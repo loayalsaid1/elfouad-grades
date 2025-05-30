@@ -114,7 +114,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#223152",
     color: "white",
     padding: "8px 6px",
-    lineHeight: "1.1",
+    lineHeight: "1.3",
     fontSize: 10,
     fontWeight: "bold",
     textAlign: "center",
@@ -123,7 +123,7 @@ const styles = StyleSheet.create({
     borderRightColor: "#ffffff",
   },
   tableCell: {
-    padding: "6px",
+    padding: "4px 2px",
     fontSize: 10,
     textAlign: "center",
     flex: 1,
