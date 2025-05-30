@@ -192,10 +192,7 @@ interface StudentReportProps {
     }
   }
 }
-const footerText: [string] = [
-  `مديرة المدرسة: د/ يسرا اباظة`,
-  `رئيس الكنترول: ا/ محمد مأمون`
-]
+
 const StudentReport: React.FC<StudentReportProps> = ({ studentData }) => {
   const subjects = Object.entries(studentData.subjects)
 
@@ -281,8 +278,8 @@ const StudentReport: React.FC<StudentReportProps> = ({ studentData }) => {
 
         {/* Footer */}
         <View style={styles.footer}>
-          <Text style={styles.footerText}>{footerText[0]}</Text>
-          <Text style={styles.footerText}>{footerText[1]}</Text>
+          <Text style={styles.footerText}>{`مديرة المدرسة: د/ يسرا اباظة`}</Text>
+          <Text style={styles.footerText}>{`رئيس الكنترول: ا/ محمد مأمون`}</Text>
         </View>
       </Page>
     </Document>
