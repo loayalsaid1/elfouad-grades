@@ -3,12 +3,8 @@ import { Document, Page, Text, View, StyleSheet, Image, Font } from "@react-pdf/
 
 // Register a font that supports Arabic characters
 Font.register({
-  family: "NotoSansArabic",
-  fonts: [
-    {
-      src: "https://fonts.gstatic.com/s/notosansarabic/v18/nwpxtLGrOAZMl5nJ_wfgRg3DrWFZWsnVBJ_sS6tlqHHFlhQ5l3sQWIHPqzCfyGyvu3CBFQLaig.ttf",
-    },
-  ],
+  family: "Amiri",
+  src: "https://fonts.gstatic.com/s/amiri/v25/J7aRnpd8CGxBHp0bUtk.ttf",
 })
 
 const styles = StyleSheet.create({
@@ -16,7 +12,7 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     backgroundColor: "#ffffff",
     padding: 20,
-    fontFamily: "NotoSansArabic", // Use the Arabic-compatible font
+    fontFamily: "Amiri", // Use the Arabic-compatible font
   },
   header: {
     flexDirection: "row",
