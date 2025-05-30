@@ -29,8 +29,8 @@ export default function HomePage() {
         
         {studentResult && (
           <div className="space-y-6">
-            {/* <StudentInfo student={studentResult} onExportPDF={handlePDFGeneration} pdfLoading={pdfLoading} /> */}
-            <ResultsTable student={studentResult}  onExportPDF={handlePDFGeneration} pdfLoading={pdfLoading}/>
+            <StudentInfo student={studentResult} onExportPDF={handlePDFGeneration} pdfLoading={pdfLoading} />
+            <ResultsTable student={studentResult} />
           </div>
         )}
         { !studentResult && <Instructions />}

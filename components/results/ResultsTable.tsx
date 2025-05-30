@@ -1,34 +1,17 @@
 import { Badge } from "@/components/ui/badge"
-import { Card, CardContent, CardHeader, CardDescription, CardTitle } from "@/components/ui/card"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { getGradeLevel } from "@/utils/gradeUtils"
-import { Download } from 'lucide-react'
-import { Button } from "@/components/ui/button"
-import LoadingSpinner from "@/components/ui/LoadingSpinner"
 import type { StudentResult } from "@/types/student"
 
 interface ResultsTableProps {
   student: StudentResult
-  onExportPDF: () => void
-  pdfLoading: boolean 
 }
 
-export default function ResultsTable({ student, onExportPDF, pdfLoading }: ResultsTableProps) {
+export default function ResultsTable({ student }: ResultsTableProps) {
   return (
-    <Card className="border-l-4 border-l-orange-500">
+    <Card>
       <CardHeader>
-        <div className="flex flex-col sm:flex-row justify-between items-start space-y-4 sm:space-y-0">
-          <div className="min-w-0 flex-1">
-            <CardTitle className="text-xl text-[#223152]">Student Results</CardTitle>
-            <CardDescription className="mt-2">
-              <div className="text-lg font-semibold break-words">{student.name}</div>
-              <div className="text-sm text-gray-600">Student ID: {student.id}</div>
-            </CardDescription>
-          </div>
-          <Button onClick={onExportPDF} className="bg-orange-500 hover:bg-orange-600 w-full sm:w-auto">
-            {pdfLoading ? <LoadingSpinner size="sm" className="mr-2" /> : <Download className="w-4 h-4 mr-2" />}
-            Export PDF
-          </Button>
-        </div>
+        <CardTitle>Exam Results</CardTitle>
       </CardHeader>
       <CardContent>
         <div className="overflow-x-auto">
