@@ -253,7 +253,7 @@ const StudentReport: React.FC<StudentReportProps> = ({ studentData }) => {
           <View style={styles.tableRow}>
             {subjects.map(([subject, data]) => (
               <Text key={`fullmark-${subject}`} style={styles.tableCell}>
-                Full Mark: {data.fullMark}
+                {data.fullMark}
               </Text>
             ))}
           </View>
