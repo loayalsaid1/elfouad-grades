@@ -43,7 +43,7 @@ export default function ResultsTable({ student, onExportPDF, pdfLoading }: Resul
             </thead>
             <tbody>
               {Object.entries(student.subjects).map(([subject, data]) => {
-                const grade = getGradeLevel(data.score)
+                const grade = getGradeLevel(data.score, data.fullMark)
 
                 return (
                   <tr key={subject} className="hover:bg-gray-50">
