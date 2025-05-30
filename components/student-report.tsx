@@ -117,7 +117,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
     backgroundColor: "#223152",
     color: "white",
-    padding: 8,
+    padding: "8px 6px",
+    line-height: "1.1",
     fontSize: 10,
     fontWeight: "bold",
     textAlign: "center",
@@ -126,7 +127,7 @@ const styles = StyleSheet.create({
     borderRightColor: "#ffffff",
   },
   tableCell: {
-    padding: 8,
+    padding: "6px",
     fontSize: 10,
     textAlign: "center",
     flex: 1,
@@ -220,23 +221,23 @@ const StudentReport: React.FC<StudentReportProps> = ({ studentData }) => {
 
         {/* Grade Reference */}
         <View style={styles.gradeReference}>
-          <Text style={styles.gradeReferenceTitle}>Grade Reference / مرجع الدرجات</Text>
+          <Text style={styles.gradeReferenceTitle}>Grade Reference</Text>
           <View style={styles.gradeReferenceGrid}>
             <View style={styles.gradeReferenceItem}>
               <View style={[styles.gradeColorBox, { backgroundColor: "#3b82f6" }]} />
-              <Text style={styles.gradeText}>يفوق التوقعات (85-100)</Text>
+              <Text style={styles.gradeText}>Exceeds Expectations (85-100)</Text>
             </View>
             <View style={styles.gradeReferenceItem}>
               <View style={[styles.gradeColorBox, { backgroundColor: "#10b981" }]} />
-              <Text style={styles.gradeText}>يلبي التوقعات (65-84)</Text>
+              <Text style={styles.gradeText}>Meets Expectations (65-84)</Text>
             </View>
             <View style={styles.gradeReferenceItem}>
               <View style={[styles.gradeColorBox, { backgroundColor: "#f59e0b" }]} />
-              <Text style={styles.gradeText}>يلبي التوقعات أحياناً (50-64)</Text>
+              <Text style={styles.gradeText}>Meets Expectations Sometimes (50-64)</Text>
             </View>
             <View style={styles.gradeReferenceItem}>
               <View style={[styles.gradeColorBox, { backgroundColor: "#ef4444" }]} />
-              <Text style={styles.gradeText}>أقل من المتوقع ({"<50"})</Text>
+              <Text style={styles.gradeText}>Less than expected ({"<50"})</Text>
             </View>
           </View>
         </View>
@@ -278,8 +279,8 @@ const StudentReport: React.FC<StudentReportProps> = ({ studentData }) => {
 
         {/* Footer */}
         <View style={styles.footer}>
-          <Text style={styles.footerText}>{`مديرة المدرسة: د/ يسرا اباظة`}</Text>
-          <Text style={styles.footerText}>{`رئيس الكنترول: ا/ محمد مأمون`}</Text>
+          <Text style={styles.footerText}>{`School Principal: Dr. Yousra Abaza`}</Text>
+          <Text style={styles.footerText}>{`Head of Exam Control: Mr. Mohamad Mamoun`}</Text>
         </View>
       </Page>
     </Document>
