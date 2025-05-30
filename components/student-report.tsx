@@ -16,7 +16,7 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     backgroundColor: "#ffffff",
     padding: 20,
-    fontFamily: "Amiri", // Use the Arabic-compatible font
+    fontFamily: "NotoSansArabic", // Use the Arabic-compatible font
   },
   header: {
     flexDirection: "row",
