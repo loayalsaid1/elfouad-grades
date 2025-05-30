@@ -4,11 +4,7 @@ import { Document, Page, Text, View, StyleSheet, Image, Font } from "@react-pdf/
 // Register a font that supports Arabic characters
 Font.register({
   family: "NotoSansArabic",
-  fonts: [
-    {
-      src: "https://fonts.gstatic.com/s/notosansarabic/v18/nwpxtLGrOAZMl5nJ_wfgRg3DrWFZWsnVBJ_sS6tlqHHFlhQ5l3sQWIHPqzCfyGyvu3CBFQLaig.ttf",
-    },
-  ],
+  src: "https://fonts.gstatic.com/s/notosansarabic/v18/nwpxtLGrOAZMl5nJ_wfgRg3DrWFZWsnVBJ_sS6tlqHHFlhQ5l3sQWIHPqzCfyGyvu3CBFQLaig.ttf",
 })
 
 const styles = StyleSheet.create({
@@ -118,7 +114,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#223152",
     color: "white",
     padding: "8px 6px",
-    line-height: "1.1",
+    lineHeight: "1.1",
     fontSize: 10,
     fontWeight: "bold",
     textAlign: "center",
@@ -279,8 +275,8 @@ const StudentReport: React.FC<StudentReportProps> = ({ studentData }) => {
 
         {/* Footer */}
         <View style={styles.footer}>
-          <Text style={styles.footerText}>{`School Principal: Dr. Yousra Abaza`}</Text>
-          <Text style={styles.footerText}>{`Head of Exam Control: Mr. Mohamad Mamoun`}</Text>
+          <Text style={styles.footerText}>School Principal: Dr. Yousra Abaza</Text>
+          <Text style={styles.footerText}>Head of Exam Control: Mr. Mohamad Mamoun</Text>
         </View>
       </Page>
     </Document>
