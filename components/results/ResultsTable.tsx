@@ -11,7 +11,7 @@ export default function ResultsTable({ student }: ResultsTableProps) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Exam Results / نتائج الامتحان</CardTitle>
+        <CardTitle>Exam Results</CardTitle>
       </CardHeader>
       <CardContent>
         <div className="overflow-x-auto">
