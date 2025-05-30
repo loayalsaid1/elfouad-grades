@@ -3,8 +3,12 @@ import { Document, Page, Text, View, StyleSheet, Image, Font } from "@react-pdf/
 
 // Register a font that supports Arabic characters
 Font.register({
-  family: "Amiri",
-  src: "https://fonts.gstatic.com/s/amiri/v25/J7aRnpd8CGxBHp0bUtk.ttf",
+  family: "NotoSansArabic",
+  fonts: [
+    {
+      src: "https://fonts.gstatic.com/s/notosansarabic/v18/nwpxtLGrOAZMl5nJ_wfgRg3DrWFZWsnVBJ_sS6tlqHHFlhQ5l3sQWIHPqzCfyGyvu3CBFQLaig.ttf",
+    },
+  ],
 })
 
 const styles = StyleSheet.create({
@@ -12,7 +16,7 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     backgroundColor: "#ffffff",
     padding: 20,
-    fontFamily: "Amiri", // Use the Arabic-compatible font
+    fontFamily: "NotoSansArabic", // Use the Arabic-compatible font
   },
   header: {
     flexDirection: "row",
@@ -271,8 +275,8 @@ const StudentReport: React.FC<StudentReportProps> = ({ studentData }) => {
 
         {/* Footer */}
         <View style={styles.footer}>
-          <Text style={styles.footerText}>مديرة المدرسة: د/ يسرا اباظة</Text>
-          <Text style={styles.footerText}>رئيس الكنترول: ا/ محمد مأمون</Text>
+          <Text style={styles.footerText}>{`مديرة المدرسة: د/ يسرا اباظة`}</Text>
+          <Text style={styles.footerText}>{`رئيس الكنترول: ا/ محمد مأمون`}</Text>
         </View>
       </Page>
     </Document>
