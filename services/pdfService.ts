@@ -1,12 +1,13 @@
 import { pdf } from "@react-pdf/renderer"
 import type { StudentResult } from "@/types/student"
 import StudentReport from "@/components/pdf/StudentReport"
+import React from "react"
 
 export class PDFService {
   static async generateStudentReport(studentData: StudentResult): Promise<void> {
     try {
       // Generate PDF on client side
-      const blob = await pdf(<StudentReport studentData={studentData} />).toBlob()
+      const blob = await pdf(React.createElement(StudentReport, { studentData })).toBlob()
 
       // Create download link
       const url = window.URL.createObjectURL(blob)

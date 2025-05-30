@@ -1,4 +1,3 @@
-import type React from "react"
 import { Document, Page, Text, View, Image, Font } from "@react-pdf/renderer"
 import { pdfStyles } from "./styles"
 import { getGradeColor } from "@/utils/gradeUtils"
@@ -15,7 +14,7 @@ interface StudentReportProps {
   studentData: StudentResult
 }
 
-const StudentReport: React.FC<StudentReportProps> = ({ studentData }) => {
+export default function StudentReport({ studentData }: StudentReportProps) {
   const subjects = Object.entries(studentData.subjects)
 
   return (
@@ -99,5 +98,3 @@ const StudentReport: React.FC<StudentReportProps> = ({ studentData }) => {
     </Document>
   )
 }
-
-export default StudentReport
