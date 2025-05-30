@@ -13,7 +13,7 @@ export default function GradeReference() {
             <div key={index} className="flex items-center space-x-2">
               <div className="w-4 h-4 rounded" style={{ backgroundColor: grade.color }}></div>
               <div className="text-sm">
-                <div className="font-medium">{grade.textAr}</div>
+                <div className="font-medium">{grade.textEn}</div>
                 <div className="text-gray-600">{grade.range}</div>
               </div>
             </div>
