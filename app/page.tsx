@@ -5,6 +5,7 @@ import StudentSearchForm from "@/components/search/StudentSearchForm"
 import StudentInfo from "@/components/results/StudentInfo"
 import GradeReference from "@/components/results/GradeReference"
 import ResultsTable from "@/components/results/ResultsTable"
+import Instructions from "@/components/Instructions"
 import { useStudentSearch } from "@/hooks/useStudentSearch"
 import { usePDFGeneration } from "@/hooks/usePDFGeneration"
 
@@ -24,14 +25,15 @@ export default function HomePage() {
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <StudentSearchForm onSearch={searchStudent} loading={loading} error={error} />
-
+        <GradeReference />
+        
         {studentResult && (
           <div className="space-y-6">
             <StudentInfo student={studentResult} onExportPDF={handlePDFGeneration} pdfLoading={pdfLoading} />
-            <GradeReference />
             <ResultsTable student={studentResult} />
           </div>
         )}
+        { !studentResult && <Instructions />}
       </main>
     </div>
   )
