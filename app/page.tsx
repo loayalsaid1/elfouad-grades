@@ -41,6 +41,7 @@ export default function HomePage() {
   const [studentId, setStudentId] = useState("")
   const [studentResult, setStudentResult] = useState<StudentResult | null>(null)
   const [loading, setLoading] = useState(false)
+  const [pdfLoading, setPdfLoading] = useState(false)
   const [error, setError] = useState("")
 
   const searchStudent = async () => {
@@ -71,6 +72,7 @@ export default function HomePage() {
     if (!studentResult) return
 
     try {
+      setPdfLoading(true)
       // Generate PDF on client side
       const blob = await pdf(<StudentReport studentData={studentResult} />).toBlob()
 
@@ -86,6 +88,8 @@ export default function HomePage() {
       document.body.removeChild(a)
     } catch (err) {
       console.error("Error generating PDF:", err)
+    } finally {
+      setPdfLoading(false)
     }
   }
 
@@ -151,8 +155,16 @@ export default function HomePage() {
                     <CardTitle className="text-[#223152]">{studentResult.name}</CardTitle>
                     <CardDescription>Student ID: {studentResult.id}</CardDescription>
                   </div>
-                  <Button onClick={generatePDF} className="bg-orange-500 hover:bg-orange-600 text-white">
-                    <Download className="w-4 h-4 mr-2" />
+                  <Button
+                    onClick={generatePDF}
+                    disabled={pdfLoading}
+                    className="bg-orange-500 hover:bg-orange-600 text-white"
+                  >
+                    {pdfLoading ? (
+                      <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2" />
+                    ) : (
+                      <Download className="w-4 h-4 mr-2" />
+                    )}
                     Export PDF
                   </Button>
                 </div>

@@ -1,12 +1,18 @@
 import type React from "react"
-import { Document, Page, Text, View, StyleSheet, Image } from "@react-pdf/renderer"
+import { Document, Page, Text, View, StyleSheet, Image, Font } from "@react-pdf/renderer"
+
+// Register a font that supports Arabic characters
+Font.register({
+  family: "Amiri",
+  src: "https://fonts.gstatic.com/s/amiri/v17/J7aRnpd8CGxBHpUrtLMA7w.ttf",
+})
 
 const styles = StyleSheet.create({
   page: {
     flexDirection: "column",
     backgroundColor: "#ffffff",
     padding: 20,
-    fontFamily: "Helvetica",
+    fontFamily: "Amiri", // Use the Arabic-compatible font
   },
   header: {
     flexDirection: "row",
@@ -42,8 +48,24 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: "#223152",
   },
+  studentInfo: {
+    marginBottom: 15,
+    padding: 10,
+    backgroundColor: "#f1f5f9",
+    borderRadius: 5,
+  },
+  studentName: {
+    fontSize: 16,
+    fontWeight: "bold",
+    color: "#223152",
+    marginBottom: 5,
+  },
+  studentId: {
+    fontSize: 12,
+    color: "#64748b",
+  },
   gradeReference: {
-    marginBottom: 20,
+    marginBottom: 15,
     padding: 10,
     backgroundColor: "#f8f9fa",
     borderRadius: 5,
@@ -73,66 +95,52 @@ const styles = StyleSheet.create({
   gradeText: {
     fontSize: 10,
   },
-  studentInfo: {
-    marginBottom: 20,
-    padding: 10,
-    backgroundColor: "#f1f5f9",
-    borderRadius: 5,
-  },
-  studentName: {
-    fontSize: 16,
-    fontWeight: "bold",
-    color: "#223152",
-    marginBottom: 5,
-  },
-  studentId: {
-    fontSize: 12,
-    color: "#64748b",
-  },
-  table: {
-    display: "table",
-    width: "auto",
-    borderStyle: "solid",
-    borderWidth: 1,
-    borderColor: "#223152",
+  // Horizontal table styles
+  horizontalTable: {
+    display: "flex",
+    flexDirection: "column",
+    width: "100%",
     marginBottom: 20,
   },
   tableRow: {
-    margin: "auto",
     flexDirection: "row",
+    borderBottomWidth: 1,
+    borderBottomColor: "#e5e7eb",
   },
   tableHeader: {
     backgroundColor: "#223152",
-  },
-  tableHeaderCell: {
-    margin: "auto",
-    padding: 8,
-    fontSize: 12,
-    fontWeight: "bold",
     color: "white",
-    borderStyle: "solid",
-    borderWidth: 1,
-    borderColor: "#223152",
+    padding: 8,
+    fontSize: 10,
+    fontWeight: "bold",
     textAlign: "center",
+    flex: 1,
+    borderRightWidth: 1,
+    borderRightColor: "#ffffff",
   },
   tableCell: {
-    margin: "auto",
     padding: 8,
-    fontSize: 11,
-    borderStyle: "solid",
-    borderWidth: 1,
-    borderColor: "#223152",
+    fontSize: 10,
     textAlign: "center",
+    flex: 1,
+    borderRightWidth: 1,
+    borderRightColor: "#e5e7eb",
   },
-  subjectCell: {
-    width: "25%",
-    textAlign: "left",
+  tableCellWithIndicator: {
+    padding: 8,
+    fontSize: 10,
+    textAlign: "center",
+    flex: 1,
+    borderRightWidth: 1,
+    borderRightColor: "#e5e7eb",
+    position: "relative",
   },
-  markCell: {
-    width: "15%",
-  },
-  gradeCell: {
-    width: "20%",
+  gradeIndicator: {
+    position: "absolute",
+    left: 0,
+    top: 0,
+    bottom: 0,
+    width: 4,
   },
   footer: {
     position: "absolute",
@@ -151,12 +159,18 @@ const styles = StyleSheet.create({
   },
 })
 
-const getGradeLevel = (score: number, fullMark: number) => {
-  const percentage = score // The score is already a percentage in this dataset
-  if (percentage >= 85) return { text: "يفوق التوقعات", color: "#3b82f6" }
-  if (percentage >= 65) return { text: "يلبي التوقعات", color: "#10b981" }
-  if (percentage >= 50) return { text: "يلبي التوقعات أحياناً", color: "#f59e0b" }
-  return { text: "أقل من المتوقع", color: "#ef4444" }
+const getGradeColor = (score: number) => {
+  if (score >= 85) return "#3b82f6" // Blue
+  if (score >= 65) return "#10b981" // Green
+  if (score >= 50) return "#f59e0b" // Yellow
+  return "#ef4444" // Red
+}
+
+const getGradeText = (score: number) => {
+  if (score >= 85) return "يفوق التوقعات"
+  if (score >= 65) return "يلبي التوقعات"
+  if (score >= 50) return "يلبي التوقعات أحياناً"
+  return "أقل من المتوقع"
 }
 
 interface StudentReportProps {
@@ -173,6 +187,8 @@ interface StudentReportProps {
 }
 
 const StudentReport: React.FC<StudentReportProps> = ({ studentData }) => {
+  const subjects = Object.entries(studentData.subjects)
+
   return (
     <Document>
       <Page size="A4" orientation="landscape" style={styles.page}>
@@ -218,29 +234,39 @@ const StudentReport: React.FC<StudentReportProps> = ({ studentData }) => {
           </View>
         </View>
 
-        {/* Results Table */}
-        <View style={styles.table}>
-          {/* Table Header */}
-          <View style={[styles.tableRow, styles.tableHeader]}>
-            <Text style={[styles.tableHeaderCell, styles.subjectCell]}>Subject</Text>
-            <Text style={[styles.tableHeaderCell, styles.markCell]}>Full Mark</Text>
-            <Text style={[styles.tableHeaderCell, styles.markCell]}>Student Mark</Text>
-            <Text style={[styles.tableHeaderCell, styles.gradeCell]}>Grade</Text>
+        {/* Horizontal Table */}
+        <View style={styles.horizontalTable}>
+          {/* Subject Headers */}
+          <View style={styles.tableRow}>
+            {subjects.map(([subject]) => (
+              <Text key={`header-${subject}`} style={styles.tableHeader}>
+                {subject}
+              </Text>
+            ))}
           </View>
 
-          {/* Table Rows */}
-          {Object.entries(studentData.subjects).map(([subject, data]) => {
-            const grade = getGradeLevel(data.score, data.fullMark)
+          {/* Full Marks Row */}
+          <View style={styles.tableRow}>
+            {subjects.map(([subject, data]) => (
+              <Text key={`fullmark-${subject}`} style={styles.tableCell}>
+                Full Mark: {data.fullMark}
+              </Text>
+            ))}
+          </View>
 
-            return (
-              <View key={subject} style={styles.tableRow}>
-                <Text style={[styles.tableCell, styles.subjectCell]}>{subject}</Text>
-                <Text style={[styles.tableCell, styles.markCell]}>{data.fullMark}</Text>
-                <Text style={[styles.tableCell, styles.markCell]}>{data.score.toFixed(2)}</Text>
-                <Text style={[styles.tableCell, styles.gradeCell]}>{grade.text}</Text>
-              </View>
-            )
-          })}
+          {/* Student Marks Row with Color Indicators */}
+          <View style={styles.tableRow}>
+            {subjects.map(([subject, data]) => {
+              const gradeColor = getGradeColor(data.score)
+
+              return (
+                <View key={`score-${subject}`} style={styles.tableCellWithIndicator}>
+                  <View style={[styles.gradeIndicator, { backgroundColor: gradeColor }]} />
+                  <Text>{data.score.toFixed(2)}</Text>
+                </View>
+              )
+            })}
+          </View>
         </View>
 
         {/* Footer */}
