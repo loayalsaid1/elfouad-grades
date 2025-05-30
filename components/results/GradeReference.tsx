@@ -5,7 +5,7 @@ export default function GradeReference() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-lg">Grade Reference</CardTitle>
+        <CardTitle className="text-lg">Grade Reference / مرجع الدرجات</CardTitle>
       </CardHeader>
       <CardContent>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">

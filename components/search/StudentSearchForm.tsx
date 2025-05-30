@@ -7,6 +7,7 @@ import { Search } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Alert, AlertDescription } from "@/components/ui/alert"
 import LoadingSpinner from "@/components/ui/LoadingSpinner"
 
 interface StudentSearchFormProps {
@@ -60,7 +61,11 @@ export default function StudentSearchForm({ onSearch, loading, error }: StudentS
             {loading ? "Searching..." : "Search"}
           </Button>
         </div>
-        {error && <p className="text-red-600 text-sm text-center">{error}</p>}
+        {error && (
+          <Alert className="mt-4 border-red-200 bg-red-50">
+            <AlertDescription className="text-red-700">{error}</AlertDescription>
+          </Alert>
+        )}
 
       </CardContent>
     </Card>
