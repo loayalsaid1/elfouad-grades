@@ -18,54 +18,36 @@ interface StudentSearchFormProps {
 export default function StudentSearchForm({ onSearch, loading, error }: StudentSearchFormProps) {
   const [studentId, setStudentId] = useState("")
 
-  const handleSubmit = async () => {
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
     if (studentId.trim()) {
       await onSearch(studentId.trim())
     }
   }
-    const handleKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === "Enter") {
-      handleSubmit()
-    }
-  }
-
 
   return (
     <div className="mb-8">
-
-    <Card className="border-l-4 border-l-[#223152]">
-      <CardHeader>
-        <CardTitle className="flex items-center space-x-2">
-          <Search className="h-5 w-5" />
-          <span>Search Student Results</span>
-        </CardTitle>
-        <CardDescription>Enter the student ID to view exam results and generate reports</CardDescription>
-      </CardHeader>
-      <CardContent>
-        <div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
-          <Input
-            placeholder="Enter Student ID..."
-            value={searchId}
-            onChange={(e) => setStudentId(e.target.value)}
-            className="flex-1"
-            onKeyPress={handleKeyPress}
-            disabled={loading}
-          />
-          <Button
-            onClick={handleSubmit}
-            disabled={loading || !searchId.trim()}
-            className="bg-[#223152] hover:bg-[#1a2642] w-full sm:w-auto"
-          >
-            {loading ? "Searching..." : "Search"}
-          </Button>
-        </div>
-        {error && (
-          <Alert className="mt-4 border-red-200 bg-red-50">
-            <AlertDescription className="text-red-700">{error}</AlertDescription>
-          </Alert>
-        )}
-      </CardContent>
-    </Card>
+      <Card className="max-w-md mx-auto">
+        <CardHeader className="text-center">
+          <CardTitle className="text-[#223152]">Search Student Results</CardTitle>
+          <CardDescription>Enter the student ID to view exam results</CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <form onSubmit={handleSubmit} className="flex space-x-2">
+            <Input
+              placeholder="Enter Student ID (e.g., 65)"
+              value={studentId}
+              onChange={(e) => setStudentId(e.target.value)}
+              className="flex-1"
+              required
+            />
+            <Button type="submit" disabled={loading} className="bg-[#223152] hover:bg-[#1a2642]">
+              {loading ? <LoadingSpinner size="sm" /> : <Search className="w-4 h-4" />}
+            </Button>
+          </form>
+          {error && <p className="text-red-600 text-sm text-center">{error}</p>}
+        </CardContent>
+      </Card>
     </div>
   )
 }
