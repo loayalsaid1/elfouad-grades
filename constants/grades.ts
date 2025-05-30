@@ -34,7 +34,7 @@ export const GRADE_REFERENCE_DATA = [
   {
     color: "#ef4444",
     textAr: "أقل من المتوقع",
-    textEn: "Less than expected",
+    textEn: "Less Than Expected",
     range: "<50",
   },
 ]
