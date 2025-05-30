@@ -112,6 +112,9 @@ const styles = StyleSheet.create({
     borderBottomColor: "#e5e7eb",
   },
   tableHeader: {
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
     backgroundColor: "#223152",
     color: "white",
     padding: 8,
@@ -189,7 +192,10 @@ interface StudentReportProps {
     }
   }
 }
-
+const footerText: [string] = [
+  `مديرة المدرسة: د/ يسرا اباظة`,
+  `رئيس الكنترول: ا/ محمد مأمون`
+]
 const StudentReport: React.FC<StudentReportProps> = ({ studentData }) => {
   const subjects = Object.entries(studentData.subjects)
 
@@ -275,8 +281,8 @@ const StudentReport: React.FC<StudentReportProps> = ({ studentData }) => {
 
         {/* Footer */}
         <View style={styles.footer}>
-          <Text style={styles.footerText}>{`مديرة المدرسة: د/ يسرا اباظة`}</Text>
-          <Text style={styles.footerText}>{`رئيس الكنترول: ا/ محمد مأمون`}</Text>
+          <Text style={styles.footerText}>{footerText[0]}</Text>
+          <Text style={styles.footerText}>{footerText[1]}</Text>
         </View>
       </Page>
     </Document>
