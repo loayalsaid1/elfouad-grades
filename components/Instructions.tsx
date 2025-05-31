@@ -13,7 +13,6 @@ export default function Instructions() {
               <li>• Enter the student ID in the search box above</li>
               <li>• View detailed results with color-coded grade levels</li>
               <li>• Export professional PDF reports with school branding</li>
-              <li>• All reports include official signatures and formatting</li>
             </ul>
           </div>
         </div>
