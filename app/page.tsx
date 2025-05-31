@@ -1,6 +1,7 @@
 "use client"
 
 import Header from "@/components/layout/Header"
+import Footer from "@/components/layout/Footer"
 import StudentSearchForm from "@/components/search/StudentSearchForm"
 import StudentInfo from "@/components/results/StudentInfo"
 import GradeReference from "@/components/results/GradeReference"
@@ -20,10 +21,8 @@ export default function HomePage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50" dir="ltr">
-      <Header />
-
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-8 space-y-6 sm:space-y-8">
+    <div className="bg-gradient-to-br from-slate-50 to-blue-50" dir="ltr">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-8 space-y-6 sm:space-y-8">
         <StudentSearchForm onSearch={searchStudent} loading={loading} error={error} />
         <GradeReference />
         
@@ -34,7 +33,7 @@ export default function HomePage() {
           </div>
         )}
         { !studentResult && <Instructions />}
-      </main>
+      </div>
     </div>
   )
 }
