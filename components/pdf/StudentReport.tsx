@@ -2,6 +2,7 @@ import { Document, Page, Text, View, Image, Font } from "@react-pdf/renderer"
 import { pdfStyles } from "./styles"
 import { getGradeColor } from "@/utils/gradeUtils"
 import { GRADE_REFERENCE_DATA } from "@/constants/grades"
+import { CURRENT_ROUND } from '@/constants/currentRound'
 import type { StudentResult } from "@/types/student"
 
 // Register a font that supports Arabic characters
@@ -25,7 +26,7 @@ export default function StudentReport({ studentData }: StudentReportProps) {
           <Image style={pdfStyles.logo} src="/logo.png" />
           <View style={pdfStyles.headerCenter}>
             <Text style={pdfStyles.headerTitle}>Sixth Primary Report</Text>
-            <Text style={pdfStyles.headerSubtitle}>First Term 2024-2025</Text>
+            <Text style={pdfStyles.headerSubtitle}>{CURRENT_ROUND.term == 1 ? 'First' : 'Second'} Term {CURRENT_ROUND.startYear}-{CURRENT_ROUND.endYear}</Text>
           </View>
           <View style={pdfStyles.schoolInfo}>
             <Text>El Fouad Schools</Text>

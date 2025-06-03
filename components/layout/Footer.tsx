@@ -1,4 +1,6 @@
 import { Facebook, Globe, Linkedin, Instagram, ExternalLink } from "lucide-react"
+import { CURRENT_ROUND } from '@/constants/currentRound'
+
 
 export default function Footer() {
   const socialLinks = [
@@ -76,7 +78,7 @@ export default function Footer() {
 
         {/* Bottom Border */}
         <div className="mt-6 pt-4 border-t border-white/20 text-center">
-          <p className="text-xs text-gray-400">Student Results Portal • First Term 2024-2025</p>
+          <p className="text-xs text-gray-400">Student Results Portal • {CURRENT_ROUND.term == 1 ? 'First' : 'Second'} Term {CURRENT_ROUND.startYear}-{CURRENT_ROUND.endYear}</p>
         </div>
       </div>
     </footer>

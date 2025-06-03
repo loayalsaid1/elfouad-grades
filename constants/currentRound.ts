@@ -7,5 +7,5 @@ type Round = {
 export const CURRENT_ROUND: Round = {
 	startYear: 2024,
 	endYear: 2025,
-	term: 1
+	term: 2
 };
