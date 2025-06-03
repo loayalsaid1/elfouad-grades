@@ -22,3 +22,32 @@ export const getGradeColor = (score: number): string => {
   if (score >= GRADE_THRESHOLDS.FAIR) return "#f59e0b" // Yellow
   return "#ef4444" // Red
 }
+
+export const getOrdinalInfo = (num: number) => {
+  const ordinals: Record<number, string> = {
+    1: "first",
+    2: "second",
+    3: "third",
+    4: "fourth",
+    5: "fifth",
+    6: "sixth",
+    7: "seventh",
+    8: "eighth"
+  }
+
+  const getOrdinalSuffix = (n: number) => {
+    if (n % 100 >= 11 && n % 100 <= 13) return `${n}th`
+    switch (n % 10) {
+      case 1: return `${n}st`
+      case 2: return `${n}nd`
+      case 3: return `${n}rd`
+      default: return `${n}th`
+    }
+  }
+
+  return {
+    number: num.toString(),
+    ordinal: getOrdinalSuffix(num),
+    word: ordinals[num] || `${num}th`
+  }
+}
