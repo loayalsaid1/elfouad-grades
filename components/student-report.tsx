@@ -22,6 +22,7 @@ const styles = StyleSheet.create({
     borderBottom: 2,
     borderBottomColor: "#223152",
     paddingBottom: 10,
+    textTransform: "capitalize",
   },
   logo: {
     width: 60,
