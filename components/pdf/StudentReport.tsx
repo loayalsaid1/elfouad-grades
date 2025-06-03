@@ -23,7 +23,7 @@ export default function StudentReport({ studentData }: StudentReportProps) {
       <Page size="A4" orientation="landscape" style={pdfStyles.page}>
         {/* Header */}
         <View style={pdfStyles.header}>
-          <Image style={pdfStyles.logo} src="/logo.png" />
+          <Image style={pdfStyles.logo} src="/logo2.png" />
           <View style={pdfStyles.headerCenter}>
             <Text style={pdfStyles.headerTitle}>Sixth Primary Report</Text>
             <Text style={pdfStyles.headerSubtitle}>{CURRENT_ROUND.term == 1 ? 'First' : 'Second'} Term {CURRENT_ROUND.startYear}-{CURRENT_ROUND.endYear}</Text>

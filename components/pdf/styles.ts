@@ -15,10 +15,11 @@ export const pdfStyles = StyleSheet.create({
     borderBottom: 2,
     borderBottomColor: "#223152",
     paddingBottom: 10,
+    textTransform: "capitalize",
   },
   logo: {
-    width: 60,
-    height: 60,
+    width: 120,
+    height: 70,
   },
   headerCenter: {
     flex: 1,
