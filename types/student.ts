@@ -3,10 +3,13 @@ export interface StudentResult {
   name: string
   subjects: {
     [key: string]: {
-      score: number
+      score: number | null
       fullMark: number
+      isAbsent: boolean
     }
   }
+  school?: string
+  grade?: number
 }
 
 export interface GradeLevel {

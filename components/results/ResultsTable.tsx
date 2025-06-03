@@ -1,7 +1,9 @@
+"use client"
+
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardHeader, CardDescription, CardTitle } from "@/components/ui/card"
 import { getGradeLevel } from "@/utils/gradeUtils"
-import { Download } from 'lucide-react'
+import { Download } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import LoadingSpinner from "@/components/ui/LoadingSpinner"
 import type { StudentResult } from "@/types/student"
@@ -9,7 +11,7 @@ import type { StudentResult } from "@/types/student"
 interface ResultsTableProps {
   student: StudentResult
   onExportPDF: () => void
-  pdfLoading: boolean 
+  pdfLoading: boolean
 }
 
 export default function ResultsTable({ student, onExportPDF, pdfLoading }: ResultsTableProps) {
@@ -43,14 +45,14 @@ export default function ResultsTable({ student, onExportPDF, pdfLoading }: Resul
             </thead>
             <tbody>
               {Object.entries(student.subjects).map(([subject, data]) => {
-                const grade = getGradeLevel(data.score)
+                const grade = getGradeLevel(data.score, data.isAbsent)
 
                 return (
                   <tr key={subject} className="hover:bg-gray-50">
                     <td className="border border-gray-300 px-4 py-3 font-medium">{subject}</td>
                     <td className="border border-gray-300 px-4 py-3 text-center">{data.fullMark}</td>
                     <td className="border border-gray-300 px-4 py-3 text-center font-semibold">
-                      {data.score.toFixed(2)}
+                      {data.isAbsent ? <span className="text-gray-500 italic">Absent</span> : data.score?.toFixed(2)}
                     </td>
                     <td className="border border-gray-300 px-4 py-3 text-center">
                       <Badge className={grade.color}>{grade.text}</Badge>

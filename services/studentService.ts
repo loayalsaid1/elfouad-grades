@@ -1,11 +1,12 @@
 import type { StudentResult } from "@/types/student"
 
 export class StudentService {
-  static async getStudentById(id: string): Promise<StudentResult> {
-    const response = await fetch(`/api/students/${id}`)
+  static async getStudentById(id: string, school: string, grade: number): Promise<StudentResult> {
+    const response = await fetch(`/api/results/${school}/${grade}/${id}`)
 
     if (!response.ok) {
-      throw new Error("Student not found")
+      const errorData = await response.json()
+      throw new Error(errorData.error || "Student not found")
     }
 
     return response.json()

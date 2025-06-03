@@ -2,7 +2,7 @@ import { Document, Page, Text, View, Image, Font } from "@react-pdf/renderer"
 import { pdfStyles } from "./styles"
 import { getGradeColor } from "@/utils/gradeUtils"
 import { GRADE_REFERENCE_DATA } from "@/constants/grades"
-import { CURRENT_ROUND } from '@/constants/currentRound'
+import { CURRENT_ROUND } from "@/constants/currentRound"
 import type { StudentResult } from "@/types/student"
 
 // Register a font that supports Arabic characters
@@ -26,7 +26,9 @@ export default function StudentReport({ studentData }: StudentReportProps) {
           <Image style={pdfStyles.logo} src="/logo2.png" />
           <View style={pdfStyles.headerCenter}>
             <Text style={pdfStyles.headerTitle}>Sixth Primary Report</Text>
-            <Text style={pdfStyles.headerSubtitle}>{CURRENT_ROUND.term == 1 ? 'First' : 'Second'} Term {CURRENT_ROUND.startYear}-{CURRENT_ROUND.endYear}</Text>
+            <Text style={pdfStyles.headerSubtitle}>
+              {CURRENT_ROUND.term == 1 ? "First" : "Second"} Term {CURRENT_ROUND.startYear}-{CURRENT_ROUND.endYear}
+            </Text>
           </View>
           <View style={pdfStyles.schoolInfo}>
             <Text>El Fouad Schools</Text>
@@ -52,6 +54,11 @@ export default function StudentReport({ studentData }: StudentReportProps) {
                 </Text>
               </View>
             ))}
+            {/* Add absent reference */}
+            <View style={pdfStyles.gradeReferenceItem}>
+              <View style={[pdfStyles.gradeColorBox, { backgroundColor: "#9ca3af" }]} />
+              <Text style={pdfStyles.gradeText}>Absent (غ)</Text>
+            </View>
           </View>
         </View>
 
@@ -78,12 +85,12 @@ export default function StudentReport({ studentData }: StudentReportProps) {
           {/* Student Marks Row with Color Indicators */}
           <View style={pdfStyles.tableRow}>
             {subjects.map(([subject, data]) => {
-              const gradeColor = getGradeColor(data.score)
+              const gradeColor = getGradeColor(data.score, data.isAbsent)
 
               return (
                 <View key={`score-${subject}`} style={pdfStyles.tableCellWithIndicator}>
                   <View style={[pdfStyles.gradeIndicator, { backgroundColor: gradeColor }]} />
-                  <Text>{data.score.toFixed(2)}</Text>
+                  <Text>{data.isAbsent ? "غ" : data.score?.toFixed(2)}</Text>
                 </View>
               )
             })}
