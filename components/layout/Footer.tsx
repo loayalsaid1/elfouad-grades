@@ -44,7 +44,7 @@ export default function Footer() {
           <div className="text-center md:text-left">
             <h3 className="text-xl font-bold mb-2">El Fouad Schools</h3>
             <p className="text-gray-300 text-sm">Excellence in Education • East Zagazig Directorate</p>
-            <p className="text-gray-400 text-xs mt-1">6th Grade Results Portal</p>
+            <p className="text-gray-400 text-xs mt-1">Student Results Portal</p>
           </div>
 
           {/* Social Links */}

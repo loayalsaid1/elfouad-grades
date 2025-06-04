@@ -28,7 +28,7 @@ export default function ResultsTable({ student, onExportPDF, pdfLoading }: Resul
           </div>
           <Button onClick={onExportPDF} className="bg-orange-500 hover:bg-orange-600 w-full sm:w-auto">
             {pdfLoading ? <LoadingSpinner size="sm" className="mr-2" /> : <Download className="w-4 h-4 mr-2" />}
-            Export PDF
+            Download PDF
           </Button>
         </div>
       </CardHeader>

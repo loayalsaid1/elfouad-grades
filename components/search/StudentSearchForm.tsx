@@ -44,7 +44,7 @@ export default function StudentSearchForm({ onSearch, loading, error }: StudentS
       <CardContent>
         <div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
           <Input
-            placeholder="Enter Student ID (e.g., 65)"
+            placeholder="Enter Student's National ID [الرقم القومي للطالب]"
             value={studentId}
             onChange={(e) => setStudentId(e.target.value)}
             className="flex-1"
@@ -60,8 +60,11 @@ export default function StudentSearchForm({ onSearch, loading, error }: StudentS
             {loading ? "Searching..." : "Search"}
           </Button>
         </div>
-        {error && <p className="text-red-600 text-sm text-center">{error}</p>}
-
+        {error && (
+          <Alert className="mt-4 border-red-200 bg-red-50">
+            <AlertDescription className="text-red-700">{error}</AlertDescription>
+          </Alert>
+        )}
       </CardContent>
     </Card>
     </div>
