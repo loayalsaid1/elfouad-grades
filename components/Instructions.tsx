@@ -10,7 +10,7 @@ export default function Instructions() {
           <div className="min-w-0">
             <h3 className="font-semibold text-blue-900 mb-2">How to use this portal:</h3>
             <ul className="text-blue-800 space-y-1 text-sm">
-              <li>• Enter the student ID in the search box above</li>
+              <li>• Enter the student's national ID in the search box above</li>
               <li>• View detailed results with color-coded grade levels</li>
               <li>• Export professional PDF reports with school branding</li>
             </ul>
