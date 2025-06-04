@@ -69,3 +69,25 @@ export const getOrdinalInfo = (num: number) => {
     word: ordinals[num] || `${num}th`,
   }
 }
+
+export const getStudentYearTitle = (grade: number): string => {
+  if (grade < 1 || grade > 12)
+    throw new Error("Grade Must be between 1 and 12");
+
+  let stage: "Primary" | "Preparatory" | "Secondary";
+  let yearOfStage: number;
+
+  if (grade >= 10) {
+    stage = "Secondary";
+    yearOfStage = grade - 9;
+  } else if (grade >= 7) {
+    stage = "Preparatory";
+    yearOfStage = grade - 6; 
+  } else {
+    stage = "Primary";
+    yearOfStage = grade;
+  }
+
+  const ordinalWord = getOrdinalInfo(yearOfStage).word;
+  return `${ordinalWord} ${stage}`;
+}

@@ -1,6 +1,6 @@
 import { Document, Page, Text, View, Image, Font } from "@react-pdf/renderer"
 import { pdfStyles } from "./styles"
-import { getGradeColor } from "@/utils/gradeUtils"
+import { getGradeColor, getStudentYearTitle } from "@/utils/gradeUtils"
 import { GRADE_REFERENCE_DATA } from "@/constants/grades"
 import { CURRENT_ROUND } from "@/constants/currentRound"
 import type { StudentResult } from "@/types/student"
@@ -25,7 +25,7 @@ export default function StudentReport({ studentData }: StudentReportProps) {
         <View style={pdfStyles.header}>
           <Image style={pdfStyles.logo} src="/logo2.png" />
           <View style={pdfStyles.headerCenter}>
-            <Text style={pdfStyles.headerTitle}>Sixth Primary Report</Text>
+            <Text style={pdfStyles.headerTitle}>{ getStudentYearTitle(studentData.grade)} Report</Text>
             <Text style={pdfStyles.headerSubtitle}>
               {CURRENT_ROUND.term == 1 ? "First" : "Second"} Term {CURRENT_ROUND.startYear}-{CURRENT_ROUND.endYear}
             </Text>

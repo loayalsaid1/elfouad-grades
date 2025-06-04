@@ -8,8 +8,8 @@ export interface StudentResult {
       isAbsent: boolean
     }
   }
-  school?: string
-  grade?: number
+  school: string
+  grade: number
 }
 
 export interface GradeLevel {
