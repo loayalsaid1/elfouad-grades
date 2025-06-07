@@ -90,7 +90,11 @@ export default function StudentReport({ studentData }: StudentReportProps) {
               return (
                 <View key={`score-${subject}`} style={pdfStyles.tableCellWithIndicator}>
                   <View style={[pdfStyles.gradeIndicator, { backgroundColor: gradeColor }]} />
-                  <Text>{data.isAbsent ? "Absent" : data.score?.toFixed(2)}</Text>
+                  {data.isAbsent ? (
+                    <Text style={pdfStyles.tableCellAbsentText}>-</Text>
+                  ) : (
+                    <Text style={pdfStyles.tableCell}>{data.score?.toFixed(2)}</Text>
+                  )}
                 </View>
               )
             })}

@@ -124,6 +124,10 @@ export const pdfStyles = StyleSheet.create({
     borderRightColor: "#e5e7eb",
   },
   tableCellWithIndicator: {
+    display: "flex",
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
     padding: 8,
     fontSize: 10,
     textAlign: "center",
@@ -138,6 +142,11 @@ export const pdfStyles = StyleSheet.create({
     top: 0,
     bottom: 0,
     width: 4,
+  },
+  tableCellAbsentText: {
+    fontWeight: "bold",
+    transform: "scale(3)",
+    color: "#9ca3af",
   },
   footer: {
     position: "absolute",
