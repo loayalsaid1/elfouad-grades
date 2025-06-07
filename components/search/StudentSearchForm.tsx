@@ -39,12 +39,12 @@ export default function StudentSearchForm({ onSearch, loading, error }: StudentS
           <Search className="h-5 w-5" />
           <span>Search Student Results</span>
         </CardTitle>
-        <CardDescription>Enter the student ID to view exam results and generate reports</CardDescription>
+        <CardDescription>Enter the student's National ID to view exam results and generate reports</CardDescription>
       </CardHeader>
       <CardContent>
         <div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
           <Input
-            placeholder="Enter Student's National ID [الرقم القومي للطالب]"
+            placeholder="Student's National ID"
             value={studentId}
             onChange={(e) => setStudentId(e.target.value)}
             className="flex-1"
