@@ -52,7 +52,7 @@ export default function ResultsTable({ student, onExportPDF, pdfLoading }: Resul
                     <td className="border border-gray-300 px-4 py-3 font-medium">{subject}</td>
                     <td className="border border-gray-300 px-4 py-3 text-center">{data.fullMark}</td>
                     <td className="border border-gray-300 px-4 py-3 text-center font-semibold">
-                      {data.isAbsent ? <span className="text-gray-500 italic">Absent</span> : data.score?.toFixed(2)}
+                      {data.isAbsent ? <span className="text-gray-600 text-lg font-bold">-</span> : data.score?.toFixed(2)}
                     </td>
                     <td className="border border-gray-300 px-4 py-3 text-center">
                       <Badge className={grade.color}>{grade.text}</Badge>
