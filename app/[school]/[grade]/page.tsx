@@ -1,6 +1,7 @@
 "use client"
 
 import { useParams, useRouter } from "next/navigation"
+import { useRef, useEffect } from 'react'
 import { Button } from "@/components/ui/button"
 import { ArrowLeft } from "lucide-react"
 import { getOrdinalInfo } from "@/utils/gradeUtils"
@@ -17,7 +18,7 @@ export default function GradePage() {
   const router = useRouter()
   const school = params.school as string
   const grade = Number.parseInt(params.grade as string)
-
+  const resultsTableRef = useRef<HTMLDivElement | null>(null)
   const { studentResult, loading, error, searchStudent } = useStudentSearch(school, grade)
   const { pdfLoading, generatePDF } = usePDFGeneration()
 
@@ -49,6 +50,15 @@ export default function GradePage() {
     return <div>School not found</div>
   }
 
+  const onFoundStudent = (): void => {
+    if (resultsTableRef.current)
+      resultsTableRef.current.scrollIntoView({ behavior: 'smooth' })
+  }
+
+  useEffect(() => {
+    if (!loading && !error && studentResult)
+      onFoundStudent()
+  }, [error, studentResult, loading])
   return (
     <div className="bg-gradient-to-br from-slate-50 to-blue-50 min-h-screen">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-8 space-y-6 sm:space-y-8">
@@ -78,8 +88,8 @@ export default function GradePage() {
         <GradeReference />
 
         {studentResult && (
-          <div className="space-y-6">
-            <ResultsTable student={studentResult} onExportPDF={handlePDFGeneration} pdfLoading={pdfLoading} />
+          <div className="space-y-6" ref={resultsTableRef} >
+            <ResultsTable  student={studentResult} onExportPDF={handlePDFGeneration} pdfLoading={pdfLoading} />
           </div>
         )}
 
