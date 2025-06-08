@@ -37,11 +37,13 @@ export async function GET(request: NextRequest, { params }: { params: { school: 
 
     const studentData = studentLine.split(",")
     const studentName = studentData[1]
+    const parentPassword = studentData[2] // new column
 
     // Build subjects object
     const subjects: { [key: string]: { score: number | null; fullMark: number; isAbsent: boolean } } = {}
 
-    for (let i = 2; i < headers.length; i++) {
+    // Subjects now start from index 3
+    for (let i = 3; i < headers.length; i++) {
       const subjectName = headers[i]
       const fullMark = 100
       const scoreValue = studentData[i]?.trim()
