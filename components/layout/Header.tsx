@@ -7,8 +7,8 @@ export default function Header() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-4">
-            <div className="relative w-16 h-16">
-              <Image src="/logo2.png" alt="El Fouad Schools Group" fill className="object-contain" priority />
+            <div className="relative w-32 h-16">
+              <Image src="/logo2.png" alt="El Fouad Schools Group" fill className="object-cover" priority />
             </div>
             <div>
               <h1 className="text-2xl font-bold text-[#223152]">El Fouad Schools Group</h1>
