@@ -85,7 +85,7 @@ export default function GradePage() {
         </div>
 
         <StudentSearchForm onSearch={searchStudent} loading={loading} error={error} />
-        <GradeReference />
+        {grade < 8 && <GradeReference />}
 
         {studentResult && (
           <div className="space-y-6" ref={resultsTableRef} >

@@ -17,6 +17,7 @@ interface StudentReportProps {
 
 export default function StudentReport({ studentData }: StudentReportProps) {
   const subjects = Object.entries(studentData.subjects)
+  const showGradeReference = studentData.grade < 8
 
   return (
     <Document>
@@ -43,24 +44,26 @@ export default function StudentReport({ studentData }: StudentReportProps) {
         </View>
 
         {/* Grade Reference */}
-        <View style={pdfStyles.gradeReference}>
-          <Text style={pdfStyles.gradeReferenceTitle}>Grade Reference</Text>
-          <View style={pdfStyles.gradeReferenceGrid}>
-            {GRADE_REFERENCE_DATA.map((grade, index) => (
-              <View key={index} style={pdfStyles.gradeReferenceItem}>
-                <View style={[pdfStyles.gradeColorBox, { backgroundColor: grade.color }]} />
-                <Text style={pdfStyles.gradeText}>
-                  {grade.textEn} ({grade.range})
-                </Text>
+        {showGradeReference && (
+          <View style={pdfStyles.gradeReference}>
+            <Text style={pdfStyles.gradeReferenceTitle}>Grade Reference</Text>
+            <View style={pdfStyles.gradeReferenceGrid}>
+              {GRADE_REFERENCE_DATA.map((grade, index) => (
+                <View key={index} style={pdfStyles.gradeReferenceItem}>
+                  <View style={[pdfStyles.gradeColorBox, { backgroundColor: grade.color }]} />
+                  <Text style={pdfStyles.gradeText}>
+                    {grade.textEn} ({grade.range})
+                  </Text>
+                </View>
+              ))}
+              {/* Add absent reference */}
+              <View style={pdfStyles.gradeReferenceItem}>
+                <View style={[pdfStyles.gradeColorBox, { backgroundColor: "#9ca3af" }]} />
+                <Text style={pdfStyles.gradeText}>Absent (غ)</Text>
               </View>
-            ))}
-            {/* Add absent reference */}
-            <View style={pdfStyles.gradeReferenceItem}>
-              <View style={[pdfStyles.gradeColorBox, { backgroundColor: "#9ca3af" }]} />
-              <Text style={pdfStyles.gradeText}>Absent (غ)</Text>
             </View>
           </View>
-        </View>
+        )}
 
         {/* Horizontal Table */}
         <View style={pdfStyles.horizontalTable}>
@@ -85,18 +88,31 @@ export default function StudentReport({ studentData }: StudentReportProps) {
           {/* Student Marks Row with Color Indicators */}
           <View style={pdfStyles.tableRow}>
             {subjects.map(([subject, data]) => {
-              const gradeColor = getGradeColor(data.score, data.isAbsent)
-
-              return (
-                <View key={`score-${subject}`} style={pdfStyles.tableCellWithIndicator}>
-                  <View style={[pdfStyles.gradeIndicator, { backgroundColor: gradeColor }]} />
-                  {data.isAbsent ? (
-                    <Text style={pdfStyles.tableCellAbsentText}>-</Text>
-                  ) : (
-                    <Text style={pdfStyles.tableCell}>{data.score?.toFixed(2)}</Text>
-                  )}
-                </View>
-              )
+              // Only show color indicator if grade < 8
+              if (showGradeReference) {
+                
+                const gradeColor = getGradeColor(data.score, data.isAbsent)
+                return (
+                  <View key={`score-${subject}`} style={pdfStyles.tableCellWithIndicator}>
+                    <View style={[pdfStyles.gradeIndicator, { backgroundColor: gradeColor }]} />
+                    {data.isAbsent ? (
+                      <Text style={pdfStyles.tableCellAbsentText}>-</Text>
+                    ) : (
+                      <Text style={pdfStyles.tableCell}>{data.score?.toFixed(2)}</Text>
+                    )}
+                  </View>
+                )
+              } else {
+                return (
+                  <View key={`score-${subject}`} style={pdfStyles.tableCell}>
+                    {data.isAbsent ? (
+                      <Text style={pdfStyles.tableCellAbsentText}>-</Text>
+                    ) : (
+                      <Text style={pdfStyles.tableCell}>{data.score?.toFixed(2)}</Text>
+                    )}
+                  </View>
+                )
+              }
             })}
           </View>
         </View>

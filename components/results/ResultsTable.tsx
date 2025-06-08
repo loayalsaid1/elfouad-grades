@@ -15,6 +15,8 @@ interface ResultsTableProps {
 }
 
 export default function ResultsTable({ student, onExportPDF, pdfLoading }: ResultsTableProps) {
+  const showGrade = student.grade < 8
+
   return (
     <Card className="border-l-4 border-l-orange-500">
       <CardHeader>
@@ -40,7 +42,9 @@ export default function ResultsTable({ student, onExportPDF, pdfLoading }: Resul
                 <th className="border border-gray-300 px-4 py-3 text-left">Subject</th>
                 <th className="border border-gray-300 px-4 py-3 text-center">Full Mark</th>
                 <th className="border border-gray-300 px-4 py-3 text-center">Student Mark</th>
-                <th className="border border-gray-300 px-4 py-3 text-center">Grade</th>
+                {showGrade && (
+                  <th className="border border-gray-300 px-4 py-3 text-center">Grade</th>
+                )}
               </tr>
             </thead>
             <tbody>
@@ -54,9 +58,11 @@ export default function ResultsTable({ student, onExportPDF, pdfLoading }: Resul
                     <td className="border border-gray-300 px-4 py-3 text-center font-semibold">
                       {data.isAbsent ? <span className="text-gray-600 text-lg font-bold">-</span> : data.score?.toFixed(2)}
                     </td>
-                    <td className="border border-gray-300 px-4 py-3 text-center">
-                      <Badge className={grade.color}>{grade.text}</Badge>
-                    </td>
+                    {showGrade && (
+                      <td className="border border-gray-300 px-4 py-3 text-center">
+                        <Badge className={grade.color}>{grade.text}</Badge>
+                      </td>
+                    )}
                   </tr>
                 )
               })}
