@@ -10,6 +10,7 @@ export interface StudentResult {
   }
   school: string
   grade: number
+  requiresPassword?: boolean
 }
 
 export interface GradeLevel {
@@ -21,4 +22,9 @@ export interface GradeLevel {
 export interface GradeInfo {
   text: string
   color: string
+}
+
+export interface PasswordRequiredError {
+  error: string
+  requiresPassword: boolean
 }

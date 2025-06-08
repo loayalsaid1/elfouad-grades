@@ -5,6 +5,8 @@ import path from "path"
 export async function GET(request: NextRequest, { params }: { params: { school: string; grade: string; id: string } }) {
   try {
     const { school, grade, id: studentId } = params
+    const { searchParams } = new URL(request.url)
+    const providedPassword = searchParams.get("password")
 
     // Validate school and grade
     const validSchools = ["international", "modern"]
@@ -37,7 +39,32 @@ export async function GET(request: NextRequest, { params }: { params: { school: 
 
     const studentData = studentLine.split(",")
     const studentName = studentData[1]
-    const parentPassword = studentData[2] // new column
+    const parentPassword = studentData[2]?.trim() // parent password column
+
+    // Check if parent password is required
+    const requiresPassword = parentPassword && parentPassword !== "" && parentPassword !== "-"
+
+    if (requiresPassword) {
+      if (!providedPassword) {
+        return NextResponse.json(
+          {
+            error: "Parent password required",
+            requiresPassword: true,
+          },
+          { status: 401 },
+        )
+      }
+
+      if (providedPassword !== parentPassword) {
+        return NextResponse.json(
+          {
+            error: "Incorrect parent password",
+            requiresPassword: true,
+          },
+          { status: 401 },
+        )
+      }
+    }
 
     // Build subjects object
     const subjects: { [key: string]: { score: number | null; fullMark: number; isAbsent: boolean } } = {}
@@ -65,6 +92,7 @@ export async function GET(request: NextRequest, { params }: { params: { school: 
       subjects,
       school,
       grade: gradeNum,
+      requiresPassword: false,
     })
   } catch (error) {
     console.error("Error reading student data:", error)
