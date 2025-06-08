@@ -21,6 +21,7 @@ export default function GradePage() {
   const grade = Number.parseInt(params.grade as string)
   const resultsTableRef = useRef<HTMLDivElement | null>(null)
   const [hasStudent, setHasStudent] = useState(false)
+  const [currentSchool, setCurrentSchool] = useState<{ name: string; logo: string } | null>(null)
 
   const {
     studentResult,
@@ -47,7 +48,10 @@ export default function GradePage() {
     },
   }
 
-  const currentSchool = schoolInfo[school as keyof typeof schoolInfo]
+  useEffect(() => {
+    setCurrentSchool(schoolInfo[school as keyof typeof schoolInfo] || null)
+  }, [school])
+
   const ordinalInfo = getOrdinalInfo(grade)
 
   const handlePDFGeneration = async () => {
@@ -60,14 +64,6 @@ export default function GradePage() {
     router.push(`/${school}`)
   }
 
-  if (!currentSchool) {
-    return <div>School not found</div>
-  }
-
-  const onFoundStudent = (): void => {
-    if (resultsTableRef.current) resultsTableRef.current.scrollIntoView({ behavior: "smooth" })
-  }
-
   useEffect(() => {
     if (!loading && !error && studentResult) {
       setHasStudent(true)
@@ -77,10 +73,18 @@ export default function GradePage() {
   }, [error, studentResult, loading])
 
   useEffect(() => {
+    const onFoundStudent = (): void => {
+      if (resultsTableRef.current) resultsTableRef.current.scrollIntoView({ behavior: "smooth" })
+    }
+
     if (hasStudent) {
       onFoundStudent()
     }
   }, [hasStudent])
+
+  if (!currentSchool) {
+    return <div>School not found</div>
+  }
 
   return (
     <div className="bg-gradient-to-br from-slate-50 to-blue-50 min-h-screen">
