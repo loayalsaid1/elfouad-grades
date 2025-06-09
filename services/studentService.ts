@@ -26,5 +26,5 @@ export class StudentService {
   }
 }
 
-// Named export for the function
+// Named export for backward compatibility
 export const getStudentById = StudentService.getStudentById

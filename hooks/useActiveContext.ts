@@ -14,29 +14,37 @@ export function useActiveContext(school: string, grade: string): ActiveContext {
   const [context, setContext] = useState<ActiveContext>({
     year: 0,
     term: 0,
-    fallback: false,
+    fallback: true,
     loading: true,
     error: null,
   })
 
   useEffect(() => {
     async function fetchActiveContext() {
-      if (!school || !grade) {
-        setContext((prev) => ({
-          ...prev,
-          loading: false,
-          error: "School and grade are required",
-        }))
-        return
-      }
-
       try {
+        // Always include fallback import
+        const { CURRENT_ROUND } = await import("@/constants/currentRound")
+        const fallbackContext = {
+          year: CURRENT_ROUND.startYear,
+          term: CURRENT_ROUND.term,
+          fallback: true,
+          loading: false,
+          error: null,
+        }
+
+        if (!school || !grade) {
+          setContext(fallbackContext)
+          return
+        }
+
         const response = await fetch(
           `/api/active-context?school=${encodeURIComponent(school)}&grade=${encodeURIComponent(grade)}`,
         )
 
         if (!response.ok) {
-          throw new Error(`Failed to fetch active context: ${response.status}`)
+          console.log("Active context API failed, using fallback")
+          setContext(fallbackContext)
+          return
         }
 
         const data = await response.json()
@@ -50,11 +58,15 @@ export function useActiveContext(school: string, grade: string): ActiveContext {
         })
       } catch (error) {
         console.error("Error fetching active context:", error)
-        setContext((prev) => ({
-          ...prev,
+        // Always fall back to currentRound on error
+        const { CURRENT_ROUND } = await import("@/constants/currentRound")
+        setContext({
+          year: CURRENT_ROUND.startYear,
+          term: CURRENT_ROUND.term,
+          fallback: true,
           loading: false,
-          error: error instanceof Error ? error.message : "Unknown error",
-        }))
+          error: null,
+        })
       }
     }
 
