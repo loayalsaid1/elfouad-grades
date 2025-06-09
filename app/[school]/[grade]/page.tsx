@@ -1,145 +1,123 @@
 "use client"
 
-import { useParams, useRouter } from "next/navigation"
-import { useRef, useEffect, useState } from "react"
-import { Button } from "@/components/ui/button"
-import { ArrowLeft } from "lucide-react"
-import { getOrdinalInfo } from "@/utils/gradeUtils"
-import StudentSearchForm from "@/components/search/StudentSearchForm"
-import ParentPasswordDialog from "@/components/search/ParentPasswordDialog"
-import GradeReference from "@/components/results/GradeReference"
-import ResultsTable from "@/components/results/ResultsTable"
-import Instructions from "@/components/Instructions"
-import { useStudentSearch } from "@/hooks/useStudentSearch"
-import { usePDFGeneration } from "@/hooks/usePDFGeneration"
+import { useState } from "react"
+import { useParams } from "next/navigation"
+import { StudentSearchForm } from "@/components/search/StudentSearchForm"
+import { StudentInfo } from "@/components/results/StudentInfo"
+import { ResultsTable } from "@/components/results/ResultsTable"
+import { GradeReference } from "@/components/results/GradeReference"
+import { ParentPasswordDialog } from "@/components/search/ParentPasswordDialog"
 import { useActiveContext } from "@/hooks/useActiveContext"
-import Image from "next/image"
+import { useStudentSearch } from "@/hooks/useStudentSearch"
+import { Alert, AlertDescription } from "@/components/ui/alert"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { AlertCircle, Database } from "lucide-react"
 
 export default function GradePage() {
   const params = useParams()
-  const router = useRouter()
   const school = params.school as string
-  const grade = Number.parseInt(params.grade as string)
-  const resultsTableRef = useRef<HTMLDivElement | null>(null)
-  const [hasStudent, setHasStudent] = useState(false)
-  const [currentSchool, setCurrentSchool] = useState<{ name: string; logo: string } | null>(null)
+  const grade = params.grade as string
 
-  // Get active context (with fallback to currentRound)
-  const { year, term, fallback, loading: contextLoading } = useActiveContext(school, grade.toString())
+  const [showPasswordDialog, setShowPasswordDialog] = useState(false)
+  const [pendingStudentId, setPendingStudentId] = useState<string>("")
 
-  const {
-    studentResult,
-    loading,
-    error,
-    searchStudent,
-    showPasswordDialog,
-    submitPassword,
-    cancelPasswordDialog,
-    passwordError,
-    passwordLoading,
-  } = useStudentSearch(school, grade)
+  const { year, term, loading: contextLoading, error: contextError } = useActiveContext(school, grade)
+  const { student, loading, error, searchStudent, clearStudent } = useStudentSearch(school, Number.parseInt(grade))
 
-  const { pdfLoading, generatePDF } = usePDFGeneration()
-
-  const schoolInfo = {
-    international: {
-      name: "El-Fouad International School",
-      logo: "/El-Fouad Internsational School Logo .jpg",
-    },
-    modern: {
-      name: "El-Fouad Modern Schools",
-      logo: "/El-Fouad Modern Schools logo jpg.jpg",
-    },
-  }
-
-  useEffect(() => {
-    setCurrentSchool(schoolInfo[school as keyof typeof schoolInfo] || null)
-  }, [school])
-
-  const ordinalInfo = getOrdinalInfo(grade)
-
-  const handlePDFGeneration = async () => {
-    if (studentResult) {
-      await generatePDF(studentResult)
+  const handleSearch = async (studentId: string, password?: string) => {
+    try {
+      await searchStudent(studentId, password)
+      setShowPasswordDialog(false)
+      setPendingStudentId("")
+    } catch (err: any) {
+      if (err.requiresPassword && !password) {
+        setPendingStudentId(studentId)
+        setShowPasswordDialog(true)
+      }
     }
   }
 
-  const handleBack = () => {
-    router.push(`/${school}`)
+  const handlePasswordSubmit = async (password: string) => {
+    if (pendingStudentId) {
+      await handleSearch(pendingStudentId, password)
+    }
   }
 
-  useEffect(() => {
-    if (!loading && !error && studentResult) {
-      setHasStudent(true)
-    } else {
-      setHasStudent(false)
-    }
-  }, [error, studentResult, loading])
-
-  useEffect(() => {
-    const onFoundStudent = (): void => {
-      if (resultsTableRef.current) resultsTableRef.current.scrollIntoView({ behavior: "smooth" })
-    }
-
-    if (hasStudent) {
-      onFoundStudent()
-    }
-  }, [hasStudent])
-
-  if (!currentSchool) {
-    return <div>School not found</div>
+  // Show context loading state
+  if (contextLoading) {
+    return (
+      <div className="container mx-auto px-4 py-8">
+        <div className="flex items-center justify-center min-h-[400px]">
+          <div className="text-center">
+            <Database className="h-8 w-8 animate-spin mx-auto mb-4 text-blue-600" />
+            <p className="text-lg">Loading academic context...</p>
+          </div>
+        </div>
+      </div>
+    )
   }
 
-  // Don't show loading for context - just use fallback
-  const currentPeriod = fallback ? "Current Period" : `${year}-${year + 1} Term ${term}`
+  // Show context error
+  if (contextError) {
+    return (
+      <div className="container mx-auto px-4 py-8">
+        <Alert variant="destructive">
+          <AlertCircle className="h-4 w-4" />
+          <AlertDescription>
+            <strong>Academic Context Error:</strong> {contextError}
+            <br />
+            <span className="text-sm mt-2 block">
+              Please ensure that an active academic context is set up for {school} grade {grade} in the admin dashboard.
+            </span>
+          </AlertDescription>
+        </Alert>
+      </div>
+    )
+  }
 
   return (
-    <div className="bg-gradient-to-br from-slate-50 to-blue-50 min-h-screen">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-8 space-y-6 sm:space-y-8">
-        {/* Back Button */}
-        <Button variant="outline" onClick={handleBack} className="hover:bg-[#223152] hover:text-white">
-          <ArrowLeft className="w-4 h-4 mr-2" />
-          Back to Grades
-        </Button>
+    <div className="container mx-auto px-4 py-8">
+      <div className="mb-8">
+        <h1 className="text-3xl font-bold mb-2">
+          {school === "international" ? "El-Fouad International School" : "El-Fouad Modern Schools"} - Grade {grade}
+        </h1>
+        <p className="text-muted-foreground">
+          Academic Year {year} - Term {term}
+        </p>
+      </div>
 
-        {/* Header */}
-        <div className="text-center mb-8">
-          <div className="flex justify-center mb-4">
-            <div className="relative w-16 h-16 rounded-full overflow-hidden bg-white shadow-lg">
-              <Image
-                src={currentSchool.logo || "/placeholder.svg"}
-                alt={`${currentSchool.name} Logo`}
-                fill
-                className="object-contain p-1"
-              />
-            </div>
-          </div>
-          <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-2">{currentSchool.name}</h1>
-          <p className="text-xl text-gray-600 capitalize">{ordinalInfo.word} Grade Results</p>
-          <p className="text-sm text-gray-500 mt-1">{currentPeriod}</p>
-        </div>
+      <div className="grid gap-6">
+        <Card>
+          <CardHeader>
+            <CardTitle>Student Search</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <StudentSearchForm onSearch={handleSearch} loading={loading} />
+          </CardContent>
+        </Card>
 
-        <StudentSearchForm onSearch={searchStudent} loading={loading} error={error} />
-        {grade < 8 && <GradeReference />}
-
-        {/* Parent Password Dialog */}
-        <ParentPasswordDialog
-          open={showPasswordDialog}
-          onSubmit={submitPassword}
-          onCancel={cancelPasswordDialog}
-          loading={passwordLoading}
-          error={passwordError}
-          studentName={studentResult?.name}
-        />
-
-        {studentResult && (
-          <div className="space-y-6" ref={resultsTableRef}>
-            <ResultsTable student={studentResult} onExportPDF={handlePDFGeneration} pdfLoading={pdfLoading} />
-          </div>
+        {error && (
+          <Alert variant="destructive">
+            <AlertCircle className="h-4 w-4" />
+            <AlertDescription>{error}</AlertDescription>
+          </Alert>
         )}
 
-        {!studentResult && <Instructions />}
+        {student && (
+          <>
+            <StudentInfo student={student} />
+            <ResultsTable student={student} />
+            <GradeReference />
+          </>
+        )}
       </div>
+
+      <ParentPasswordDialog
+        open={showPasswordDialog}
+        onOpenChange={setShowPasswordDialog}
+        onSubmit={handlePasswordSubmit}
+        loading={loading}
+      />
     </div>
   )
 }

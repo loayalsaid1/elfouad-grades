@@ -14,37 +14,32 @@ export function useActiveContext(school: string, grade: string): ActiveContext {
   const [context, setContext] = useState<ActiveContext>({
     year: 0,
     term: 0,
-    fallback: true,
+    fallback: false,
     loading: true,
     error: null,
   })
 
   useEffect(() => {
     async function fetchActiveContext() {
-      try {
-        // Always include fallback import
-        const { CURRENT_ROUND } = await import("@/constants/currentRound")
-        const fallbackContext = {
-          year: CURRENT_ROUND.startYear,
-          term: CURRENT_ROUND.term,
-          fallback: true,
+      if (!school || !grade) {
+        setContext({
+          year: 0,
+          term: 0,
+          fallback: false,
           loading: false,
-          error: null,
-        }
+          error: "School and grade are required",
+        })
+        return
+      }
 
-        if (!school || !grade) {
-          setContext(fallbackContext)
-          return
-        }
-
+      try {
         const response = await fetch(
           `/api/active-context?school=${encodeURIComponent(school)}&grade=${encodeURIComponent(grade)}`,
         )
 
         if (!response.ok) {
-          console.log("Active context API failed, using fallback")
-          setContext(fallbackContext)
-          return
+          const errorData = await response.json()
+          throw new Error(errorData.error || `Failed to fetch active context: ${response.status}`)
         }
 
         const data = await response.json()
@@ -52,20 +47,18 @@ export function useActiveContext(school: string, grade: string): ActiveContext {
         setContext({
           year: data.year,
           term: data.term,
-          fallback: data.fallback || false,
+          fallback: false,
           loading: false,
           error: null,
         })
       } catch (error) {
         console.error("Error fetching active context:", error)
-        // Always fall back to currentRound on error
-        const { CURRENT_ROUND } = await import("@/constants/currentRound")
         setContext({
-          year: CURRENT_ROUND.startYear,
-          term: CURRENT_ROUND.term,
-          fallback: true,
+          year: 0,
+          term: 0,
+          fallback: false,
           loading: false,
-          error: null,
+          error: error instanceof Error ? error.message : "Failed to fetch active context",
         })
       }
     }

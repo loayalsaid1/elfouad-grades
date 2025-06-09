@@ -1,23 +1,20 @@
+import { type NextRequest, NextResponse } from "next/server"
 import { createRouteHandlerClient } from "@supabase/auth-helpers-nextjs"
 import { cookies } from "next/headers"
-import { NextResponse } from "next/server"
 
-export async function GET(request: Request) {
+export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url)
     const school = searchParams.get("school")
     const grade = searchParams.get("grade")
 
-    // Always fall back to currentRound if no params or database issues
-    const { CURRENT_ROUND } = await import("@/constants/currentRound")
-    const fallbackResponse = {
-      year: CURRENT_ROUND.startYear,
-      term: CURRENT_ROUND.term,
-      fallback: true,
+    if (!school || !grade) {
+      return NextResponse.json({ error: "School and grade are required" }, { status: 400 })
     }
 
-    if (!school || !grade) {
-      return NextResponse.json(fallbackResponse)
+    const gradeNum = Number.parseInt(grade)
+    if (isNaN(gradeNum) || gradeNum < 1 || gradeNum > 12) {
+      return NextResponse.json({ error: "Invalid grade" }, { status: 400 })
     }
 
     const supabase = createRouteHandlerClient({ cookies })
@@ -27,25 +24,23 @@ export async function GET(request: Request) {
       .from("schools")
       .select("id")
       .eq("slug", school)
-      .maybeSingle()
+      .single()
 
     if (schoolError || !schoolData) {
-      console.log("School not found in database, using fallback")
-      return NextResponse.json(fallbackResponse)
+      return NextResponse.json({ error: "School not found" }, { status: 404 })
     }
 
-    // Get active context
+    // Get active context for this school and grade
     const { data: contextData, error: contextError } = await supabase
       .from("academic_contexts")
       .select("year, term")
       .eq("school_id", schoolData.id)
-      .eq("grade", Number.parseInt(grade))
+      .eq("grade", gradeNum)
       .eq("is_active", true)
-      .maybeSingle()
+      .single()
 
     if (contextError || !contextData) {
-      console.log("No active context found, using fallback")
-      return NextResponse.json(fallbackResponse)
+      return NextResponse.json({ error: "No active academic context found for this school and grade" }, { status: 404 })
     }
 
     return NextResponse.json({
@@ -54,13 +49,7 @@ export async function GET(request: Request) {
       fallback: false,
     })
   } catch (error) {
-    console.error("Error in active-context API:", error)
-    // Always return fallback on any error
-    const { CURRENT_ROUND } = await import("@/constants/currentRound")
-    return NextResponse.json({
-      year: CURRENT_ROUND.startYear,
-      term: CURRENT_ROUND.term,
-      fallback: true,
-    })
+    console.error("Error fetching active context:", error)
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 })
   }
 }
