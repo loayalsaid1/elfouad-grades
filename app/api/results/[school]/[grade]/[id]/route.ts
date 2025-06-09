@@ -51,12 +51,12 @@ export async function GET(request: NextRequest, { params }: { params: { school: 
       }
     }
 
-    // Fall back to file-based system if no data in Supabase
-    const student = await getStudentById(id, school, grade)
-
-    if (!student) {
+    // // Fall back to file-based system if no data in Supabase
+    // const student = await getStudentById(id, school, grade)
+// 
+    // if (!student) {
       return NextResponse.json({ error: "Student not found" }, { status: 404 })
-    }
+    // }
 
     return NextResponse.json(student)
   } catch (error) {
