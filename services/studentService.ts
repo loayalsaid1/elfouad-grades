@@ -25,3 +25,6 @@ export class StudentService {
     return response.json()
   }
 }
+
+// Named export for the function
+export const getStudentById = StudentService.getStudentById

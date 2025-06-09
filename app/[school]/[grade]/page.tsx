@@ -1,137 +1,111 @@
 "use client"
 
+import { useState } from "react"
 import { useParams, useRouter } from "next/navigation"
-import { useRef, useEffect, useState } from "react"
-import { Button } from "@/components/ui/button"
-import { ArrowLeft } from "lucide-react"
-import { getOrdinalInfo } from "@/utils/gradeUtils"
+import { Card, CardContent } from "@/components/ui/card"
+import { Alert, AlertDescription } from "@/components/ui/alert"
 import StudentSearchForm from "@/components/search/StudentSearchForm"
-import ParentPasswordDialog from "@/components/search/ParentPasswordDialog"
-import GradeReference from "@/components/results/GradeReference"
 import ResultsTable from "@/components/results/ResultsTable"
-import Instructions from "@/components/Instructions"
-import { useStudentSearch } from "@/hooks/useStudentSearch"
-import { usePDFGeneration } from "@/hooks/usePDFGeneration"
-import Image from "next/image"
+import StudentInfo from "@/components/results/StudentInfo"
+import GradeReference from "@/components/results/GradeReference"
+import LoadingSpinner from "@/components/ui/LoadingSpinner"
+import { useActiveContext } from "@/hooks/useActiveContext"
+import type { Student } from "@/types/student"
 
 export default function GradePage() {
   const params = useParams()
   const router = useRouter()
   const school = params.school as string
-  const grade = Number.parseInt(params.grade as string)
-  const resultsTableRef = useRef<HTMLDivElement | null>(null)
-  const [hasStudent, setHasStudent] = useState(false)
-  const [currentSchool, setCurrentSchool] = useState<{ name: string; logo: string } | null>(null)
+  const grade = params.grade as string
 
-  const {
-    studentResult,
-    loading,
-    error,
-    searchStudent,
-    showPasswordDialog,
-    submitPassword,
-    cancelPasswordDialog,
-    passwordError,
-    passwordLoading,
-  } = useStudentSearch(school, grade)
+  const [student, setStudent] = useState<Student | null>(null)
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
 
-  const { pdfLoading, generatePDF } = usePDFGeneration()
+  // Use the active context hook instead of importing currentRound
+  const { year, term, loading: contextLoading, error: contextError } = useActiveContext(school, grade)
 
-  const schoolInfo = {
-    international: {
-      name: "El-Fouad International School",
-      logo: "/El-Fouad Internsational School Logo .jpg",
-    },
-    modern: {
-      name: "El-Fouad Modern Schools",
-      logo: "/El-Fouad Modern Schools logo jpg.jpg",
-    },
-  }
+  const fetchResults = async (studentId: string) => {
+    if (!year || !term) return
 
-  useEffect(() => {
-    setCurrentSchool(schoolInfo[school as keyof typeof schoolInfo] || null)
-  }, [school])
+    setLoading(true)
+    setError(null)
 
-  const ordinalInfo = getOrdinalInfo(grade)
+    try {
+      const response = await fetch(`/api/results/${school}/${grade}/${studentId}?year=${year}&term=${term}`)
 
-  const handlePDFGeneration = async () => {
-    if (studentResult) {
-      await generatePDF(studentResult)
+      if (!response.ok) {
+        if (response.status === 404) {
+          setError("Student not found. Please check the ID and try again.")
+        } else if (response.status === 403) {
+          setError("Access denied. Please check your credentials.")
+        } else {
+          setError("An error occurred while fetching results.")
+        }
+        setStudent(null)
+        setLoading(false)
+        return
+      }
+
+      const data = await response.json()
+      setStudent(data)
+    } catch (err) {
+      setError("An unexpected error occurred. Please try again later.")
+      console.error(err)
+    } finally {
+      setLoading(false)
     }
   }
 
-  const handleBack = () => {
-    router.push(`/${school}`)
+  // If context is loading, show loading state
+  if (contextLoading) {
+    return (
+      <div className="flex justify-center items-center min-h-screen">
+        <LoadingSpinner size="lg" />
+      </div>
+    )
   }
 
-  useEffect(() => {
-    if (!loading && !error && studentResult) {
-      setHasStudent(true)
-    } else {
-      setHasStudent(false)
-    }
-  }, [error, studentResult, loading])
-
-  useEffect(() => {
-    const onFoundStudent = (): void => {
-      if (resultsTableRef.current) resultsTableRef.current.scrollIntoView({ behavior: "smooth" })
-    }
-
-    if (hasStudent) {
-      onFoundStudent()
-    }
-  }, [hasStudent])
-
-  if (!currentSchool) {
-    return <div>School not found</div>
+  // If there's a context error, show error message
+  if (contextError) {
+    return (
+      <Alert variant="destructive" className="max-w-md mx-auto mt-8">
+        <AlertDescription>Error loading academic period: {contextError}</AlertDescription>
+      </Alert>
+    )
   }
 
   return (
-    <div className="bg-gradient-to-br from-slate-50 to-blue-50 min-h-screen">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-8 space-y-6 sm:space-y-8">
-        {/* Back Button */}
-        <Button variant="outline" onClick={handleBack} className="hover:bg-[#223152] hover:text-white">
-          <ArrowLeft className="w-4 h-4 mr-2" />
-          Back to Grades
-        </Button>
+    <div className="container mx-auto px-4 py-8">
+      <h1 className="text-2xl font-bold mb-6">
+        {school === "international" ? "El Fouad International School" : "El Fouad Modern School"} - Grade {grade}
+      </h1>
 
-        {/* Header */}
-        <div className="text-center mb-8">
-          <div className="flex justify-center mb-4">
-            <div className="relative w-16 h-16 rounded-full overflow-hidden bg-white shadow-lg">
-              <Image
-                src={currentSchool.logo || "/placeholder.svg"}
-                alt={`${currentSchool.name} Logo`}
-                fill
-                className="object-contain p-1"
-              />
-            </div>
-          </div>
-          <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-2">{currentSchool.name}</h1>
-          <p className="text-xl text-gray-600 capitalize">{ordinalInfo.word} Grade Results</p>
+      <Card className="mb-8">
+        <CardContent className="pt-6">
+          <StudentSearchForm onSearch={fetchResults} />
+        </CardContent>
+      </Card>
+
+      {loading && (
+        <div className="flex justify-center my-8">
+          <LoadingSpinner size="lg" />
         </div>
+      )}
 
-        <StudentSearchForm onSearch={searchStudent} loading={loading} error={error} />
-        {grade < 8 && <GradeReference />}
+      {error && (
+        <Alert variant="destructive" className="mb-6">
+          <AlertDescription>{error}</AlertDescription>
+        </Alert>
+      )}
 
-        {/* Parent Password Dialog */}
-        <ParentPasswordDialog
-          open={showPasswordDialog}
-          onSubmit={submitPassword}
-          onCancel={cancelPasswordDialog}
-          loading={passwordLoading}
-          error={passwordError}
-          studentName={studentResult?.name}
-        />
-
-        {studentResult && (
-          <div className="space-y-6" ref={resultsTableRef}>
-            <ResultsTable student={studentResult} onExportPDF={handlePDFGeneration} pdfLoading={pdfLoading} />
-          </div>
-        )}
-
-        {!studentResult && <Instructions />}
-      </div>
+      {student && (
+        <div className="space-y-8">
+          <StudentInfo student={student} school={school} grade={grade} year={year} term={term} />
+          <ResultsTable student={student} />
+          <GradeReference />
+        </div>
+      )}
     </div>
   )
 }

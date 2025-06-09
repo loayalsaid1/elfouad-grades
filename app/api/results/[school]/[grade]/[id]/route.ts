@@ -1,101 +1,66 @@
 import { type NextRequest, NextResponse } from "next/server"
-import fs from "fs"
-import path from "path"
+import { createRouteHandlerClient } from "@supabase/auth-helpers-nextjs"
+import { cookies } from "next/headers"
+import { getStudentById } from "@/services/studentService"
+import { CURRENT_ROUND } from "@/constants/currentRound"
 
 export async function GET(request: NextRequest, { params }: { params: { school: string; grade: string; id: string } }) {
+  const { school, grade, id } = params
+
+  // Get year and term from query params or fall back to currentRound
+  const searchParams = request.nextUrl.searchParams
+  const year = Number.parseInt(searchParams.get("year") || String(CURRENT_ROUND.startYear))
+  const term = Number.parseInt(searchParams.get("term") || String(CURRENT_ROUND.term))
+
   try {
-    const { school, grade, id: studentId } = params
-    const { searchParams } = new URL(request.url)
-    const providedPassword = searchParams.get("password")
+    // First try to get from Supabase
+    const supabase = createRouteHandlerClient({ cookies })
 
-    // Validate school and grade
-    const validSchools = ["international", "modern"]
-    const gradeNum = Number.parseInt(grade)
+    // Get school_id
+    const { data: schoolData } = await supabase.from("schools").select("id").eq("name", school).single()
 
-    if (!validSchools.includes(school) || isNaN(gradeNum) || gradeNum < 1 || gradeNum > 8) {
-      return NextResponse.json({ error: "Invalid school or grade" }, { status: 400 })
+    if (schoolData) {
+      // Get academic context
+      const { data: contextData } = await supabase
+        .from("academic_contexts")
+        .select("id")
+        .eq("school_id", schoolData.id)
+        .eq("year", year)
+        .eq("term", term)
+        .eq("grade", Number.parseInt(grade))
+        .single()
+
+      if (contextData) {
+        // Get student results
+        const { data: studentData, error } = await supabase
+          .from("student_results")
+          .select("*")
+          .eq("context_id", contextData.id)
+          .eq("student_id", id)
+          .single()
+
+        if (studentData && !error) {
+          // Format the data to match the expected structure
+          return NextResponse.json({
+            id: studentData.student_id,
+            name: studentData.student_name,
+            parent_password: studentData.parent_password || null,
+            scores: studentData.scores,
+          })
+        }
+      }
     }
 
-    const csvPath = path.join(process.cwd(), "data", `${school}-${grade}.csv`)
+    // Fall back to file-based system if no data in Supabase
+    const student = await getStudentById(school, grade, id)
 
-    // Check if file exists
-    if (!fs.existsSync(csvPath)) {
-      return NextResponse.json({ error: "Data file not found" }, { status: 404 })
-    }
-
-    const csvContent = fs.readFileSync(csvPath, "utf-8")
-    const lines = csvContent.trim().split("\n")
-    const headers = lines[0].split(",")
-
-    // Find student data
-    const studentLine = lines.slice(1).find((line) => {
-      const data = line.split(",")
-      return data[0] === studentId
-    })
-
-    if (!studentLine) {
+    if (!student) {
       return NextResponse.json({ error: "Student not found" }, { status: 404 })
     }
 
-    const studentData = studentLine.split(",")
-    const studentName = studentData[1]
-    const parentPassword = studentData[2]?.trim() // parent password column
-
-    // Check if parent password is required
-    const requiresPassword = parentPassword && parentPassword !== "" && parentPassword !== "-"
-
-    if (requiresPassword) {
-      if (!providedPassword) {
-        return NextResponse.json(
-          {
-            error: "Parent password required",
-            requiresPassword: true,
-          },
-          { status: 401 },
-        )
-      }
-
-      if (providedPassword !== parentPassword) {
-        return NextResponse.json(
-          {
-            error: "Incorrect parent password",
-            requiresPassword: true,
-          },
-          { status: 401 },
-        )
-      }
-    }
-
-    // Build subjects object
-    const subjects: { [key: string]: { score: number | null; fullMark: number; isAbsent: boolean } } = {}
-
-    // Subjects now start from index 3
-    for (let i = 3; i < headers.length; i++) {
-      const subjectName = headers[i]
-      const fullMark = 100
-      const scoreValue = studentData[i]?.trim()
-
-      // Handle absent students (marked with "-")
-      const isAbsent = scoreValue === "-" || scoreValue === "" || scoreValue === undefined
-      const score = isAbsent ? null : Number.parseFloat(scoreValue)
-
-      subjects[subjectName] = {
-        score,
-        fullMark,
-        isAbsent,
-      }
-    }
-
-    return NextResponse.json({
-      id: studentId,
-      name: studentName,
-      subjects,
-      school,
-      grade: gradeNum,
-      requiresPassword: false,
-    })
+    return NextResponse.json(student)
   } catch (error) {
-    console.error("Error reading student data:", error)
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 })
+    console.error("Error fetching student:", error)
+    return NextResponse.json({ error: "Failed to fetch student data" }, { status: 500 })
   }
 }
