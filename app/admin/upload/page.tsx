@@ -36,8 +36,8 @@ export default function UploadPage() {
 
   const supabase = createClientComponentClient()
 
-  // Helper function to check if a value indicates absence
-  const isAbsent = (value: string): boolean => {
+  // Helper function to check if a value indicates absence (ONLY for subject scores)
+  const isAbsentScore = (value: string): boolean => {
     if (!value) return true
     const trimmed = value.trim().toLowerCase()
     return trimmed === "" || trimmed === "-" || trimmed === "absent" || trimmed === "غائب"
@@ -131,7 +131,13 @@ export default function UploadPage() {
       studentRows.forEach((row, rowIndex) => {
         const studentId = row[studentIdIndex]?.trim()
         const studentName = row[studentNameIndex]?.trim()
-        const parentPassword = parentPasswordIndex >= 0 ? row[parentPasswordIndex]?.trim() || null : null
+
+        // Handle parent password properly - empty means null, not absent
+        let parentPassword: string | null = null
+        if (parentPasswordIndex >= 0) {
+          const passwordValue = row[parentPasswordIndex]?.trim()
+          parentPassword = passwordValue && passwordValue !== "" ? passwordValue : null
+        }
 
         if (!studentId || !studentName) {
           errors.push(`Row ${rowIndex + 3}: Missing student ID or name`)
@@ -144,8 +150,8 @@ export default function UploadPage() {
           const scoreStr = row[index]?.trim()
           const fullMarkStr = fullMarks[index]?.trim()
 
-          // Check if student is absent for this subject
-          const absent = isAbsent(scoreStr)
+          // Check if student is absent for this subject (ONLY apply to subject columns)
+          const absent = isAbsentScore(scoreStr)
 
           let score: number | null = null
           if (!absent) {
@@ -309,13 +315,28 @@ export default function UploadPage() {
 
   const canSave = context && processedStudents.length > 0 && validationErrors.length === 0
 
+  // Helper function to determine if a cell should be highlighted as absent (only for subject columns)
+  const shouldHighlightAsAbsent = (rowIndex: number, cellIndex: number, cell: string): boolean => {
+    if (rowIndex <= 1) return false // Don't highlight headers or full marks row
+
+    const headers = parsedData?.[0] || []
+    const header = headers[cellIndex]?.toLowerCase() || ""
+
+    // Only highlight if it's a subject column (not id, name, or password)
+    const nonSubjectColumns = ["id", "student_id", "student_name", "name", "parent_password", "password"]
+    const isSubjectColumn = !nonSubjectColumns.some((col) => header.includes(col.toLowerCase()))
+
+    return isSubjectColumn && isAbsentScore(cell)
+  }
+
   return (
     <div className="min-h-screen bg-gray-50 py-8">
       <div className="max-w-6xl mx-auto px-4">
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-gray-900">Upload Student Results</h1>
           <p className="text-gray-600 mt-2">
-            Upload CSV files with student results data. Use "-" or leave empty for absent students.
+            Upload CSV files with student results data. Use "-" or leave empty for absent students in subject columns
+            only.
           </p>
         </div>
 
@@ -330,7 +351,8 @@ export default function UploadPage() {
             <CardTitle>Select CSV File</CardTitle>
             <CardDescription>
               Upload a CSV file with student results. Required columns: student_id (or id), student_name, then subject
-              columns. Optional: parent_password column. Use "-" or leave empty for absent students.
+              columns. Optional: parent_password column. Use "-" or leave empty for absent students in subject columns
+              only.
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -395,7 +417,8 @@ export default function UploadPage() {
             <CardHeader>
               <CardTitle>Data Preview</CardTitle>
               <CardDescription>
-                Review the parsed data before saving to database. Absent students are highlighted in red.
+                Review the parsed data before saving to database. Absent students (in subject columns) are highlighted
+                in red.
                 {processedStudents.length > 0 && (
                   <span className="ml-2">
                     <Badge variant="secondary">{processedStudents.length} students processed</Badge>
@@ -413,7 +436,7 @@ export default function UploadPage() {
                         className={index === 0 ? "bg-blue-50" : index === 1 ? "bg-yellow-50" : "bg-white"}
                       >
                         {row.map((cell, cellIndex) => {
-                          const isAbsentCell = index > 1 && isAbsent(cell)
+                          const isAbsentCell = shouldHighlightAsAbsent(index, cellIndex, cell)
                           return (
                             <td
                               key={cellIndex}
