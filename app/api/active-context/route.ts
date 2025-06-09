@@ -18,7 +18,7 @@ export async function GET(request: Request) {
     const { data: schoolData, error: schoolError } = await supabase
       .from("schools")
       .select("id")
-      .eq("name", school)
+      .eq("slug", school)
       .single()
 
     if (schoolError || !schoolData) {
