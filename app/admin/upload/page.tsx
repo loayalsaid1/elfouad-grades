@@ -53,14 +53,83 @@ export default function UploadPage() {
 
     setLoading(true)
     try {
-      // This is a simplified save - you can enhance this based on your needs
+      // Get the headers, full marks, and student data
       const headers = parsedData[0]
       const fullMarks = parsedData[1]
       const students = parsedData.slice(2)
 
-      console.log("Would save:", { headers, fullMarks, students })
-      setMessage("Data saved successfully! (This is a demo - implement actual save logic)")
+      // Extract subject names (exclude id, student_name, parent_password)
+      const subjectNames = headers.filter(
+        (header) => !["id", "student_id", "student_name", "parent_password"].includes(header),
+      )
+
+      // For now, we'll use default context values - you can enhance this with a form
+      const defaultSchoolId = 1 // You can make this selectable
+      const defaultYear = 2025
+      const defaultTerm = 2
+      const defaultGrade = 5
+
+      // Create or get academic context
+      const { data: existingContext, error: contextError } = await supabase
+        .from("academic_contexts")
+        .select("id")
+        .eq("school_id", defaultSchoolId)
+        .eq("year", defaultYear)
+        .eq("term", defaultTerm)
+        .eq("grade", defaultGrade)
+        .single()
+
+      let contextId
+      if (existingContext) {
+        contextId = existingContext.id
+      } else {
+        const { data: newContext, error: createError } = await supabase
+          .from("academic_contexts")
+          .insert({
+            school_id: defaultSchoolId,
+            year: defaultYear,
+            term: defaultTerm,
+            grade: defaultGrade,
+          })
+          .select("id")
+          .single()
+
+        if (createError) throw createError
+        contextId = newContext.id
+      }
+
+      // Prepare student results data
+      const studentResults = students.map((student) => {
+        const scores = {}
+        subjectNames.forEach((subject, index) => {
+          const subjectIndex = headers.indexOf(subject)
+          scores[subject] = {
+            score: Number.parseFloat(student[subjectIndex]) || 0,
+            full_mark: Number.parseFloat(fullMarks[subjectIndex]) || 100,
+          }
+        })
+
+        return {
+          student_id: student[0] || student[1], // id or student_id
+          student_name: student[headers.indexOf("student_name")],
+          parent_password: student[headers.indexOf("parent_password")] || null,
+          context_id: contextId,
+          scores: scores,
+        }
+      })
+
+      // Insert student results
+      const { error: insertError } = await supabase.from("student_results").insert(studentResults)
+
+      if (insertError) throw insertError
+
+      setMessage(`Successfully saved ${studentResults.length} student results!`)
+
+      // Clear the form
+      setFile(null)
+      setParsedData(null)
     } catch (error) {
+      console.error("Save error:", error)
       setMessage("Error saving data: " + error.message)
     } finally {
       setLoading(false)
