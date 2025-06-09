@@ -15,7 +15,7 @@ interface ParsedStudent {
   student_id: string
   student_name: string
   parent_password: string | null
-  scores: Record<string, { score: number; full_mark: number }>
+  scores: Record<string, { score: number | null; full_mark: number; absent: boolean }>
 }
 
 interface UploadContext {
@@ -35,6 +35,13 @@ export default function UploadPage() {
   const [validationErrors, setValidationErrors] = useState<string[]>([])
 
   const supabase = createClientComponentClient()
+
+  // Helper function to check if a value indicates absence
+  const isAbsent = (value: string): boolean => {
+    if (!value) return true
+    const trimmed = value.trim().toLowerCase()
+    return trimmed === "" || trimmed === "-" || trimmed === "absent" || trimmed === "غائب"
+  }
 
   const onDrop = useCallback((acceptedFiles: File[]) => {
     const file = acceptedFiles[0]
@@ -119,6 +126,7 @@ export default function UploadPage() {
 
       // Process students
       const students: ParsedStudent[] = []
+      let absentCount = 0
 
       studentRows.forEach((row, rowIndex) => {
         const studentId = row[studentIdIndex]?.trim()
@@ -130,26 +138,37 @@ export default function UploadPage() {
           return
         }
 
-        const scores: Record<string, { score: number; full_mark: number }> = {}
+        const scores: Record<string, { score: number | null; full_mark: number; absent: boolean }> = {}
 
         subjectIndices.forEach(({ header, index }) => {
           const scoreStr = row[index]?.trim()
           const fullMarkStr = fullMarks[index]?.trim()
 
-          const score = scoreStr ? Number.parseFloat(scoreStr) : 0
-          const fullMark = fullMarkStr ? Number.parseFloat(fullMarkStr) : 100
+          // Check if student is absent for this subject
+          const absent = isAbsent(scoreStr)
 
-          if (isNaN(score)) {
-            errors.push(`Row ${rowIndex + 3}, ${header}: Invalid score "${scoreStr}"`)
-            return
+          let score: number | null = null
+          if (!absent) {
+            score = scoreStr ? Number.parseFloat(scoreStr) : 0
+            if (isNaN(score)) {
+              errors.push(`Row ${rowIndex + 3}, ${header}: Invalid score "${scoreStr}"`)
+              return
+            }
           }
 
+          const fullMark = fullMarkStr ? Number.parseFloat(fullMarkStr) : 100
           if (isNaN(fullMark)) {
             errors.push(`Full marks row, ${header}: Invalid full mark "${fullMarkStr}"`)
             return
           }
 
-          scores[header] = { score, full_mark: fullMark }
+          scores[header] = {
+            score,
+            full_mark: fullMark,
+            absent,
+          }
+
+          if (absent) absentCount++
         })
 
         students.push({
@@ -168,7 +187,7 @@ export default function UploadPage() {
         setProcessedStudents(students)
         setMessage({
           type: "success",
-          text: `Successfully parsed ${students.length} students with ${subjectIndices.length} subjects.`,
+          text: `Successfully parsed ${students.length} students with ${subjectIndices.length} subjects. Found ${absentCount} absent entries.`,
         })
       }
     } catch (error) {
@@ -265,9 +284,14 @@ export default function UploadPage() {
 
       if (insertError) throw insertError
 
+      // Count absent entries for reporting
+      const totalAbsent = newStudents.reduce((count, student) => {
+        return count + Object.values(student.scores).filter((score) => score.absent).length
+      }, 0)
+
       setMessage({
         type: "success",
-        text: `Successfully saved ${studentResults.length} student results to the database!`,
+        text: `Successfully saved ${studentResults.length} student results to the database! (${totalAbsent} absent entries recorded)`,
       })
 
       // Clear the form
@@ -290,7 +314,9 @@ export default function UploadPage() {
       <div className="max-w-6xl mx-auto px-4">
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-gray-900">Upload Student Results</h1>
-          <p className="text-gray-600 mt-2">Upload CSV files with student results data</p>
+          <p className="text-gray-600 mt-2">
+            Upload CSV files with student results data. Use "-" or leave empty for absent students.
+          </p>
         </div>
 
         {/* Context Selection */}
@@ -304,7 +330,7 @@ export default function UploadPage() {
             <CardTitle>Select CSV File</CardTitle>
             <CardDescription>
               Upload a CSV file with student results. Required columns: student_id (or id), student_name, then subject
-              columns. Optional: parent_password column.
+              columns. Optional: parent_password column. Use "-" or leave empty for absent students.
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -369,7 +395,7 @@ export default function UploadPage() {
             <CardHeader>
               <CardTitle>Data Preview</CardTitle>
               <CardDescription>
-                Review the parsed data before saving to database
+                Review the parsed data before saving to database. Absent students are highlighted in red.
                 {processedStudents.length > 0 && (
                   <span className="ml-2">
                     <Badge variant="secondary">{processedStudents.length} students processed</Badge>
@@ -386,11 +412,19 @@ export default function UploadPage() {
                         key={index}
                         className={index === 0 ? "bg-blue-50" : index === 1 ? "bg-yellow-50" : "bg-white"}
                       >
-                        {row.map((cell, cellIndex) => (
-                          <td key={cellIndex} className="border border-gray-200 px-3 py-2 text-sm">
-                            {cell || "-"}
-                          </td>
-                        ))}
+                        {row.map((cell, cellIndex) => {
+                          const isAbsentCell = index > 1 && isAbsent(cell)
+                          return (
+                            <td
+                              key={cellIndex}
+                              className={`border border-gray-200 px-3 py-2 text-sm ${
+                                isAbsentCell ? "bg-red-50 text-red-600" : ""
+                              }`}
+                            >
+                              {cell || (isAbsentCell ? "ABSENT" : "-")}
+                            </td>
+                          )
+                        })}
                       </tr>
                     ))}
                   </tbody>

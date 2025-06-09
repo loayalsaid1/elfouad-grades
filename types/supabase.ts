@@ -91,8 +91,9 @@ export interface Database {
 }
 
 export type Subject = {
-  score: number
+  score: number | null
   full_mark: number
+  absent: boolean
 }
 
 export type Scores = {
