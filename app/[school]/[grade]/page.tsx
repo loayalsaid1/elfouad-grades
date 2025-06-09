@@ -2,11 +2,11 @@
 
 import { useState } from "react"
 import { useParams } from "next/navigation"
-import { StudentSearchForm } from "@/components/search/StudentSearchForm"
-import { StudentInfo } from "@/components/results/StudentInfo"
-import { ResultsTable } from "@/components/results/ResultsTable"
-import { GradeReference } from "@/components/results/GradeReference"
-import { ParentPasswordDialog } from "@/components/search/ParentPasswordDialog"
+import StudentSearchForm from "@/components/search/StudentSearchForm"
+import StudentInfo from "@/components/results/StudentInfo"
+import ResultsTable from "@/components/results/ResultsTable"
+import GradeReference from "@/components/results/GradeReference"
+import ParentPasswordDialog from "@/components/search/ParentPasswordDialog"
 import { useActiveContext } from "@/hooks/useActiveContext"
 import { useStudentSearch } from "@/hooks/useStudentSearch"
 import { Alert, AlertDescription } from "@/components/ui/alert"
@@ -22,7 +22,7 @@ export default function GradePage() {
   const [pendingStudentId, setPendingStudentId] = useState<string>("")
 
   const { year, term, loading: contextLoading, error: contextError } = useActiveContext(school, grade)
-  const { student, loading, error, searchStudent, clearStudent } = useStudentSearch(school, Number.parseInt(grade))
+  const { studentResult: student, loading, error, searchStudent, clearStudent } = useStudentSearch(school, Number.parseInt(grade))
 
   const handleSearch = async (studentId: string, password?: string) => {
     try {
