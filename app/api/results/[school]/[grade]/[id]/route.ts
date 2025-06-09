@@ -17,7 +17,7 @@ export async function GET(request: NextRequest, { params }: { params: { school: 
     const supabase = createRouteHandlerClient({ cookies })
 
     // Get school_id
-    const { data: schoolData } = await supabase.from("schools").select("id").eq("name", school).single()
+    const { data: schoolData } = await supabase.from("schools").select("id").eq("slug", school).single()
 
     if (schoolData) {
       // Get academic context
