@@ -114,8 +114,8 @@ const {
         {student && (
           <>
             {/* <StudentInfo student={student} /> */}
-            <ResultsTable student={student}  onExportPDF={() => generatePDF(student)} pdfLoading={pdfLoading} />
             <GradeReference />
+            <ResultsTable student={student}  onExportPDF={() => generatePDF(student)} pdfLoading={pdfLoading} />
           </>
         )}
       </div>

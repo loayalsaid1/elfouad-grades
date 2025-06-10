@@ -17,6 +17,11 @@ interface ResultsTableProps {
 export default function ResultsTable({ student, onExportPDF, pdfLoading }: ResultsTableProps) {
   const showGrade = student.grade < 7
 
+  // Find subjects with score < 50 and not absent
+  const secondRoundSubjects = Object.entries(student.subjects)
+    .filter(([_, data]) => !data.isAbsent && typeof data.score === "number" && data.score < 99)
+    .map(([subject]) => subject)
+
   return (
     <Card className="border-l-4 border-l-orange-500">
       <CardHeader>
@@ -35,6 +40,13 @@ export default function ResultsTable({ student, onExportPDF, pdfLoading }: Resul
         </div>
       </CardHeader>
       <CardContent>
+                {/* Second Round Exams message */}
+        {secondRoundSubjects.length > 0 && (
+          <div className="mt-6 mb-6 p-4 bg-yellow-50 border border-yellow-200 rounded text-yellow-900 text-base font-medium">
+            You are required to attend the Second Round Exams in the following subjects:{" "}
+            <span className="font-semibold">{secondRoundSubjects.join(", ")}</span>
+          </div>
+        )}
         <div className="overflow-x-auto">
           <table className="w-full border-collapse border border-gray-300">
             <thead>
@@ -69,6 +81,7 @@ export default function ResultsTable({ student, onExportPDF, pdfLoading }: Resul
             </tbody>
           </table>
         </div>
+
       </CardContent>
     </Card>
   )
