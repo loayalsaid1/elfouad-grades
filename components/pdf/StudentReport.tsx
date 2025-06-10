@@ -17,7 +17,7 @@ interface StudentReportProps {
 
 export default function StudentReport({ studentData }: StudentReportProps) {
   const subjects = Object.entries(studentData.subjects)
-  const showGradeReference = studentData.grade < 8
+  const showGradeReference = studentData.grade < 7
 
   return (
     <Document>
@@ -88,7 +88,7 @@ export default function StudentReport({ studentData }: StudentReportProps) {
           {/* Student Marks Row with Color Indicators */}
           <View style={pdfStyles.tableRow}>
             {subjects.map(([subject, data]) => {
-              // Only show color indicator if grade < 8
+              // Only show color indicator if grade < 7
               if (showGradeReference) {
                 
                 const gradeColor = getGradeColor(data.score, data.isAbsent)

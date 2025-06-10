@@ -15,7 +15,7 @@ interface ResultsTableProps {
 }
 
 export default function ResultsTable({ student, onExportPDF, pdfLoading }: ResultsTableProps) {
-  const showGrade = student.grade < 8
+  const showGrade = student.grade < 7
 
   return (
     <Card className="border-l-4 border-l-orange-500">
