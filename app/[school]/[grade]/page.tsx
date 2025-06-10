@@ -12,17 +12,32 @@ import { useStudentSearch } from "@/hooks/useStudentSearch"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { AlertCircle, Database } from "lucide-react"
+import { usePDFGeneration } from "@/hooks/usePDFGeneration"
+
 
 export default function GradePage() {
   const params = useParams()
   const school = params.school as string
   const grade = params.grade as string
 
-  const [showPasswordDialog, setShowPasswordDialog] = useState(false)
+const { pdfLoading, generatePDF } = usePDFGeneration()
+
+  // const [showPasswordDialog, setShowPasswordDialog] = useState(false)
   const [pendingStudentId, setPendingStudentId] = useState<string>("")
 
   const { year, term, loading: contextLoading, error: contextError } = useActiveContext(school, grade)
-  const { studentResult: student, loading, error, searchStudent, clearStudent } = useStudentSearch(school, Number.parseInt(grade))
+  // const { studentResult: student, loading, error, searchStudent, clearStudent } = useStudentSearch(school, Number.parseInt(grade))
+const {
+      studentResult: student,
+    loading,
+    error,
+    searchStudent,
+    showPasswordDialog,
+    submitPassword,
+    cancelPasswordDialog,
+    passwordError,
+    passwordLoading,
+} = useStudentSearch(school, Number.parseInt(grade))
 
   const handleSearch = async (studentId: string, password?: string) => {
     try {
@@ -87,14 +102,7 @@ export default function GradePage() {
       </div>
 
       <div className="grid gap-6">
-        <Card>
-          <CardHeader>
-            <CardTitle>Student Search</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <StudentSearchForm onSearch={handleSearch} loading={loading} />
-          </CardContent>
-        </Card>
+        <StudentSearchForm onSearch={handleSearch} loading={loading} />
 
         {error && (
           <Alert variant="destructive">
@@ -105,8 +113,8 @@ export default function GradePage() {
 
         {student && (
           <>
-            <StudentInfo student={student} />
-            <ResultsTable student={student} />
+            {/* <StudentInfo student={student} /> */}
+            <ResultsTable student={student}  onExportPDF={() => generatePDF(student)} pdfLoading={pdfLoading} />
             <GradeReference />
           </>
         )}
@@ -114,9 +122,11 @@ export default function GradePage() {
 
       <ParentPasswordDialog
         open={showPasswordDialog}
-        onOpenChange={setShowPasswordDialog}
-        onSubmit={handlePasswordSubmit}
-        loading={loading}
+        onCancel={cancelPasswordDialog}
+        onSubmit={submitPassword}
+        loading={passwordLoading}
+        error={passwordError}
+        studentName={pendingStudentId ? student?.name : ''}
       />
     </div>
   )
