@@ -1,8 +1,20 @@
+'use client'
+
+import React from 'react'
 import { Facebook, Globe, Linkedin, Instagram, ExternalLink } from "lucide-react"
 import { CURRENT_ROUND } from '@/constants/currentRound'
-
+import { usePathname } from "next/navigation"
 
 export default function Footer() {
+  const pathname = usePathname()
+
+    // Determine Facebook link based on route
+  let facebookUrl = "https://www.facebook.com/share/1HSJHe1df4/"
+  if (pathname?.startsWith("/international")) {
+    facebookUrl = "https://www.facebook.com/share/19DbXqKcRA/"
+  } else if (pathname?.startsWith("/modern")) {
+    facebookUrl = "https://www.facebook.com/share/16TciEwA8g/"
+  }
   const socialLinks = [
     {
       name: "Facebook",
@@ -27,12 +39,6 @@ export default function Footer() {
       url: "https://www.instagram.com/elfouad_schools/?hl=ar",
       icon: Instagram,
       color: "hover:text-pink-600",
-    },
-    {
-      name: "Egyptian Education",
-      url: "https://www.egyptianeducation.com/el-fouad-international-school/",
-      icon: ExternalLink,
-      color: "hover:text-green-600",
     },
   ]
 
