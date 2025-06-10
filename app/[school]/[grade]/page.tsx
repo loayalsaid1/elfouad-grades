@@ -82,7 +82,7 @@ export default function GradePage() {
           {school === "international" ? "El-Fouad International School" : "El-Fouad Modern Schools"} - Grade {grade}
         </h1>
         <p className="text-muted-foreground">
-          Academic Year {year} - Term {term}
+          Academic Year {year}/{year + 1} - Term {term}
         </p>
       </div>
 
