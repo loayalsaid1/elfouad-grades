@@ -114,7 +114,7 @@ const {
         {student && (
           <>
             {/* <StudentInfo student={student} /> */}
-            <GradeReference />
+            {Number.parseInt(grade) < 7 && <GradeReference />}
             <ResultsTable student={student}  onExportPDF={() => generatePDF(student)} pdfLoading={pdfLoading} />
           </>
         )}
