@@ -59,7 +59,7 @@ export default function StudentReport({ studentData }: StudentReportProps) {
               {/* Add absent reference */}
               <View style={pdfStyles.gradeReferenceItem}>
                 <View style={[pdfStyles.gradeColorBox, { backgroundColor: "#9ca3af" }]} />
-                <Text style={pdfStyles.gradeText}>Absent (غ)</Text>
+                <Text style={pdfStyles.gradeText}>Absent</Text>
               </View>
             </View>
           </View>
