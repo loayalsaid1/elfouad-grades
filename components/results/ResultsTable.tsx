@@ -19,7 +19,7 @@ export default function ResultsTable({ student, onExportPDF, pdfLoading }: Resul
 
   // Find subjects with score < 50 and not absent
   const secondRoundSubjects = Object.entries(student.subjects)
-    .filter(([_, data]) => !data.isAbsent && typeof data.score === "number" && data.score < 99)
+    .filter(([_, data]) => !data.isAbsent && typeof data.score === "number" && data.score < 50)
     .map(([subject]) => subject)
 
   return (
