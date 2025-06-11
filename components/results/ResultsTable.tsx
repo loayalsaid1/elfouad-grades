@@ -46,7 +46,7 @@ export default function ResultsTable({ student, onExportPDF, pdfLoading }: Resul
                 {/* Second Round Exams message */}
         { student.grade >= 4 && secondRoundSubjects.length > 0 && (
           <div className="mt-6 mb-6 p-4 bg-yellow-50 border border-yellow-200 rounded text-yellow-900 text-base font-medium">
-            You are required to attend the Second Round Exams in the following subjects:{" "}
+            You are required to attend the Second Round Exams <span lang="ar" className="text-gray-700"><small>(امتحانات الدور الثاني)</small></span> in the following subjects:{" "}
             <span className="font-semibold">{secondRoundSubjects.join(", ")}</span>
           </div>
         )}
