@@ -18,7 +18,7 @@ export default function Footer() {
   const socialLinks = [
     {
       name: "Facebook",
-      url: "https://www.facebook.com/Elfouadinternationalschool/?locale=ar_AR",
+      url: facebookUrl,
       icon: Facebook,
       color: "hover:text-blue-600",
     },
