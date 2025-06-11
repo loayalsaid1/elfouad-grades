@@ -83,7 +83,7 @@ export default function SettingsPage() {
       const { error: systemError } = await supabase.from("system_settings").upsert({
         key: "system_enabled",
         value: { enabled: systemEnabled },
-      })
+      }, {onConflict: 'key'});
 
       if (systemError) throw systemError
 
