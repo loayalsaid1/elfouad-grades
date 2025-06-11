@@ -13,6 +13,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { AlertCircle, Database } from "lucide-react"
 import { usePDFGeneration } from "@/hooks/usePDFGeneration"
+import Instructions from "@/components/Instructions"
 
 
 export default function GradePage() {
@@ -118,6 +119,8 @@ const {
             <ResultsTable student={student}  onExportPDF={() => generatePDF(student)} pdfLoading={pdfLoading} />
           </>
         )}
+
+        {!student && <Instructions />}
       </div>
 
       <ParentPasswordDialog
