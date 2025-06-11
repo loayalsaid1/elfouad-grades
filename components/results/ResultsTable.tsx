@@ -44,7 +44,7 @@ export default function ResultsTable({ student, onExportPDF, pdfLoading }: Resul
       </CardHeader>
       <CardContent>
                 {/* Second Round Exams message */}
-        {secondRoundSubjects.length > 0 && (
+        { student.grade >= 4 && secondRoundSubjects.length > 0 && (
           <div className="mt-6 mb-6 p-4 bg-yellow-50 border border-yellow-200 rounded text-yellow-900 text-base font-medium">
             You are required to attend the Second Round Exams in the following subjects:{" "}
             <span className="font-semibold">{secondRoundSubjects.join(", ")}</span>
