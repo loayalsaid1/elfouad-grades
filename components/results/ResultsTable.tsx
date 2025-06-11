@@ -17,9 +17,12 @@ interface ResultsTableProps {
 export default function ResultsTable({ student, onExportPDF, pdfLoading }: ResultsTableProps) {
   const showGrade = student.grade < 7
 
-  // Find subjects with score < 50 and not absent
+  // Find subjects with score < 50 or absent
   const secondRoundSubjects = Object.entries(student.subjects)
-    .filter(([_, data]) => !data.isAbsent && typeof data.score === "number" && data.score < 50)
+    .filter(([_, data]) =>
+      (data.isAbsent) ||
+      (typeof data.score === "number" && data.score < 50)
+    )
     .map(([subject]) => subject)
 
   return (
