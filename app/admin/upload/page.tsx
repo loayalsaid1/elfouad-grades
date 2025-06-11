@@ -15,7 +15,7 @@ interface ParsedStudent {
   student_id: string
   student_name: string
   parent_password: string | null
-  scores: Record<string, { score: number | null; full_mark: number; absent: boolean }>
+  scores: { subject: string; score: number | null; full_mark: number; absent: boolean }[]
 }
 
 interface UploadContext {
@@ -144,7 +144,7 @@ export default function UploadPage() {
           return
         }
 
-        const scores: Record<string, { score: number | null; full_mark: number; absent: boolean }> = {}
+        const scores: { subject: string; score: number | null; full_mark: number; absent: boolean }[] = []
 
         subjectIndices.forEach(({ header, index }) => {
           const scoreStr = row[index]?.trim()
@@ -168,11 +168,12 @@ export default function UploadPage() {
             return
           }
 
-          scores[header] = {
+          scores.push({
+            subject: header,
             score,
             full_mark: fullMark,
             absent,
-          }
+          })
 
           if (absent) absentCount++
         })
@@ -267,17 +268,8 @@ export default function UploadPage() {
       const newStudents = processedStudents.filter((s) => !existingStudentIds.has(s.student_id))
       const duplicateStudents = processedStudents.filter((s) => existingStudentIds.has(s.student_id))
 
-      if (duplicateStudents.length > 0) {
-        setMessage({
-          type: "error",
-          text: `Found ${duplicateStudents.length} students that already exist in this context. Please remove duplicates or use a different context.`,
-        })
-        setLoading(false)
-        return
-      }
-
       // Prepare student results data
-      const studentResults = newStudents.map((student) => ({
+      const studentResults = processedStudents.map((student) => ({
         student_id: student.student_id,
         student_name: student.student_name,
         parent_password: student.parent_password,
@@ -285,19 +277,21 @@ export default function UploadPage() {
         scores: student.scores,
       }))
 
-      // Insert student results
-      const { error: insertError } = await supabase.from("student_results").insert(studentResults)
+      // Upsert student results (insert or update on conflict)
+      const { error: upsertError } = await supabase
+        .from("student_results")
+        .upsert(studentResults, { onConflict: "student_id,context_id" })
 
-      if (insertError) throw insertError
+      if (upsertError) throw upsertError
 
-      // Count absent entries for reporting
-      const totalAbsent = newStudents.reduce((count, student) => {
+      // Count absent entries for reporting (for all students)
+      const totalAbsent = processedStudents.reduce((count, student) => {
         return count + Object.values(student.scores).filter((score) => score.absent).length
       }, 0)
 
       setMessage({
         type: "success",
-        text: `Successfully saved ${studentResults.length} student results to the database! (${totalAbsent} absent entries recorded)`,
+        text: `Saved ${studentResults.length} student results to the database! (${newStudents.length} new, ${duplicateStudents.length} updated, ${totalAbsent} absent entries recorded)`,
       })
 
       // Clear the form

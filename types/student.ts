@@ -1,13 +1,12 @@
 export interface StudentResult {
   id: string
   name: string
-  subjects: {
-    [key: string]: {
-      score: number | null
-      fullMark: number
-      isAbsent: boolean
-    }
-  }
+  scores: {
+    subject: string
+    score: number | null
+    full_mark: number
+    absent: boolean
+  }[]
   school: string
   grade: number
   requiresPassword?: boolean

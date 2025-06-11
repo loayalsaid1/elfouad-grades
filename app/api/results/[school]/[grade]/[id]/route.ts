@@ -78,22 +78,27 @@ export async function GET(request: NextRequest, { params }: { params: { school: 
     }
 
     // Convert Supabase format to expected format
-    const subjects: { [key: string]: { score: number | null; fullMark: number; isAbsent: boolean } } = {}
+    let scores: { subject: string; score: number | null; full_mark: number; absent: boolean }[] = []
 
     if (studentData.scores && typeof studentData.scores === "object") {
-      Object.entries(studentData.scores as any).forEach(([subjectName, subjectData]: [string, any]) => {
-        subjects[subjectName] = {
+      // If already array, just use it
+      if (Array.isArray(studentData.scores)) {
+        scores = studentData.scores
+      } else {
+        // Convert object to array
+        scores = Object.entries(studentData.scores as any).map(([subjectName, subjectData]: [string, any]) => ({
+          subject: subjectName,
           score: subjectData.absent ? null : subjectData.score,
-          fullMark: subjectData.full_mark || 100,
-          isAbsent: subjectData.absent || false,
-        }
-      })
+          full_mark: subjectData.full_mark || 100,
+          absent: subjectData.absent || false,
+        }))
+      }
     }
 
     return NextResponse.json({
       id: studentData.student_id,
       name: studentData.student_name,
-      subjects,
+      scores,
       school,
       grade: gradeNum,
       requiresPassword: false,

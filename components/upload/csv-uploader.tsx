@@ -97,14 +97,16 @@ export function CSVUploader() {
 
           // Parse student data (starting from the second row)
           const studentData: ParsedStudent[] = rows.slice(1).map((row) => {
-            const scores: Record<string, { score: number; full_mark: number }> = {}
+            const scores: { subject: string; score: number; full_mark: number; absent: boolean }[] = []
 
             subjectNames.forEach((subject) => {
               const score = Number.parseFloat(row[subject])
-              scores[subject] = {
+              scores.push({
+                subject,
                 score: isNaN(score) ? 0 : score,
                 full_mark: fullMarksObj[subject],
-              }
+                absent: false, // CSV uploader does not handle absence, set to false
+              })
             })
 
             return {

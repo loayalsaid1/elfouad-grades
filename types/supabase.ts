@@ -12,7 +12,7 @@ export interface Database {
           id?: number
           name: string
         }
-        Update: {
+        Update: { 
           id?: number
           name?: string
         }
@@ -91,14 +91,13 @@ export interface Database {
 }
 
 export type Subject = {
+  subject: string
   score: number | null
   full_mark: number
   absent: boolean
 }
 
-export type Scores = {
-  [subject: string]: Subject
-}
+export type Scores = Subject[]
 
 export type ParsedStudent = {
   student_id: string

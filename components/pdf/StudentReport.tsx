@@ -16,7 +16,7 @@ interface StudentReportProps {
 }
 
 export default function StudentReport({ studentData }: StudentReportProps) {
-  const subjects = Object.entries(studentData.subjects)
+  const subjects = studentData.scores
   const showGradeReference = studentData.grade < 7
 
   return (
@@ -69,33 +69,32 @@ export default function StudentReport({ studentData }: StudentReportProps) {
         <View style={pdfStyles.horizontalTable}>
           {/* Subject Headers */}
           <View style={pdfStyles.tableRow}>
-            {subjects.map(([subject]) => (
-              <Text key={`header-${subject}`} style={pdfStyles.tableHeader}>
-                {subject}
+            {subjects.map((data) => (
+              <Text key={`header-${data.subject}`} style={pdfStyles.tableHeader}>
+                {data.subject}
               </Text>
             ))}
           </View>
 
           {/* Full Marks Row */}
           <View style={pdfStyles.tableRow}>
-            {subjects.map(([subject, data]) => (
-              <Text key={`fullmark-${subject}`} style={pdfStyles.tableCell}>
-                {data.fullMark}
+            {subjects.map((data) => (
+              <Text key={`fullmark-${data.subject}`} style={pdfStyles.tableCell}>
+                {data.full_mark}
               </Text>
             ))}
           </View>
 
           {/* Student Marks Row with Color Indicators */}
           <View style={pdfStyles.tableRow}>
-            {subjects.map(([subject, data]) => {
+            {subjects.map((data) => {
               // Only show color indicator if grade < 7
               if (showGradeReference) {
-                
-                const gradeColor = getGradeColor(data.score, data.isAbsent)
+                const gradeColor = getGradeColor(data.score, data.absent)
                 return (
-                  <View key={`score-${subject}`} style={pdfStyles.tableCellWithIndicator}>
+                  <View key={`score-${data.subject}`} style={pdfStyles.tableCellWithIndicator}>
                     <View style={[pdfStyles.gradeIndicator, { backgroundColor: gradeColor }]} />
-                    {data.isAbsent ? (
+                    {data.absent ? (
                       <Text style={pdfStyles.tableCellAbsentText}>-</Text>
                     ) : (
                       <Text style={pdfStyles.tableCell}>{data.score?.toFixed(2)}</Text>
@@ -104,8 +103,8 @@ export default function StudentReport({ studentData }: StudentReportProps) {
                 )
               } else {
                 return (
-                  <View key={`score-${subject}`} style={pdfStyles.tableCell}>
-                    {data.isAbsent ? (
+                  <View key={`score-${data.subject}`} style={pdfStyles.tableCell}>
+                    {data.absent ? (
                       <Text style={pdfStyles.tableCellAbsentText}>-</Text>
                     ) : (
                       <Text style={pdfStyles.tableCell}>{data.score?.toFixed(2)}</Text>

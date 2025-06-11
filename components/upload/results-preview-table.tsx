@@ -50,8 +50,9 @@ export function ResultsPreviewTable({ students, subjects, fullMarks }: ResultsPr
                   )}
                 </TableCell>
                 {subjects.map((subject) => {
-                  const score = student.scores[subject]?.score || 0
-                  const fullMark = student.scores[subject]?.full_mark || fullMarks[subject]
+                  const subjectScore = student.scores.find((s) => s.subject === subject)
+                  const score = subjectScore?.score ?? 0
+                  const fullMark = subjectScore?.full_mark ?? fullMarks[subject]
                   return (
                     <TableCell key={subject} className="text-center">
                       <Badge className={getGradeColor(score, fullMark)}>

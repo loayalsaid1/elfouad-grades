@@ -16,14 +16,14 @@ interface ResultsTableProps {
 
 export default function ResultsTable({ student, onExportPDF, pdfLoading }: ResultsTableProps) {
   const showGrade = student.grade < 7
-
+  console.log(student);
   // Find subjects with score < 50 or absent
-  const secondRoundSubjects = Object.entries(student.subjects)
-    .filter(([_, data]) =>
-      (data.isAbsent) ||
+  const secondRoundSubjects = student.scores
+    .filter((data) =>
+      (data.absent) ||
       (typeof data.score === "number" && data.score < 50 && student.grade >= 3)
     )
-    .map(([subject]) => subject)
+    .map((data) => data.subject)
 
   return (
     <Card className="border-l-4 border-l-orange-500">
@@ -63,15 +63,15 @@ export default function ResultsTable({ student, onExportPDF, pdfLoading }: Resul
               </tr>
             </thead>
             <tbody>
-              {Object.entries(student.subjects).map(([subject, data]) => {
-                const grade = getGradeLevel(data.score, data.isAbsent)
+              {student.scores.map((data) => {
+                const grade = getGradeLevel(data.score, data.absent)
 
                 return (
-                  <tr key={subject} className="hover:bg-gray-50">
-                    <td className="border border-gray-300 px-4 py-3 font-medium">{subject}</td>
-                    <td className="border border-gray-300 px-4 py-3 text-center">{data.fullMark}</td>
+                  <tr key={data.subject} className="hover:bg-gray-50">
+                    <td className="border border-gray-300 px-4 py-3 font-medium">{data.subject}</td>
+                    <td className="border border-gray-300 px-4 py-3 text-center">{data.full_mark}</td>
                     <td className="border border-gray-300 px-4 py-3 text-center font-semibold">
-                      {data.isAbsent ? <span className="text-gray-600 text-lg font-bold">-</span> : data.score?.toFixed(2)}
+                      {data.absent ? <span className="text-gray-600 text-lg font-bold">-</span> : data.score?.toFixed(2)}
                     </td>
                     {showGrade && (
                       <td className="border border-gray-300 px-4 py-3 text-center">

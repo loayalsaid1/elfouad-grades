@@ -24,8 +24,8 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
     const studentData = studentLine.split(",")
     const studentName = studentData[1]
 
-    // Build subjects object
-    const subjects: { [key: string]: { score: number; fullMark: number } } = {}
+    // Build subjects array
+    const scores: { subject: string; score: number; fullMark: number }[] = []
 
     for (let i = 2; i < headers.length; i++) {
       const subjectName = headers[i]
@@ -33,16 +33,17 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
       const fullMark = 100
       const score = Number.parseFloat(studentData[i])
 
-      subjects[subjectName] = {
+      scores.push({
+        subject: subjectName,
         score,
         fullMark,
-      }
+      })
     }
 
     return NextResponse.json({
       id: studentId,
       name: studentName,
-      subjects,
+      scores,
     })
   } catch (error) {
     console.error("Error reading student data:", error)
