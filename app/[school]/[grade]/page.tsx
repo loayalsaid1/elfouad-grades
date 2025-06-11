@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useRef, useEffect } from "react"
 import { useParams } from "next/navigation"
 import StudentSearchForm from "@/components/search/StudentSearchForm"
 import StudentInfo from "@/components/results/StudentInfo"
@@ -40,6 +40,10 @@ const {
     passwordLoading,
 } = useStudentSearch(school, Number.parseInt(grade))
 
+  // Add refs for GradeReference and ResultsTable
+  const referenceRef = useRef<HTMLDivElement | null>(null)
+  const tableRef = useRef<HTMLDivElement | null>(null)
+
   const handleSearch = async (studentId: string, password?: string) => {
     try {
       await searchStudent(studentId, password)
@@ -58,6 +62,13 @@ const {
       await handleSearch(pendingStudentId, password)
     }
   }
+
+  // Scroll into view when student is found
+  useEffect(() => {
+    if (student)
+      // Scroll reference (if exists) and table into view
+      (referenceRef.current || tableRef.current)?.scrollIntoView({ behavior: "smooth" });
+  }, [student])
 
   // Show context loading state
   if (contextLoading) {
@@ -114,9 +125,16 @@ const {
 
         {student && (
           <>
-            {/* <StudentInfo student={student} /> */}
-            {Number.parseInt(grade) < 7 && <GradeReference />}
-            <ResultsTable student={student}  onExportPDF={() => generatePDF(student)} pdfLoading={pdfLoading} />
+            {/* GradeReference (with ref) */}
+            {Number.parseInt(grade) < 7 && (
+              <div ref={referenceRef}>
+                <GradeReference />
+              </div>
+            )}
+            {/* ResultsTable (with ref) */}
+            <div ref={tableRef}>
+              <ResultsTable student={student} onExportPDF={() => generatePDF(student)} pdfLoading={pdfLoading} />
+            </div>
           </>
         )}
 
