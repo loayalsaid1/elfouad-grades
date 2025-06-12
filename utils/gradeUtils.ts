@@ -1,7 +1,12 @@
 import type { GradeLevel } from "@/types/student"
 import { GRADE_COLORS, GRADE_THRESHOLDS } from "@/constants/grades"
 
-export const getGradeLevel = (score: number | null, isAbsent = false): GradeLevel => {
+// Accepts score and full_mark, computes percentage for grade level
+export const getGradeLevel = (
+  score: number | null,
+  full_mark: number,
+  isAbsent = false
+): GradeLevel => {
   // Handle absent students
   if (isAbsent || score === null) {
     return {
@@ -11,7 +16,7 @@ export const getGradeLevel = (score: number | null, isAbsent = false): GradeLeve
     }
   }
 
-  const percentage = score // The score is already a percentage in this dataset
+  const percentage = (score / full_mark) * 100
 
   if (percentage >= GRADE_THRESHOLDS.EXCELLENT) {
     return { level: "excellent", text: "Exceeds Expectations", color: GRADE_COLORS.excellent }
@@ -25,15 +30,22 @@ export const getGradeLevel = (score: number | null, isAbsent = false): GradeLeve
   return { level: "poor", text: "Less Than Expected", color: GRADE_COLORS.poor }
 }
 
-export const getGradeColor = (score: number | null, isAbsent = false): string => {
+// Accepts score and full_mark, computes percentage for color
+export const getGradeColor = (
+  score: number | null,
+  full_mark: number,
+  isAbsent = false
+): string => {
   // Handle absent students
   if (isAbsent || score === null) {
     return "#9ca3af" // Gray color for absent
   }
 
-  if (score >= GRADE_THRESHOLDS.EXCELLENT) return "#3b82f6" // Blue
-  if (score >= GRADE_THRESHOLDS.GOOD) return "#10b981" // Green
-  if (score >= GRADE_THRESHOLDS.FAIR) return "#f59e0b" // Yellow
+  const percentage = (score / full_mark) * 100
+
+  if (percentage >= GRADE_THRESHOLDS.EXCELLENT) return "#3b82f6" // Blue
+  if (percentage >= GRADE_THRESHOLDS.GOOD) return "#10b981" // Green
+  if (percentage >= GRADE_THRESHOLDS.FAIR) return "#f59e0b" // Yellow
   return "#ef4444" // Red
 }
 

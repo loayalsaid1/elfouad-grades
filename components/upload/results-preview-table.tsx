@@ -3,6 +3,7 @@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Badge } from "@/components/ui/badge"
 import type { ParsedStudent } from "@/types/supabase"
+import { getGradeColor } from "@/utils/gradeUtils"
 
 interface ResultsPreviewTableProps {
   students: ParsedStudent[]
@@ -11,15 +12,6 @@ interface ResultsPreviewTableProps {
 }
 
 export function ResultsPreviewTable({ students, subjects, fullMarks }: ResultsPreviewTableProps) {
-  const getGradeColor = (score: number, fullMark: number) => {
-    const percentage = (score / fullMark) * 100
-    if (percentage >= 90) return "bg-green-100 text-green-800"
-    if (percentage >= 80) return "bg-blue-100 text-blue-800"
-    if (percentage >= 70) return "bg-yellow-100 text-yellow-800"
-    if (percentage >= 60) return "bg-orange-100 text-orange-800"
-    return "bg-red-100 text-red-800"
-  }
-
   return (
     <div className="border rounded-lg overflow-hidden">
       <div className="max-h-96 overflow-auto">
@@ -55,7 +47,10 @@ export function ResultsPreviewTable({ students, subjects, fullMarks }: ResultsPr
                   const fullMark = subjectScore?.full_mark ?? fullMarks[subject]
                   return (
                     <TableCell key={subject} className="text-center">
-                      <Badge className={getGradeColor(score, fullMark)}>
+                      <Badge
+                        style={{ backgroundColor: getGradeColor(score, fullMark) }}
+                        className="text-white"
+                      >
                         {score}/{fullMark}
                       </Badge>
                     </TableCell>

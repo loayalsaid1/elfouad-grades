@@ -90,7 +90,7 @@ export default function StudentReport({ studentData }: StudentReportProps) {
             {subjects.map((data) => {
               // Only show color indicator if grade < 7
               if (showGradeReference) {
-                const gradeColor = getGradeColor(data.score, data.absent)
+                const gradeColor = getGradeColor(data.score, data.full_mark, data.absent)
                 return (
                   <View key={`score-${data.subject}`} style={pdfStyles.tableCellWithIndicator}>
                     <View style={[pdfStyles.gradeIndicator, { backgroundColor: gradeColor }]} />

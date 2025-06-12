@@ -21,7 +21,7 @@ export default function ResultsTable({ student, onExportPDF, pdfLoading }: Resul
   const secondRoundSubjects = student.scores
     .filter((data) =>
       (data.absent) ||
-      (typeof data.score === "number" && data.score < 50 && student.grade >= 3)
+      (typeof data.score === "number" && ((data.score / data.full_mark) * 100 ) < 50 && student.grade >= 3)
     )
     .map((data) => data.subject)
 
@@ -64,7 +64,7 @@ export default function ResultsTable({ student, onExportPDF, pdfLoading }: Resul
             </thead>
             <tbody>
               {student.scores.map((data) => {
-                const grade = getGradeLevel(data.score, data.absent)
+                const grade = getGradeLevel(data.score, data.full_mark, data.absent)
 
                 return (
                   <tr key={data.subject} className="hover:bg-gray-50">
