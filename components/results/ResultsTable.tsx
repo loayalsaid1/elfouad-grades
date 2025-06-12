@@ -75,7 +75,7 @@ export default function ResultsTable({ student, onExportPDF, pdfLoading }: Resul
                     </td>
                     {showGrade && (
                       <td className="border border-gray-300 px-4 py-3 text-center">
-                        <Badge className={grade.color}>{grade.text}</Badge>
+                        <Badge variant="secondary" className={grade.color}>{grade.text}</Badge>
                       </td>
                     )}
                   </tr>

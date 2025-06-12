@@ -8,7 +8,9 @@ const config: Config = {
     "./app/**/*.{js,ts,jsx,tsx,mdx}",
     "./src/**/*.{js,ts,jsx,tsx,mdx}",
     "*.{js,ts,jsx,tsx,mdx}",
-  ],
+    "./constants/**/*.{js,ts,jsx,tsx,mdx}",
+    "./utils/**/*.{js,ts,jsx,tsx,mdx}",
+    ],
   theme: {
     extend: {
       colors: {

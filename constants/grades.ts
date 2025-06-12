@@ -3,7 +3,7 @@ export const GRADE_COLORS = {
   good: "bg-green-100 text-green-800 border-green-200",
   fair: "bg-yellow-100 text-yellow-800 border-yellow-200",
   poor: "bg-red-100 text-red-800 border-red-200",
-  absent: "bg-gray-100 text-gray-800 border-gray-200",
+  absent: "bg-gray-300 text-gray-900 border-gray-400",
 } as const
 
 export const GRADE_THRESHOLDS = {
