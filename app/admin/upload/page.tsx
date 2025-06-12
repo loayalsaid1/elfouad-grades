@@ -82,40 +82,33 @@ export default function UploadPage() {
       const fullMarks = data[1]
       const studentRows = data.slice(2)
 
-      // Validate headers
-      const requiredColumns = ["student_id", "student_name"]
-      const missingColumns = requiredColumns.filter(
-        (col) =>
-          !headers.some(
-            (h) => h.toLowerCase().includes(col.toLowerCase()) || (col === "student_id" && h.toLowerCase() === "id"),
-          ),
-      )
-
-      if (missingColumns.length > 0) {
-        errors.push(`Missing required columns: ${missingColumns.join(", ")}`)
+      // Strict header check: first three columns must be "id", "student_name", "parent_password"
+      if (
+        headers.length < 4 ||
+        headers[0].toLowerCase() !== "id" ||
+        headers[1].toLowerCase() !== "student_name" ||
+        headers[2].toLowerCase() !== "parent_password"
+      ) {
+        errors.push(
+          `First row must start with columns: "id", "student_name", "parent_password" (in this order), followed by subject columns.`
+        )
+        setValidationErrors(errors)
+        setMessage({ type: "error", text: "CSV validation failed. Please check the errors below." })
+        return
       }
 
-      // Find column indices
-      const studentIdIndex = headers.findIndex((h) => h.toLowerCase() === "id" || h.toLowerCase() === "student_id")
-      const studentNameIndex = headers.findIndex(
-        (h) => h.toLowerCase() === "student_name" || h.toLowerCase() === "name",
-      )
-      const parentPasswordIndex = headers.findIndex(
-        (h) => h.toLowerCase() === "parent_password" || h.toLowerCase() === "password",
-      )
+      // Find column indices (now fixed)
+      const studentIdIndex = 0
+      const studentNameIndex = 1
+      const parentPasswordIndex = 2
 
-      if (studentIdIndex === -1) errors.push("Could not find student ID column (should be 'id' or 'student_id')")
-      if (studentNameIndex === -1)
-        errors.push("Could not find student name column (should be 'student_name' or 'name')")
-
-      // Get subject columns (exclude known non-subject columns)
-      const nonSubjectColumns = ["id", "student_id", "student_name", "name", "parent_password", "password"]
+      // Subject columns: everything after the first three
       const subjectIndices = headers
         .map((header, index) => ({ header: header.trim(), index }))
-        .filter(({ header }) => header && !nonSubjectColumns.some((col) => header.toLowerCase() === col.toLowerCase()))
+        .filter(({ index }) => index > 2)
 
       if (subjectIndices.length === 0) {
-        errors.push("No subject columns found")
+        errors.push("No subject columns found (must be after the first three columns).")
       }
 
       if (errors.length > 0) {
@@ -132,12 +125,10 @@ export default function UploadPage() {
         const studentId = row[studentIdIndex]?.trim()
         const studentName = row[studentNameIndex]?.trim()
 
-        // Handle parent password properly - empty means null, not absent
+        // parent_password: empty means null
         let parentPassword: string | null = null
-        if (parentPasswordIndex >= 0) {
-          const passwordValue = row[parentPasswordIndex]?.trim()
-          parentPassword = passwordValue && passwordValue !== "" ? passwordValue : null
-        }
+        const passwordValue = row[parentPasswordIndex]?.trim()
+        parentPassword = passwordValue && passwordValue !== "" ? passwordValue : null
 
         if (!studentId || !studentName) {
           errors.push(`Row ${rowIndex + 3}: Missing student ID or name`)
@@ -344,9 +335,7 @@ export default function UploadPage() {
           <CardHeader>
             <CardTitle>Select CSV File</CardTitle>
             <CardDescription>
-              Upload a CSV file with student results. Required columns: student_id (or id), student_name, then subject
-              columns. Optional: parent_password column. Use "-" or leave empty for absent students in subject columns
-              only.
+              Upload a CSV file with student results. <b>The first row must start with columns: "id", "student_name", "parent_password" (in this order), then subject columns.</b> Use "-" or leave empty for absent students in subject columns only.
             </CardDescription>
           </CardHeader>
           <CardContent>
