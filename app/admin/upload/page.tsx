@@ -247,7 +247,7 @@ export default function UploadPage() {
         contextId = newContext.id
       }
 
-      // Check for existing students in this context
+      // Fetch all existing student_ids for this context
       const { data: existingStudents, error: checkError } = await supabase
         .from("student_results")
         .select("student_id")
@@ -256,8 +256,24 @@ export default function UploadPage() {
       if (checkError) throw checkError
 
       const existingStudentIds = new Set(existingStudents?.map((s) => s.student_id) || [])
+      const uploadedStudentIds = new Set(processedStudents.map((s) => s.student_id))
+
+      // Determine which students are new, updated, and which to delete
       const newStudents = processedStudents.filter((s) => !existingStudentIds.has(s.student_id))
-      const duplicateStudents = processedStudents.filter((s) => existingStudentIds.has(s.student_id))
+      const updatedStudents = processedStudents.filter((s) => existingStudentIds.has(s.student_id))
+      const studentsToDelete = Array.from(existingStudentIds).filter((id) => !uploadedStudentIds.has(id))
+
+      // Delete students not in the uploaded file
+      let deletedCount = 0
+      if (studentsToDelete.length > 0) {
+        const { error: deleteError, count } = await supabase
+          .from("student_results")
+          .delete({ count: "exact" })
+          .eq("context_id", contextId)
+          .in("student_id", studentsToDelete)
+        if (deleteError) throw deleteError
+        deletedCount = count ?? studentsToDelete.length
+      }
 
       // Prepare student results data
       const studentResults = processedStudents.map((student) => ({
@@ -282,7 +298,7 @@ export default function UploadPage() {
 
       setMessage({
         type: "success",
-        text: `Saved ${studentResults.length} student results to the database! (${newStudents.length} new, ${duplicateStudents.length} updated, ${totalAbsent} absent entries recorded)`,
+        text: `Saved ${studentResults.length} student results! (${newStudents.length} inserted, ${updatedStudents.length} updated, ${deletedCount} deleted, ${totalAbsent} absent entries)`,
       })
 
       // Clear the form
