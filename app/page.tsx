@@ -5,11 +5,27 @@ import { useRouter } from "next/navigation"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { GraduationCap, Building2 } from "lucide-react"
+import { useSystemStatus } from "@/contexts/SystemStatusContext"
 import Image from "next/image"
+import LoadingSpinner from "@/components/ui/LoadingSpinner"
+import SystemDisabled from "@/components/SystemDisabled"
 
 export default function HomePage() {
   const router = useRouter()
   const [selectedSchool, setSelectedSchool] = useState<string | null>(null)
+  
+  const { enabled, loading: systemStatusLoading } = useSystemStatus()
+
+  if (systemStatusLoading) {
+    return (
+      <div className="flex-1 h-full flex items-center justify-center bg-blue-50">
+        <LoadingSpinner size="lg" className="w-18 h-18 border-4 border-cyan-500" />
+      </div>
+    )
+  }
+  if (!enabled) {
+    return <SystemDisabled />
+  }
 
   const schools = [
     {
@@ -32,7 +48,7 @@ export default function HomePage() {
   }
 
   return (
-    <div className="bg-gradient-to-br from-slate-50 to-blue-50 min-h-screen">
+    <div className="bg-gradient-to-br from-slate-50 to-blue-50 h-full">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
         {/* Header */}
         <div className="text-center mb-12">
