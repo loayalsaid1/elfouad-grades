@@ -100,6 +100,11 @@ export function CSVUploader() {
             const scores: { subject: string; score: number; full_mark: number; absent: boolean }[] = []
 
             subjectNames.forEach((subject) => {
+              const value = row[subject]?.trim().toLowerCase()
+              if (value === "n/a") {
+                // Skip this subject for this student
+                return
+              }
               const score = Number.parseFloat(row[subject])
               scores.push({
                 subject,

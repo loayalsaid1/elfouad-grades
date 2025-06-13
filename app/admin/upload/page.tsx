@@ -141,6 +141,11 @@ export default function UploadPage() {
           const scoreStr = row[index]?.trim()
           const fullMarkStr = fullMarks[index]?.trim()
 
+          // Skip if value is "N/A"
+          if (scoreStr?.toLowerCase() === "n/a") {
+            return
+          }
+
           // Check if student is absent for this subject (ONLY apply to subject columns)
           const absent = isAbsentScore(scoreStr)
 
