@@ -2,7 +2,7 @@
 
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardHeader, CardDescription, CardTitle } from "@/components/ui/card"
-import { getGradeLevel } from "@/utils/gradeUtils"
+import { formatScore, getGradeLevel } from "@/utils/gradeUtils"
 import { Download } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import LoadingSpinner from "@/components/ui/LoadingSpinner"
@@ -71,7 +71,7 @@ export default function ResultsTable({ student, onExportPDF, pdfLoading }: Resul
                     <td className="border border-gray-300 px-4 py-3 font-medium">{data.subject}</td>
                     <td className="border border-gray-300 px-4 py-3 text-center">{data.full_mark}</td>
                     <td className="border border-gray-300 px-4 py-3 text-center font-semibold">
-                      {data.absent ? <span className="text-gray-600 text-lg font-bold">-</span> : data.score?.toFixed(2)}
+                      {data.absent ? <span className="text-gray-600 text-lg font-bold">-</span> : formatScore(data.score)}
                     </td>
                     {showGrade && (
                       <td className="border border-gray-300 px-4 py-3 text-center">

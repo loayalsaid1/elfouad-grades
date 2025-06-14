@@ -103,3 +103,11 @@ export const getStudentYearTitle = (grade: number): string => {
   const ordinalWord = getOrdinalInfo(yearOfStage).word;
   return `${ordinalWord} ${stage}`;
 }
+
+export function formatScore(value: number | null): string | null {
+  if (value === null) return null;
+    if (Number.isInteger(value)) {
+        return value.toString();
+    }
+    return value.toFixed(2);
+}

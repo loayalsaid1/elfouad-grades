@@ -1,6 +1,6 @@
 import { Document, Page, Text, View, Image, Font } from "@react-pdf/renderer";
 import { pdfStyles } from "./styles";
-import { getGradeColor, getStudentYearTitle } from "@/utils/gradeUtils";
+import { getGradeColor, getStudentYearTitle, formatScore } from "@/utils/gradeUtils";
 import { GRADE_REFERENCE_DATA } from "@/constants/grades";
 import { CURRENT_ROUND } from "@/constants/currentRound";
 import type { StudentResult } from "@/types/student";
@@ -133,7 +133,7 @@ export default function StudentReport({ studentData }: StudentReportProps) {
                     {data.absent ? (
                       <Text style={pdfStyles.tableCellAbsentText}>-</Text>
                     ) : (
-                      <Text>{data.score?.toFixed(2)}</Text>
+                      <Text>{formatScore(data.score)}</Text>
                     )}
                   </View>
                 );
@@ -146,7 +146,7 @@ export default function StudentReport({ studentData }: StudentReportProps) {
                     {data.absent ? (
                       <Text style={pdfStyles.tableCellAbsentText}>-</Text>
                     ) : (
-                      <Text>{data.score?.toFixed(2)}</Text>
+                      <Text>{formatScore(data.score)}</Text>
                     )}
                   </View>
                 );
