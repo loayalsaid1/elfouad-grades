@@ -18,6 +18,12 @@ export default function SettingsPage() {
   const [message, setMessage] = useState("")
   const [error, setError] = useState("")
 
+  // Filter state
+  const [filterYear, setFilterYear] = useState("")
+  const [filterGrade, setFilterGrade] = useState("")
+  const [filterTerm, setFilterTerm] = useState("")
+  const [filterSchool, setFilterSchool] = useState("")
+
   const supabase = createClientComponentClient()
 
   useEffect(() => {
@@ -112,6 +118,22 @@ export default function SettingsPage() {
     }))
   }
 
+  // Get unique filter options from contexts
+  const schoolOptions = Array.from(new Set(contexts.map((c: any) => c.schools?.name).filter(Boolean)))
+  const yearOptions = Array.from(new Set(contexts.map((c: any) => c.year))).sort((a, b) => b - a)
+  const gradeOptions = Array.from(new Set(contexts.map((c: any) => c.grade))).sort((a, b) => a - b)
+  const termOptions = Array.from(new Set(contexts.map((c: any) => c.term))).sort()
+
+  // Filtered contexts
+  const filteredContexts = contexts.filter((context: any) => {
+    return (
+      (!filterSchool || context.schools?.name === filterSchool) &&
+      (!filterYear || context.year === Number(filterYear)) &&
+      (!filterGrade || context.grade === Number(filterGrade)) &&
+      (!filterTerm || context.term === Number(filterTerm))
+    )
+  })
+
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-50 py-8">
@@ -176,15 +198,82 @@ export default function SettingsPage() {
             </CardDescription>
           </CardHeader>
           <CardContent>
+            {/* Filter Controls */}
+            <div className="flex flex-wrap gap-4 mb-6">
+              <div>
+                <label className="block text-xs font-medium text-gray-700 mb-1">School</label>
+                <select
+                  className="border rounded px-2 py-1 text-sm"
+                  value={filterSchool}
+                  onChange={e => setFilterSchool(e.target.value)}
+                >
+                  <option value="">All</option>
+                  {schoolOptions.map((school) => (
+                    <option key={school} value={school}>{school}</option>
+                  ))}
+                </select>
+              </div>
+              <div>
+                <label className="block text-xs font-medium text-gray-700 mb-1">Year</label>
+                <select
+                  className="border rounded px-2 py-1 text-sm"
+                  value={filterYear}
+                  onChange={e => setFilterYear(e.target.value)}
+                >
+                  <option value="">All</option>
+                  {yearOptions.map((year) => (
+                    <option key={year} value={year}>{year}-{Number(year)+1}</option>
+                  ))}
+                </select>
+              </div>
+              <div>
+                <label className="block text-xs font-medium text-gray-700 mb-1">Grade</label>
+                <select
+                  className="border rounded px-2 py-1 text-sm"
+                  value={filterGrade}
+                  onChange={e => setFilterGrade(e.target.value)}
+                >
+                  <option value="">All</option>
+                  {gradeOptions.map((grade) => (
+                    <option key={grade} value={grade}>Grade {grade}</option>
+                  ))}
+                </select>
+              </div>
+              <div>
+                <label className="block text-xs font-medium text-gray-700 mb-1">Term</label>
+                <select
+                  className="border rounded px-2 py-1 text-sm"
+                  value={filterTerm}
+                  onChange={e => setFilterTerm(e.target.value)}
+                >
+                  <option value="">All</option>
+                  {termOptions.map((term) => (
+                    <option key={term} value={term}>{term === 1 ? "First" : "Second"} Term</option>
+                  ))}
+                </select>
+              </div>
+            </div>
+            {/* Contexts List */}
             <div className="space-y-4">
-              {contexts.length > 0 ? (
-                contexts.map((context) => (
-                  <div key={context.id} className="flex items-center justify-between border-b pb-3">
+              {filteredContexts.length > 0 ? (
+                filteredContexts.map((context: any) => (
+                  <div
+                    key={context.id}
+                    className="flex items-center justify-between border-b pb-3"
+                  >
                     <div>
-                      <p className="font-medium">{context.schools?.name || "Unknown School"}</p>
-                      <p className="text-sm text-gray-500">
-                        Grade {context.grade} • {context.year}-{context.year + 1} • Term {context.term}
-                      </p>
+                      <div className="flex items-center gap-2">
+                        <span className="font-semibold text-blue-900">{context.schools?.name || "Unknown School"}</span>
+                        <span className="inline-block bg-blue-100 text-blue-800 text-xs font-semibold px-2 py-0.5 rounded">
+                          {context.year}-{context.year + 1}
+                        </span>
+                        <span className="inline-block bg-green-100 text-green-800 text-xs font-semibold px-2 py-0.5 rounded">
+                          Grade {context.grade}
+                        </span>
+                        <span className="inline-block bg-yellow-100 text-yellow-800 text-xs font-semibold px-2 py-0.5 rounded">
+                          {context.term === 1 ? "First" : "Second"} Term
+                        </span>
+                      </div>
                     </div>
                     <Switch
                       checked={activeContexts[context.id] || false}
