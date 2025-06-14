@@ -87,9 +87,9 @@ export default function StudentReport({ studentData }: StudentReportProps) {
                 key={`header-${data.subject}`}
                 style={[
                   pdfStyles.tableHeader,
-                  studentData.grade <= 6
-                    ? { fontSize: 8, padding: "2px 1px" }
-                    : {},
+                  // studentData.grade <= 6
+                    { fontSize: 8, padding: "5px 2.5px" }
+                    // : {},
                 ]}
               >
                 {data.subject}
