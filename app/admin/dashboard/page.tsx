@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { createClientComponentClient } from "@supabase/auth-helpers-nextjs"
+import { createClientComponentClient, User } from "@supabase/auth-helpers-nextjs"
 import { useRouter } from "next/navigation"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -9,7 +9,7 @@ import { Badge } from "@/components/ui/badge"
 import { Upload, Settings, School, Users, Database, LogOut } from "lucide-react"
 
 export default function AdminDashboard() {
-  const [user, setUser] = useState(null)
+  const [user, setUser] = useState<User | null>(null)
   const [stats, setStats] = useState({
     totalStudents: 0,
     totalSchools: 0,
@@ -25,7 +25,7 @@ export default function AdminDashboard() {
         data: { user },
       } = await supabase.auth.getUser()
       if (!user) {
-        router.push("/admin")
+        router.push("/admin/login")
         return
       }
       setUser(user)
@@ -63,7 +63,7 @@ export default function AdminDashboard() {
 
   const handleLogout = async () => {
     await supabase.auth.signOut()
-    router.push("/admin")
+    router.push("/admin/login")
   }
 
   if (!user) return <div>Loading...</div>
@@ -140,7 +140,7 @@ export default function AdminDashboard() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           <Card
             className="cursor-pointer hover:shadow-lg transition-shadow"
-            onClick={() => router.push("/admin/upload")}
+            onClick={() => router.push("/admin/dashboard/upload")}
           >
             <CardHeader>
               <CardTitle className="flex items-center">
@@ -156,7 +156,7 @@ export default function AdminDashboard() {
 
           <Card
             className="cursor-pointer hover:shadow-lg transition-shadow"
-            onClick={() => router.push("/admin/settings")}
+            onClick={() => router.push("/admin/dashboard/settings")}
           >
             <CardHeader>
               <CardTitle className="flex items-center">
@@ -174,7 +174,7 @@ export default function AdminDashboard() {
 
           <Card
             className="cursor-pointer hover:shadow-lg transition-shadow"
-            onClick={() => router.push("/admin/schools")}
+            onClick={() => router.push("/admin/dashboard/schools")}
           >
             <CardHeader>
               <CardTitle className="flex items-center">
