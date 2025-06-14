@@ -75,17 +75,19 @@ export default function Footer() {
             </div>
           </div>
 
+        </div>
           {/* Copyright */}
+        <div className="mt-6 pt-4 border-t border-white/20 text-center">
           <div className="text-center md:text-right text-sm text-gray-400">
             <p>&copy; {new Date().getFullYear()} El Fouad Schools</p>
             <p>All rights reserved</p>
           </div>
-        </div>
+          </div>
 
-        {/* Bottom Border */}
+        {/* Bottom Border
         <div className="mt-6 pt-4 border-t border-white/20 text-center">
           <p className="text-xs text-gray-400">Student Results Portal • {CURRENT_ROUND.term == 1 ? 'First' : 'Second'} Term {CURRENT_ROUND.startYear}-{CURRENT_ROUND.endYear}</p>
-        </div>
+        </div> */}
       </div>
     </footer>
   )
