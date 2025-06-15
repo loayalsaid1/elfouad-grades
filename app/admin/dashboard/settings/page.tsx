@@ -8,8 +8,10 @@ import { Switch } from "@/components/ui/switch"
 import { Label } from "@/components/ui/label"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Loader2, Settings, AlertCircle, CheckCircle } from "lucide-react"
+import { useAdminUser } from "@/hooks/useAdminUser"
 
 export default function SettingsPage() {
+  const user = useAdminUser()
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [systemEnabled, setSystemEnabled] = useState(true)
@@ -134,7 +136,7 @@ export default function SettingsPage() {
     )
   })
 
-  if (loading) {
+  if (loading || !user) {
     return (
       <div className="min-h-screen bg-gray-50 py-8">
         <div className="max-w-4xl mx-auto px-4">

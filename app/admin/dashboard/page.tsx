@@ -7,9 +7,10 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Upload, Settings, School, Users, Database, LogOut } from "lucide-react"
+import { useAdminUser } from "@/hooks/useAdminUser"
 
 export default function AdminDashboard() {
-  const [user, setUser] = useState<User | null>(null)
+  const user = useAdminUser()
   const [stats, setStats] = useState({
     totalStudents: 0,
     totalSchools: 0,
@@ -20,21 +21,11 @@ export default function AdminDashboard() {
   const supabase = createClientComponentClient()
 
   useEffect(() => {
-    const getUser = async () => {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser()
-      if (!user) {
-        router.push("/admin/login")
-        return
-      }
-      setUser(user)
-
-      // Load dashboard stats
-      await loadStats()
+    if (user) {
+      loadStats()
     }
-    getUser()
-  }, [])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user])
 
   const loadStats = async () => {
     try {

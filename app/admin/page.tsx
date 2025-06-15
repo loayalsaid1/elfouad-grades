@@ -1,25 +1,27 @@
 'use client'
-// Redirect to the dashboard page if logged in, otherwhise redirecto to /login
+import { useEffect, useState } from "react";
 import { redirect } from "next/navigation";
-import { useEffect } from "react";
-import { createClientComponentSupabaseClient } from "@/lib/supabase";	
+import { createClientComponentSupabaseClient } from "@/lib/supabase";
 import LoadingSpinner from "@/components/ui/LoadingSpinner";
+import { useAdminUser } from "@/hooks/useAdminUser";
 
 export default function Page() {
-	const supabase = createClientComponentSupabaseClient();
+	const [checked, setChecked] = useState(false);
+	const user = useAdminUser()
+	
 
 	useEffect(() => {
 		const checkSession = async () => {
-			const { data: { session } } = await supabase.auth.getSession();
-			if (session) {
+			setChecked(true);
+			if (user) {
 				redirect("/admin/dashboard");
 			} else {
 				redirect("/admin/login");
 			}
 		};
-
 		checkSession();
-	}, [supabase]);
+	}, [user]);
 
-	return <LoadingSpinner size="lg" />;
+	if (!checked) return <LoadingSpinner size="lg" className="border-4 border-cyan-500" />;
+	return null;
 }

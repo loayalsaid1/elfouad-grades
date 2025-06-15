@@ -10,6 +10,7 @@ import { Badge } from "@/components/ui/badge"
 import { Upload, FileText, AlertCircle, CheckCircle, Info } from "lucide-react"
 import { ContextSelector } from "@/components/admin/context-selector"
 import Papa from "papaparse"
+import { useAdminUser } from "@/hooks/useAdminUser"
 
 interface ParsedStudent {
   student_id: string
@@ -26,6 +27,7 @@ interface UploadContext {
 }
 
 export default function UploadPage() {
+  const user = useAdminUser()
   const [file, setFile] = useState<File | null>(null)
   const [parsedData, setParsedData] = useState<string[][] | null>(null)
   const [processedStudents, setProcessedStudents] = useState<ParsedStudent[]>([])
@@ -333,6 +335,19 @@ export default function UploadPage() {
     const isSubjectColumn = !nonSubjectColumns.some((col) => header.includes(col.toLowerCase()))
 
     return isSubjectColumn && isAbsentScore(cell)
+  }
+
+  if (!user) {
+    return (
+      <div className="min-h-screen bg-gray-50 py-8">
+        <div className="max-w-6xl mx-auto px-4">
+          <div className="flex items-center justify-center p-8">
+            <Upload className="h-6 w-6 animate-spin mr-2" />
+            <span>Loading upload page...</span>
+          </div>
+        </div>
+      </div>
+    )
   }
 
   return (

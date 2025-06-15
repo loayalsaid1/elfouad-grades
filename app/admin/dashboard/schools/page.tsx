@@ -8,8 +8,10 @@ import { Input } from "@/components/ui/input"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog"
 import { Loader2, Plus, Pencil, School, AlertCircle, CheckCircle } from "lucide-react"
+import { useAdminUser } from "@/hooks/useAdminUser"
 
 export default function SchoolsPage() {
+  const user = useAdminUser()
   const [schools, setSchools] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState("")
@@ -92,6 +94,19 @@ export default function SchoolsPage() {
       return () => clearTimeout(timer)
     }
   }, [message])
+
+  if (!user) {
+    return (
+      <div className="min-h-screen bg-gray-50 py-8">
+        <div className="max-w-4xl mx-auto px-4">
+          <div className="flex items-center justify-center p-8">
+            <Loader2 className="h-6 w-6 animate-spin mr-2" />
+            <span>Loading schools...</span>
+          </div>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className="min-h-screen bg-gray-50 py-8">
