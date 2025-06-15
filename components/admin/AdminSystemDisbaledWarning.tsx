@@ -1,12 +1,12 @@
-// a message to stick to teh top of teh screen when there is an admin using the system and the system is disabled instead of blocking everything and redirecting him to the home where he sees system disabled message like normal users
 'use client'
 
 import { useSystemStatus } from "@/contexts/SystemStatusContext"
-
+import useGetUser from "@/hooks/useGetUser"
 
 export default function AdminSystemDisabledWarning() {
   const { enabled, loading } = useSystemStatus()
-  if (loading || enabled) return null
+	const { user, loading: userLoading } = useGetUser()
+  if (loading || enabled || (!user && !userLoading)) return null
 
   return (
     <div className="fixed top-0 left-0 w-full bg-yellow-50 border-b border-yellow-200 text-yellow-800 text-sm z-40">

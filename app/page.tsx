@@ -9,13 +9,15 @@ import { useSystemStatus } from "@/contexts/SystemStatusContext"
 import Image from "next/image"
 import LoadingSpinner from "@/components/ui/LoadingSpinner"
 import SystemDisabled from "@/components/SystemDisabled"
+import useGetUser from "@/hooks/useGetUser"
 
 export default function HomePage() {
   const router = useRouter()
   const [selectedSchool, setSelectedSchool] = useState<string | null>(null)
   
   const { enabled, loading: systemStatusLoading } = useSystemStatus()
-
+  const { user, loading: userLoading } = useGetUser()
+  
   if (systemStatusLoading) {
     return (
       <div className="flex-1 h-full flex items-center justify-center bg-blue-50">
@@ -23,7 +25,7 @@ export default function HomePage() {
       </div>
     )
   }
-  if (!enabled) {
+  if (!enabled && !user && !userLoading) {
     return <SystemDisabled />
   }
 
