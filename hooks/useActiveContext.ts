@@ -1,6 +1,9 @@
 "use client"
 
 import { useState, useEffect } from "react"
+// Add supabase client import
+import { createClientComponentClient } from "@supabase/auth-helpers-nextjs"
+import type { Database } from "@/types/supabase" // adjust path if needed
 
 interface ActiveContext {
   year: number
@@ -33,20 +36,26 @@ export function useActiveContext(school: string, grade: string): ActiveContext {
       }
 
       try {
-        const response = await fetch(
-          `/api/active-context?school=${encodeURIComponent(school)}&grade=${encodeURIComponent(grade)}`,
-        )
+        const supabase = createClientComponentClient<Database>()
+        // grade is string, convert to int
+        const gradeInt = Number.parseInt(grade)
+        if (isNaN(gradeInt)) {
+          throw new Error("Invalid grade")
+        }
+        const { data, error } = await supabase
+          .rpc("get_active_context", { school_slug: school, input_grade: gradeInt })
 
-        if (!response.ok) {
-          const errorData = await response.json()
-          throw new Error(errorData.error || `Failed to fetch active context: ${response.status}`)
+        if (error) {
+          throw new Error(error.message)
         }
 
-        const data = await response.json()
+        if (!data || data.length === 0) {
+          throw new Error("No active academic context found")
+        }
 
         setContext({
-          year: data.year,
-          term: data.term,
+          year: data[0].year,
+          term: data[0].term,
           fallback: false,
           loading: false,
           error: null,
