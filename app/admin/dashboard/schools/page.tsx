@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { createClientComponentClient } from "@supabase/auth-helpers-nextjs"
+import { createClientComponentSupabaseClient } from "@/lib/supabase"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -12,16 +12,17 @@ import { useAdminUser } from "@/hooks/useAdminUser"
 
 export default function SchoolsPage() {
   const user = useAdminUser()
-  const [schools, setSchools] = useState([])
+  const [schools, setSchools] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
-  const [error, setError] = useState("")
-  const [message, setMessage] = useState("")
+  const [error, setError] = useState<string>("")
+  const [message, setMessage] = useState<string>("")
   const [isDialogOpen, setIsDialogOpen] = useState(false)
-  const [editingSchool, setEditingSchool] = useState(null)
+  const [editingSchool, setEditingSchool] = useState<any | null>(null)
   const [schoolName, setSchoolName] = useState("")
+  const [schoolSlug, setSchoolSlug] = useState("")
   const [isSaving, setIsSaving] = useState(false)
 
-  const supabase = createClientComponentClient()
+  const supabase = createClientComponentSupabaseClient()
 
   useEffect(() => {
     fetchSchools()
@@ -37,7 +38,7 @@ export default function SchoolsPage() {
       if (error) throw error
 
       setSchools(data || [])
-    } catch (err) {
+    } catch (err: any) {
       setError("Failed to load schools: " + err.message)
     } finally {
       setLoading(false)
@@ -47,17 +48,19 @@ export default function SchoolsPage() {
   const handleAddSchool = () => {
     setEditingSchool(null)
     setSchoolName("")
+    setSchoolSlug("")
     setIsDialogOpen(true)
   }
 
-  const handleEditSchool = (school) => {
+  const handleEditSchool = (school: any) => {
     setEditingSchool(school)
     setSchoolName(school.name)
+    setSchoolSlug(school.slug || "")
     setIsDialogOpen(true)
   }
 
   const handleSaveSchool = async () => {
-    if (!schoolName.trim()) return
+    if (!schoolName.trim() || !schoolSlug.trim()) return
 
     try {
       setIsSaving(true)
@@ -65,13 +68,18 @@ export default function SchoolsPage() {
 
       if (editingSchool) {
         // Update existing school
-        const { error } = await supabase.from("schools").update({ name: schoolName.trim() }).eq("id", editingSchool.id)
+        const { error } = await supabase
+          .from("schools")
+          .update({ name: schoolName.trim(), slug: schoolSlug.trim() })
+          .eq("id", editingSchool.id)
 
         if (error) throw error
         setMessage(`School "${schoolName}" updated successfully`)
       } else {
         // Add new school
-        const { error } = await supabase.from("schools").insert({ name: schoolName.trim() })
+        const { error } = await supabase
+          .from("schools")
+          .insert({ name: schoolName.trim(), slug: schoolSlug.trim() })
 
         if (error) throw error
         setMessage(`School "${schoolName}" added successfully`)
@@ -80,7 +88,7 @@ export default function SchoolsPage() {
       // Refresh schools list
       await fetchSchools()
       setIsDialogOpen(false)
-    } catch (err) {
+    } catch (err: any) {
       setError("Failed to save school: " + err.message)
     } finally {
       setIsSaving(false)
@@ -157,6 +165,7 @@ export default function SchoolsPage() {
                       <div>
                         <h3 className="font-medium">{school.name}</h3>
                         <p className="text-sm text-gray-500">ID: {school.id}</p>
+                        <p className="text-xs text-gray-400">Slug: {school.slug || <span className="italic text-gray-300">none</span>}</p>
                       </div>
                       <Button variant="outline" size="sm" onClick={() => handleEditSchool(school)}>
                         <Pencil className="h-4 w-4 mr-1" />
@@ -194,12 +203,23 @@ export default function SchoolsPage() {
                   placeholder="Enter school name"
                 />
               </div>
+              <div className="space-y-2">
+                <label htmlFor="school-slug" className="text-sm font-medium">
+                  Slug
+                </label>
+                <Input
+                  id="school-slug"
+                  value={schoolSlug}
+                  onChange={(e) => setSchoolSlug(e.target.value)}
+                  placeholder="Enter school slug (e.g. el-fouad-primary)"
+                />
+              </div>
             </div>
             <DialogFooter>
               <Button variant="outline" onClick={() => setIsDialogOpen(false)} disabled={isSaving}>
                 Cancel
               </Button>
-              <Button onClick={handleSaveSchool} disabled={!schoolName.trim() || isSaving}>
+              <Button onClick={handleSaveSchool} disabled={!schoolName.trim() || !schoolSlug.trim() || isSaving}>
                 {isSaving ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
