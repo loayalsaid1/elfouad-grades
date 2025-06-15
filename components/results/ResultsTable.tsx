@@ -68,14 +68,14 @@ export default function ResultsTable({ student, onExportPDF, pdfLoading }: Resul
 
                 return (
                   <tr key={data.subject} className="hover:bg-gray-50">
-                    <td className="border border-gray-300 px-4 py-3 font-medium">{data.subject}</td>
+                    <td className="min-w-10 border border-gray-300 px-4 py-3 font-medium">{data.subject}</td>
                     <td className="border border-gray-300 px-4 py-3 text-center">{data.full_mark}</td>
                     <td className="border border-gray-300 px-4 py-3 text-center font-semibold">
                       {data.absent ? <span className="text-gray-600 text-lg font-bold">-</span> : formatScore(data.score)}
                     </td>
                     {showGrade && (
                       <td className="border border-gray-300 px-4 py-3 text-center">
-                        <Badge variant="secondary" className={grade.color}>{grade.text}</Badge>
+                        <Badge variant="secondary" className={`${grade.color} `}>{grade.text}</Badge>
                       </td>
                     )}
                   </tr>
