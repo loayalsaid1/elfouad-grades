@@ -33,7 +33,7 @@ export default function AdminDashboard() {
       const { count: schoolCount } = await supabase.from("schools").select("*", { count: "exact", head: true })
 
       // Get total students (from your existing CSV data)
-      const { count: studentCount } = await supabase.from("student_results").select("*", { count: "exact", head: true })
+      const { count: studentCount } = await supabase.from("distinct_students").select("*", { count: "exact", head: true });
 
       // Get active contexts
       const { count: activeCount } = await supabase
