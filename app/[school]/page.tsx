@@ -89,8 +89,8 @@ export default function SchoolPage() {
                       handleGradeSelect(grade)
                     }}
                   >
-                    <GraduationCap className="w-4 h-4 mr-2" />
-                    Select Grade
+                    <GraduationCap className="w-4 h-4 mr-1" />
+                    Select
                   </Button>
                 </CardContent>
               </Card>
