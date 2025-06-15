@@ -5,6 +5,7 @@ import "./globals.css"
 import Header from "@/components/layout/Header"
 import Footer from "@/components/layout/Footer"
 import { SystemStatusProvider } from "@/contexts/SystemStatusContext"
+import AdminSystemDisabledWarning from "@/components/admin/AdminSystemDisbaledWarning"
 
 const inter = Inter({ subsets: ["latin"] })
 
@@ -30,8 +31,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={`${inter.className} h-screen  flex flex-col`}>
+      <body className={`${inter.className} h-screen flex flex-col pt-7`}>
         <SystemStatusProvider>
+          <AdminSystemDisabledWarning />
           <Header />
           <main className="flex-1">{children}</main>
           <Footer />
