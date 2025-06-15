@@ -41,11 +41,20 @@ export default function AdminDashboard() {
         .select("*", { count: "exact", head: true })
         .eq("is_active", true)
 
+      // Fetch system_enabled status
+      const { data: systemSetting } = await supabase
+        .from("system_settings")
+        .select("value")
+        .eq("key", "system_enabled")
+        .single()
+
+      const systemEnabled = systemSetting?.value?.enabled !== false
+
       setStats({
         totalStudents: studentCount || 0,
         totalSchools: schoolCount || 2,
         activeContexts: activeCount || 0,
-        systemStatus: "enabled",
+        systemStatus: systemEnabled ? "enabled" : "disabled",
       })
     } catch (error) {
       console.error("Error loading stats:", error)
