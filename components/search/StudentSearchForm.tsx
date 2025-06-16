@@ -7,16 +7,14 @@ import { Search } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Alert, AlertDescription } from "@/components/ui/alert"
 import LoadingSpinner from "@/components/ui/LoadingSpinner"
 
 interface StudentSearchFormProps {
   onSearch: (studentId: string) => Promise<void>
   loading: boolean
-  error: string
 }
 
-export default function StudentSearchForm({ onSearch, loading, error }: StudentSearchFormProps) {
+export default function StudentSearchForm({ onSearch, loading }: StudentSearchFormProps) {
   const [studentId, setStudentId] = useState("")
 
   const handleSearch = async () => {
@@ -30,7 +28,6 @@ export default function StudentSearchForm({ onSearch, loading, error }: StudentS
       handleSearch()
     }
   }
-
 
   return (
     <div className="mb-8">
@@ -61,11 +58,6 @@ export default function StudentSearchForm({ onSearch, loading, error }: StudentS
             {loading ? "Searching..." : "Search"}
           </Button>
         </div>
-        {error && (
-          <Alert className="mt-4 border-red-200 bg-red-50">
-            <AlertDescription className="text-red-700">{error}</AlertDescription>
-          </Alert>
-        )}
       </CardContent>
     </Card>
     </div>

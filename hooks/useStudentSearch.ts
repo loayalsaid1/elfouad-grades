@@ -49,7 +49,14 @@ export function useStudentSearch(school: string, grade: number) {
       setPendingStudentId(null)
     } catch (err) {
       const error = err as Error & PasswordRequiredError
-      setPasswordError(error.message)
+      // Only show error if it's a password error, otherwise close dialog and show as main error
+      if (error.requiresPassword) {
+        setPasswordError(error.message)
+      } else {
+        setShowPasswordDialog(false)
+        setPendingStudentId(null)
+        setError(error.message)
+      }
     } finally {
       setPasswordLoading(false)
     }

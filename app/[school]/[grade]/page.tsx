@@ -23,12 +23,8 @@ export default function GradePage() {
 
 const { pdfLoading, generatePDF } = usePDFGeneration()
 
-  // const [showPasswordDialog, setShowPasswordDialog] = useState(false)
-  const [pendingStudentId, setPendingStudentId] = useState<string>("")
-
   const { year, term, loading: contextLoading, error: contextError } = useActiveContext(school, grade)
-  // const { studentResult: student, loading, error, searchStudent, clearStudent } = useStudentSearch(school, Number.parseInt(grade))
-const {
+  const {
       studentResult: student,
     loading,
     error,
@@ -45,22 +41,11 @@ const {
   const tableRef = useRef<HTMLDivElement | null>(null)
 
   const handleSearch = async (studentId: string, password?: string) => {
-    try {
-      await searchStudent(studentId, password)
-      setShowPasswordDialog(false)
-      setPendingStudentId("")
-    } catch (err: any) {
-      if (err.requiresPassword && !password) {
-        setPendingStudentId(studentId)
-        setShowPasswordDialog(true)
-      }
-    }
+    await searchStudent(studentId, password)
   }
 
   const handlePasswordSubmit = async (password: string) => {
-    if (pendingStudentId) {
-      await handleSearch(pendingStudentId, password)
-    }
+    await submitPassword(password)
   }
 
   // Scroll into view when student is found
@@ -144,10 +129,10 @@ const {
       <ParentPasswordDialog
         open={showPasswordDialog}
         onCancel={cancelPasswordDialog}
-        onSubmit={submitPassword}
+        onSubmit={handlePasswordSubmit}
         loading={passwordLoading}
         error={passwordError}
-        studentName={pendingStudentId ? student?.name : ''}
+        studentName={student?.name}
       />
     </div>
   )

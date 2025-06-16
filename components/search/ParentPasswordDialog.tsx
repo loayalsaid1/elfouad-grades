@@ -2,7 +2,7 @@
 
 import type React from "react"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -31,8 +31,16 @@ export default function ParentPasswordDialog({
   const [password, setPassword] = useState("")
   const [showPassword, setShowPassword] = useState(false)
 
+  // Clear password and error when dialog closes
+  useEffect(() => {
+    if (!open) {
+      setPassword("")
+    }
+  }, [open])
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    if (loading) return
     if (password.trim()) {
       await onSubmit(password.trim())
     }
@@ -83,6 +91,7 @@ export default function ParentPasswordDialog({
                 className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
                 onClick={() => setShowPassword(!showPassword)}
                 disabled={loading}
+                tabIndex={-1}
               >
                 {showPassword ? (
                   <EyeOff className="h-4 w-4 text-gray-400" />

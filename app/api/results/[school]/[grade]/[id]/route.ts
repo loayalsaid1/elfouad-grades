@@ -1,3 +1,4 @@
+// Thankfully, this garbage no longer used.. I loved postrgresql after replacing this endpoint..!
 import { type NextRequest, NextResponse } from "next/server"
 import { createRouteHandlerClient } from "@supabase/auth-helpers-nextjs"
 import { cookies } from "next/headers"
