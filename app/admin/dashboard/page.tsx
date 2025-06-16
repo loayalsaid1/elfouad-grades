@@ -92,7 +92,7 @@ export default function AdminDashboard() {
       {/* Main Content */}
       <main className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
         {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">Total Students</CardTitle>
@@ -100,16 +100,6 @@ export default function AdminDashboard() {
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">{stats.totalStudents}</div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Schools</CardTitle>
-              <School className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{stats.totalSchools}</div>
             </CardContent>
           </Card>
 
@@ -137,7 +127,7 @@ export default function AdminDashboard() {
         </div>
 
         {/* Quick Actions */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <Card
             className="cursor-pointer hover:shadow-lg transition-shadow"
             onClick={() => router.push("/admin/dashboard/upload")}
@@ -168,24 +158,6 @@ export default function AdminDashboard() {
             <CardContent>
               <Button variant="outline" className="w-full">
                 Open Settings
-              </Button>
-            </CardContent>
-          </Card>
-
-          <Card
-            className="cursor-pointer hover:shadow-lg transition-shadow"
-            onClick={() => router.push("/admin/dashboard/schools")}
-          >
-            <CardHeader>
-              <CardTitle className="flex items-center">
-                <School className="h-5 w-5 mr-2" />
-                Manage Schools
-              </CardTitle>
-              <CardDescription>Add and manage schools and academic contexts</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <Button variant="outline" className="w-full">
-                Manage Schools
               </Button>
             </CardContent>
           </Card>
