@@ -78,7 +78,7 @@ export default function Footer() {
         </div>
           {/* Copyright */}
         <div className="mt-6 pt-4 border-t border-white/20 text-center">
-          <div className="text-center md:text-right text-sm text-gray-400">
+          <div className="text-center text-sm text-gray-400">
             <p>&copy; {new Date().getFullYear()} El Fouad Schools</p>
             <p>All rights reserved</p>
           </div>
