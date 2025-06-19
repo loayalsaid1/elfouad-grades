@@ -2,7 +2,7 @@
 
 import { useState, useCallback } from "react"
 import { useDropzone } from "react-dropzone"
-import { createClientComponentClient } from "@supabase/auth-helpers-nextjs"
+import { createClientComponentSupabaseClient } from "@/lib/supabase"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Alert, AlertDescription } from "@/components/ui/alert"
@@ -36,7 +36,7 @@ export default function UploadPage() {
   const [message, setMessage] = useState<{ type: "success" | "error" | "info"; text: string } | null>(null)
   const [validationErrors, setValidationErrors] = useState<string[]>([])
 
-  const supabase = createClientComponentClient()
+  const supabase = createClientComponentSupabaseClient()
 
   // Helper function to check if a value indicates absence (ONLY for subject scores)
   const isAbsentScore = (value: string): boolean => {

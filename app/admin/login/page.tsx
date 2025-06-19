@@ -4,7 +4,7 @@ import type React from "react"
 
 import { useState } from "react"
 import { useRouter } from "next/navigation"
-import { createClientComponentClient } from "@supabase/auth-helpers-nextjs"
+import { createClientComponentSupabaseClient } from "@/lib/supabase"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
@@ -18,7 +18,7 @@ export default function AdminLogin() {
   const [resetSent, setResetSent] = useState(false)
   const [resetLoading, setResetLoading] = useState(false)
   const router = useRouter()
-  const supabase = createClientComponentClient()
+  const supabase = createClientComponentSupabaseClient()
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()

@@ -1,8 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
-// Add supabase client import
-import { createClientComponentClient } from "@supabase/auth-helpers-nextjs"
+import { createClientComponentSupabaseClient } from "@/lib/supabase"
 import type { Database } from "@/types/supabase" // adjust path if needed
 
 interface ActiveContext {
@@ -36,7 +35,7 @@ export function useActiveContext(school: string, grade: string): ActiveContext {
       }
 
       try {
-        const supabase = createClientComponentClient<Database>()
+        const supabase = createClientComponentSupabaseClient()
         // grade is string, convert to int
         const gradeInt = Number.parseInt(grade)
         if (isNaN(gradeInt)) {

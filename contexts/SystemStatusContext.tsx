@@ -1,7 +1,7 @@
 'use client'
 
 import React, { createContext, useContext, useEffect, useState } from "react"
-import { createClientComponentClient } from "@supabase/auth-helpers-nextjs"
+import { createClientComponentSupabaseClient } from "@/lib/supabase"
 
 const SystemStatusContext = createContext({ enabled: true, loading: true })
 
@@ -15,7 +15,7 @@ export function SystemStatusProvider({ children }: { children: React.ReactNode }
 
 
   useEffect(() => {
-    const supabase = createClientComponentClient()
+    const supabase = createClientComponentSupabaseClient()
     // Initial fetch
     supabase
       .from("system_settings")

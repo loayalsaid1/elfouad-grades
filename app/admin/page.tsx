@@ -1,7 +1,6 @@
 'use client'
 import { useEffect, useState } from "react";
 import { redirect } from "next/navigation";
-import { createClientComponentSupabaseClient } from "@/lib/supabase";
 import LoadingSpinner from "@/components/ui/LoadingSpinner";
 import { useAdminUser } from "@/hooks/useAdminUser";
 

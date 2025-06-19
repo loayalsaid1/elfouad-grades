@@ -1,11 +1,11 @@
 // a hook to get the current user
 import { useEffect, useState } from "react";
-import { createClientComponentClient, User } from "@supabase/auth-helpers-nextjs";
+import { createClientComponentSupabaseClient } from "@/lib/supabase";
 
 export default function useGetUser() {
-	const [user, setUser] = useState<User | null>(null);
+	const [user, setUser] = useState<any | null>(null);
 	const [loading, setLoading] = useState(true);
-	const supabase = createClientComponentClient();
+	const supabase = createClientComponentSupabaseClient();
 
 	useEffect(() => {
 		const fetchUser = async () => {

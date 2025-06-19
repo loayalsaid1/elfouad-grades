@@ -1,13 +1,13 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { createClientComponentClient, User } from "@supabase/auth-helpers-nextjs"
+import { createClientComponentSupabaseClient } from "@/lib/supabase"
 import { useRouter } from "next/navigation"
 
 export function useAdminUser() {
-  const [user, setUser] = useState<User | null>(null)
+  const [user, setUser] = useState<any | null>(null)
   const router = useRouter()
-  const supabase = createClientComponentClient()
+  const supabase = createClientComponentSupabaseClient()
 
   useEffect(() => {
     const getUser = async () => {

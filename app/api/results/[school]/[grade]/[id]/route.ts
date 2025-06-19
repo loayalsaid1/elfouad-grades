@@ -1,7 +1,6 @@
 // Thankfully, this garbage no longer used.. I loved postrgresql after replacing this endpoint..!
 import { type NextRequest, NextResponse } from "next/server"
-import { createRouteHandlerClient } from "@supabase/auth-helpers-nextjs"
-import { cookies } from "next/headers"
+import { createServerSupabaseClient } from "@/lib/supabase"
 
 export async function GET(request: NextRequest, { params }: { params: { school: string; grade: string; id: string } }) {
   try {
@@ -15,7 +14,7 @@ export async function GET(request: NextRequest, { params }: { params: { school: 
       return NextResponse.json({ error: "Invalid grade" }, { status: 400 })
     }
 
-    const supabase = createRouteHandlerClient({ cookies })
+    const supabase = createServerSupabaseClient()
 
     // Get school by slug
     const { data: schoolData, error: schoolError } = await supabase

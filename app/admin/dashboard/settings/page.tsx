@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { createClientComponentClient } from "@supabase/auth-helpers-nextjs"
+import { createClientComponentSupabaseClient } from "@/lib/supabase"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Switch } from "@/components/ui/switch"
@@ -26,7 +26,7 @@ export default function SettingsPage() {
   const [filterTerm, setFilterTerm] = useState("")
   const [filterSchool, setFilterSchool] = useState("")
 
-  const supabase = createClientComponentClient()
+  const supabase = createClientComponentSupabaseClient()
 
   useEffect(() => {
     fetchSettings()

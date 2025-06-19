@@ -1,13 +1,13 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { createClientComponentClient, User } from "@supabase/auth-helpers-nextjs"
 import { useRouter } from "next/navigation"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Upload, Settings, School, Users, Database, LogOut } from "lucide-react"
 import { useAdminUser } from "@/hooks/useAdminUser"
+import { createClientComponentSupabaseClient } from "@/lib/supabase"
 
 export default function AdminDashboard() {
   const user = useAdminUser()
@@ -18,7 +18,7 @@ export default function AdminDashboard() {
     systemStatus: "enabled",
   })
   const router = useRouter()
-  const supabase = createClientComponentClient()
+  const supabase = createClientComponentSupabaseClient()
 
   useEffect(() => {
     if (user) {

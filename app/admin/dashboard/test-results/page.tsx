@@ -11,7 +11,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { AlertCircle } from "lucide-react"
 import { usePDFGeneration } from "@/hooks/usePDFGeneration"
 import Instructions from "@/components/Instructions"
-import { createClientComponentClient } from "@supabase/auth-helpers-nextjs"
+import { createClientComponentSupabaseClient } from "@/lib/supabase"
 
 export default function AdminTestResultsPage() {
   // Use school slug for querying, so fetch all schools with id/slug mapping
@@ -31,7 +31,7 @@ export default function AdminTestResultsPage() {
     loading: false,
   })
 
-  const supabase = createClientComponentClient()
+  const supabase = createClientComponentSupabaseClient()
 
   // Student search hook (only call if all dropdowns selected)
   const { pdfLoading, generatePDF } = usePDFGeneration()
