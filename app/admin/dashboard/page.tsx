@@ -127,7 +127,7 @@ export default function AdminDashboard() {
         </div>
 
         {/* Quick Actions */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           <Card
             className="cursor-pointer hover:shadow-lg transition-shadow"
             onClick={() => router.push("/admin/dashboard/upload")}
@@ -158,6 +158,27 @@ export default function AdminDashboard() {
             <CardContent>
               <Button variant="outline" className="w-full">
                 Open Settings
+              </Button>
+            </CardContent>
+          </Card>
+
+          {/* New: Test Student Results Card */}
+          <Card
+            className="cursor-pointer hover:shadow-lg transition-shadow"
+            onClick={() => router.push("/admin/dashboard/test-results")}
+          >
+            <CardHeader>
+              <CardTitle className="flex items-center">
+                <Users className="h-5 w-5 mr-2" />
+                Test Student Results
+              </CardTitle>
+              <CardDescription>
+                Search and view student results as a normal user would
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Button variant="outline" className="w-full">
+                Open Test Results
               </Button>
             </CardContent>
           </Card>
