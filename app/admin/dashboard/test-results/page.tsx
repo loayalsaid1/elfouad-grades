@@ -11,12 +11,29 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { AlertCircle } from "lucide-react"
 import { usePDFGeneration } from "@/hooks/usePDFGeneration"
 import Instructions from "@/components/Instructions"
+import { createClientComponentClient } from "@supabase/auth-helpers-nextjs"
 
 export default function AdminTestResultsPage() {
-  // Admin can select school and grade
-  const [school, setSchool] = useState("international")
-  const [grade, setGrade] = useState(1)
+  // Use school slug for querying, so fetch all schools with id/slug mapping
+  const [schoolOptions, setSchoolOptions] = useState<{ id: number; slug: string; name: string }[]>([])
+  const [selection, setSelection] = useState({
+    school: "",
+    grade: "" as number | "",
+    year: "" as number | "",
+    term: "" as number | "",
+  })
 
+  const [contextState, setContextState] = useState({
+    years: [] as number[],
+    terms: [] as number[],
+    contexts: [] as any[],
+    activeContext: null as any | null,
+    loading: false,
+  })
+
+  const supabase = createClientComponentClient()
+
+  // Student search hook (only call if all dropdowns selected)
   const { pdfLoading, generatePDF } = usePDFGeneration()
   const {
     studentResult: student,
@@ -28,7 +45,12 @@ export default function AdminTestResultsPage() {
     cancelPasswordDialog,
     passwordError,
     passwordLoading,
-  } = useStudentSearch(school, grade)
+  } = useStudentSearch(
+    selection.school,
+    typeof selection.grade === "number" ? selection.grade : 0,
+    typeof selection.year === "number" ? selection.year : undefined,
+    typeof selection.term === "number" ? selection.term : undefined
+  )
 
   // Add refs for GradeReference and ResultsTable
   const referenceRef = useRef<HTMLDivElement | null>(null)
@@ -48,12 +70,79 @@ export default function AdminTestResultsPage() {
       (referenceRef.current || tableRef.current)?.scrollIntoView({ behavior: "smooth" });
   }, [student])
 
-  // School/grade options
-  const schools = [
-    { id: "international", name: "El-Fouad International School" },
-    { id: "modern", name: "El-Fouad Modern Schools" },
-  ]
-  const grades = Array.from({ length: 12 }, (_, i) => i + 1)
+  // Fetch all schools (with id/slug mapping) on mount
+  useEffect(() => {
+    supabase
+      .from("schools")
+      .select("id, slug, name")
+      .then(({ data }) => {
+        if (data) setSchoolOptions(data)
+      })
+  }, [supabase])
+
+  // Fetch available contexts when school/grade changes
+  useEffect(() => {
+    setContextState(prev => ({ ...prev, years: [], terms: [], activeContext: null, contexts: [] }))
+    if (!selection.school || !selection.grade) return
+
+    setContextState(prev => ({ ...prev, loading: true }))
+    // Find school id from slug
+    const schoolObj = schoolOptions.find((s) => s.slug === selection.school)
+    if (!schoolObj) {
+      setContextState(prev => ({ ...prev, loading: false }))
+      return
+    }
+    supabase
+      .from("academic_contexts")
+      .select("id, year, term, grade, is_active")
+      .eq("school_id", schoolObj.id)
+      .eq("grade", selection.grade)
+      .then(({ data }) => {
+        if (!data) {
+          setContextState(prev => ({ ...prev, loading: false }))
+          return
+        }
+        console.log("Fetched contexts:", data, schoolObj.id, selection.grade)
+        setContextState(prev => ({ ...prev, contexts: data }))
+        // Extract unique years and terms
+        const uniqueYears = Array.from(new Set(data.map((c) => c.year))).sort((a, b) => b - a)
+        setContextState(prev => ({ ...prev, years: uniqueYears }))
+        // If only one year, auto-select it
+        if (uniqueYears.length === 1) setSelection(prev => ({ ...prev, year: uniqueYears[0] }))
+        setContextState(prev => ({ ...prev, loading: false }))
+      })
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selection.school, selection.grade, schoolOptions])
+
+  // When year changes, update terms
+  useEffect(() => {
+    setContextState(prev => ({ ...prev, terms: [], activeContext: null }))
+    if (!selection.year || !contextState.contexts.length) return
+    const filtered = contextState.contexts.filter((c) => c.year === selection.year)
+    const uniqueTerms = Array.from(new Set(filtered.map((c) => c.term))).sort()
+    setContextState(prev => ({ ...prev, terms: uniqueTerms }))
+    // If only one term, auto-select it
+    if (uniqueTerms.length === 1) setSelection(prev => ({ ...prev, term: uniqueTerms[0] }))
+  }, [selection.year, contextState.contexts])
+
+  // When term changes, set active context if available
+  useEffect(() => {
+    if (!selection.year || !selection.term || !contextState.contexts.length) {
+      setContextState(prev => ({ ...prev, activeContext: null }))
+      return
+    }
+    const filtered = contextState.contexts.filter((c) => c.year === selection.year && c.term === selection.term)
+    // Prefer active context, else first
+    const active = filtered.find((c) => c.is_active) || filtered[0] || null
+    setContextState(prev => ({ ...prev, activeContext: active }))
+  }, [selection.year, selection.term, contextState.contexts])
+
+  // Only allow search if all dropdowns are selected and context exists
+  const canSearch = !!(selection.school && selection.grade && selection.year && selection.term && contextState.activeContext)
+
+  const handleSelectionChange = (field: keyof typeof selection, value: any) => {
+    setSelection(prev => ({ ...prev, [field]: value }))
+  }
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -66,7 +155,7 @@ export default function AdminTestResultsPage() {
 
       <Card className="mb-6">
         <CardHeader>
-          <CardTitle>Choose School and Grade</CardTitle>
+          <CardTitle>Choose Academic Context</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="flex flex-wrap gap-4 items-center">
@@ -74,11 +163,12 @@ export default function AdminTestResultsPage() {
               <label className="block text-sm font-medium mb-1">School</label>
               <select
                 className="border rounded px-2 py-1"
-                value={school}
-                onChange={e => setSchool(e.target.value)}
+                value={selection.school}
+                onChange={e => handleSelectionChange("school", e.target.value)}
               >
-                {schools.map(s => (
-                  <option key={s.id} value={s.id}>{s.name}</option>
+                <option value="">Select School</option>
+                {schoolOptions.map(s => (
+                  <option key={s.slug} value={s.slug}>{s.name}</option>
                 ))}
               </select>
             </div>
@@ -86,11 +176,41 @@ export default function AdminTestResultsPage() {
               <label className="block text-sm font-medium mb-1">Grade</label>
               <select
                 className="border rounded px-2 py-1"
-                value={grade}
-                onChange={e => setGrade(Number(e.target.value))}
+                value={selection.grade}
+                onChange={e => handleSelectionChange("grade", Number(e.target.value) || "")}
+                disabled={!selection.school}
               >
-                {grades.map(g => (
-                  <option key={g} value={g}>Grade {g}</option>
+                <option value="">Select Grade</option>
+                {[...Array(8)].map((_, i) => (
+                  <option key={i + 1} value={i + 1}>Grade {i + 1}</option>
+                ))}
+              </select>
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-1">Year</label>
+              <select
+                className="border rounded px-2 py-1"
+                value={selection.year}
+                onChange={e => handleSelectionChange("year", Number(e.target.value) || "")}
+                disabled={!selection.grade || !contextState.years.length}
+              >
+                <option value="">Select Year</option>
+                {contextState.years.map(y => (
+                  <option key={y} value={y}>{y}-{y + 1}</option>
+                ))}
+              </select>
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-1">Term</label>
+              <select
+                className="border rounded px-2 py-1"
+                value={selection.term}
+                onChange={e => handleSelectionChange("term", Number(e.target.value) || "")}
+                disabled={!selection.year || !contextState.terms.length}
+              >
+                <option value="">Select Term</option>
+                {contextState.terms.map(t => (
+                  <option key={t} value={t}>{t === 1 ? "First Term" : "Second Term"}</option>
                 ))}
               </select>
             </div>
@@ -99,7 +219,7 @@ export default function AdminTestResultsPage() {
       </Card>
 
       <div className="flex flex-col gap-6">
-        <StudentSearchForm onSearch={handleSearch} loading={loading} />
+        <StudentSearchForm onSearch={canSearch ? handleSearch : undefined} loading={loading || contextState.loading} />
 
         {error && (
           <Alert variant="destructive">
@@ -110,7 +230,7 @@ export default function AdminTestResultsPage() {
 
         {student && (
           <>
-            {grade < 7 && (
+            {typeof selection.grade === "number" && selection.grade < 7 && (
               <div ref={referenceRef}>
                 <GradeReference />
               </div>

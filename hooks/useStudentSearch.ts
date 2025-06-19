@@ -4,7 +4,12 @@ import { useState } from "react"
 import { StudentService } from "@/services/studentService"
 import type { StudentResult, PasswordRequiredError } from "@/types/student"
 
-export function useStudentSearch(school: string, grade: number) {
+export function useStudentSearch(
+  school: string,
+  grade: number,
+  year?: number,
+  term?: number
+) {
   const [studentResult, setStudentResult] = useState<StudentResult | null>(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState("")
@@ -19,7 +24,7 @@ export function useStudentSearch(school: string, grade: number) {
     setStudentResult(null)
 
     try {
-      const result = await StudentService.getStudentById(studentId, school, grade)
+      const result = await StudentService.getStudentById(studentId, school, grade, undefined, year, term)
       setStudentResult(result)
     } catch (err) {
       const error = err as Error & PasswordRequiredError
@@ -43,13 +48,12 @@ export function useStudentSearch(school: string, grade: number) {
     setPasswordError("")
 
     try {
-      const result = await StudentService.getStudentById(pendingStudentId, school, grade, password)
+      const result = await StudentService.getStudentById(pendingStudentId, school, grade, password, year, term)
       setStudentResult(result)
       setShowPasswordDialog(false)
       setPendingStudentId(null)
     } catch (err) {
       const error = err as Error & PasswordRequiredError
-      // Only show error if it's a password error, otherwise close dialog and show as main error
       if (error.requiresPassword) {
         setPasswordError(error.message)
       } else {

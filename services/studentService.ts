@@ -1,4 +1,5 @@
 import { createClientComponentSupabaseClient } from "@/lib/supabase"
+
 import type { StudentResult, PasswordRequiredError } from "@/types/student"
 
 function matchErrorCode(error: any, code: string) {
@@ -11,14 +12,24 @@ function matchErrorCode(error: any, code: string) {
 }
 
 export class StudentService {
-  static async getStudentById(id: string, school: string, grade: number, password?: string): Promise<StudentResult> {
+  static async getStudentById(
+    id: string,
+    school: string,
+    grade: number,
+    password?: string,
+    year?: number,
+    term?: number
+  ): Promise<StudentResult> {
     const supabase = createClientComponentSupabaseClient()
     // Call the Supabase function directly
+    console.log(school, grade, id, password, year, term)
     const { data, error } = await supabase.rpc("get_student_result", {
       school_slug: school,
       input_grade: grade,
       input_student_id: id,
       input_parent_password: password ?? null,
+      input_year: year ?? null,
+      input_term: term ?? null,
     })
 
     if (error) {
@@ -27,6 +38,9 @@ export class StudentService {
         throw new Error("School not found")
       }
       if (matchErrorCode(error, "C40401")) {
+        throw new Error("No academic context found for the given parameters")
+      }
+      if (matchErrorCode(error, "C40402")) {
         throw new Error("No active academic context found for this school and grade")
       }
       if (matchErrorCode(error, "ST40401")) {
