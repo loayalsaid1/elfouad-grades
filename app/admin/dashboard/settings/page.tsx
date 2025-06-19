@@ -9,6 +9,7 @@ import { Label } from "@/components/ui/label"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Loader2, Settings, AlertCircle, CheckCircle } from "lucide-react"
 import { useAdminUser } from "@/hooks/useAdminUser"
+import BackToDashboard from "@/components/admin/BackToDashboard"
 
 export default function SettingsPage() {
   const user = useAdminUser()
@@ -152,6 +153,7 @@ export default function SettingsPage() {
   return (
     <div className="min-h-screen bg-gray-50 py-8">
       <div className="max-w-4xl mx-auto px-4">
+        <BackToDashboard />
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-gray-900 flex items-center">
             <Settings className="mr-3" />

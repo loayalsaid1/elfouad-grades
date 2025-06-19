@@ -11,6 +11,7 @@ import { Upload, FileText, AlertCircle, CheckCircle, Info } from "lucide-react"
 import { ContextSelector } from "@/components/admin/context-selector"
 import Papa from "papaparse"
 import { useAdminUser } from "@/hooks/useAdminUser"
+import BackToDashboard from "@/components/admin/BackToDashboard"
 
 interface ParsedStudent {
   student_id: string
@@ -353,6 +354,8 @@ export default function UploadPage() {
   return (
     <div className="min-h-screen bg-gray-50 py-8">
       <div className="max-w-6xl mx-auto px-4">
+        <BackToDashboard />
+
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-gray-900">Upload Student Results</h1>
           <p className="text-gray-600 mt-2">

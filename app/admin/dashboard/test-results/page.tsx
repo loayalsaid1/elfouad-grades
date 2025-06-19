@@ -12,6 +12,7 @@ import { AlertCircle } from "lucide-react"
 import { usePDFGeneration } from "@/hooks/usePDFGeneration"
 import Instructions from "@/components/Instructions"
 import { createClientComponentSupabaseClient } from "@/lib/supabase"
+import BackToDashboard from "@/components/admin/BackToDashboard"
 
 export default function AdminTestResultsPage() {
   // Use school slug for querying, so fetch all schools with id/slug mapping
@@ -146,6 +147,7 @@ export default function AdminTestResultsPage() {
 
   return (
     <div className="container mx-auto px-4 py-8">
+      <BackToDashboard />
       <div className="mb-8">
         <h1 className="text-3xl font-bold mb-2">Test Student Results</h1>
         <p className="text-muted-foreground">
