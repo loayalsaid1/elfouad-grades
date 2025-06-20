@@ -9,14 +9,12 @@ import { useSystemStatus } from "@/contexts/SystemStatusContext"
 import Image from "next/image"
 import LoadingSpinner from "@/components/ui/LoadingSpinner"
 import SystemDisabled from "@/components/SystemDisabled"
-import useGetUser from "@/hooks/useGetUser"
 
 export default function HomePage() {
   const router = useRouter()
   const [selectedSchool, setSelectedSchool] = useState<string | null>(null)
   
   const { enabled, loading: systemStatusLoading } = useSystemStatus()
-  const { user, loading: userLoading } = useGetUser()
   
   if (systemStatusLoading) {
     return (
@@ -25,7 +23,7 @@ export default function HomePage() {
       </div>
     )
   }
-  if (!enabled && !user && !userLoading) {
+  if (!enabled) {
     return <SystemDisabled />
   }
 
