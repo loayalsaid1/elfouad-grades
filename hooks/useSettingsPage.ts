@@ -1,6 +1,23 @@
 import { useState, useEffect } from "react"
 import { createClientComponentSupabaseClient } from "@/lib/supabase"
 
+export interface AcademicContext {
+  id: string
+  year: number
+  term: number
+  grade: number
+  is_active: boolean
+  school_id: string
+  schools?: { name: string }
+}
+
+export interface SettingsPageFilters {
+  year: string
+  grade: string
+  term: string
+  school: string
+}
+
 /**
  * A custom hook to manage system settings and active academic contexts.
  *
@@ -20,14 +37,14 @@ import { createClientComponentSupabaseClient } from "@/lib/supabase"
  */
 
 export function useSettingsPage() {
-  const [loading, setLoading] = useState(true)
-  const [saving, setSaving] = useState(false)
-  const [systemEnabled, setSystemEnabled] = useState(true)
-  const [contexts, setContexts] = useState<any[]>([])
-  const [activeContexts, setActiveContexts] = useState<{[key: string]: boolean}>({})
-  const [message, setMessage] = useState("")
-  const [error, setError] = useState("")
-  const [filters, setFilters] = useState({
+  const [loading, setLoading] = useState<boolean>(true)
+  const [saving, setSaving] = useState<boolean>(false)
+  const [systemEnabled, setSystemEnabled] = useState<boolean>(true)
+  const [contexts, setContexts] = useState<AcademicContext[]>([])
+  const [activeContexts, setActiveContexts] = useState<Record<string, boolean>>({})
+  const [message, setMessage] = useState<string>("")
+  const [error, setError] = useState<string>("")
+  const [filters, setFilters] = useState<SettingsPageFilters>({
     year: "",
     grade: "",
     term: "",
@@ -54,7 +71,7 @@ export function useSettingsPage() {
       if (settingsData) {
         setSystemEnabled(settingsData.value?.enabled !== false)
       }
-      // Fetch academic contexts with school names
+      // Fetch academic contexts with school names and school_id
       const { data: contextsData, error: contextsError } = await supabase
         .from("academic_contexts")
         .select(`
@@ -63,6 +80,7 @@ export function useSettingsPage() {
           term,
           grade,
           is_active,
+          school_id,
           schools (
             name
           )
@@ -73,8 +91,8 @@ export function useSettingsPage() {
       if (contextsError) throw contextsError
       setContexts(contextsData || [])
       // Create active contexts map
-      const activeMap: {[key: string]: boolean} = {}
-      contextsData?.forEach((context: any) => {
+      const activeMap: Record<string, boolean> = {}
+      contextsData?.forEach((context: AcademicContext) => {
         activeMap[context.id] = context.is_active || false
       })
       setActiveContexts(activeMap)
@@ -97,17 +115,17 @@ export function useSettingsPage() {
       }, {onConflict: 'key'})
       if (systemError) throw systemError
 
-      // Bulk update active contexts in a transaction
-      const updates = Object.entries(activeContexts).map(([contextId, isActive]) => ({
-        id: contextId,
-        is_active: isActive,
+      // Prepare updates array for RPC
+      const updates = contexts.map((context: AcademicContext) => ({
+        id: context.id,
+        is_active: activeContexts[context.id] || false,
       }))
-      if (updates.length > 0) {
-        const { error: contextsError } = await supabase
-          .from("academic_contexts")
-          .upsert(updates, { onConflict: "id" })
-        if (contextsError) throw contextsError
-      }
+
+      // Call the RPC to update all contexts in a transaction
+      const { error: rpcError } = await supabase.rpc("bulk_update_contexts_is_active", {
+        updates
+      })
+      if (rpcError) throw rpcError
 
       setMessage("Settings saved successfully!")
     } catch (err: any) {

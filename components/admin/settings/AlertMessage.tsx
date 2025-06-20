@@ -1,7 +1,12 @@
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { AlertCircle, CheckCircle } from "lucide-react"
 
-export function AlertMessage({ error, message }: { error?: string, message?: string }) {
+interface AlertMessageProps {
+  error?: string
+  message?: string
+}
+
+export function AlertMessage({ error, message }: AlertMessageProps) {
   if (!error && !message) return null
   return (
     <>

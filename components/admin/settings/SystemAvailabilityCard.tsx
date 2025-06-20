@@ -2,13 +2,15 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Switch } from "@/components/ui/switch"
 import { Label } from "@/components/ui/label"
 
+interface SystemAvailabilityCardProps {
+  systemEnabled: boolean
+  setSystemEnabled: (v: boolean) => void
+}
+
 export function SystemAvailabilityCard({
   systemEnabled,
   setSystemEnabled,
-}: {
-  systemEnabled: boolean,
-  setSystemEnabled: (v: boolean) => void
-}) {
+}: SystemAvailabilityCardProps) {
   return (
     <Card className="mb-6">
       <CardHeader>

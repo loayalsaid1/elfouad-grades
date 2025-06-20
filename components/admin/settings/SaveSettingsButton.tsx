@@ -1,7 +1,12 @@
 import { Button } from "@/components/ui/button"
 import { Loader2 } from "lucide-react"
 
-export function SaveSettingsButton({ saving, onSave }: { saving: boolean, onSave: () => void }) {
+interface SaveSettingsButtonProps {
+  saving: boolean
+  onSave: () => void
+}
+
+export function SaveSettingsButton({ saving, onSave }: SaveSettingsButtonProps) {
   return (
     <Button onClick={onSave} disabled={saving} className="min-w-[120px]">
       {saving ? (
