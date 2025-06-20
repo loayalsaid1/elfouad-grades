@@ -12,6 +12,7 @@ import { ContextSelector } from "@/components/admin/context-selector"
 import Papa from "papaparse"
 import { useAdminUser } from "@/hooks/useAdminUser"
 import BackToDashboard from "@/components/admin/BackToDashboard"
+import LoadingPage from "@/components/admin/LoadingPage"
 
 interface ParsedStudent {
   student_id: string
@@ -339,16 +340,7 @@ export default function UploadPage() {
   }
 
   if (!user) {
-    return (
-      <div className="min-h-screen bg-gray-50 py-8">
-        <div className="max-w-6xl mx-auto px-4">
-          <div className="flex items-center justify-center p-8">
-            <Upload className="h-6 w-6 animate-spin mr-2" />
-            <span>Loading upload page...</span>
-          </div>
-        </div>
-      </div>
-    )
+    return <LoadingPage message="Loading upload page..." />
   }
 
   return (

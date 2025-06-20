@@ -8,6 +8,7 @@ import { Badge } from "@/components/ui/badge"
 import { Upload, Settings, School, Users, Database, LogOut } from "lucide-react"
 import { useAdminUser } from "@/hooks/useAdminUser"
 import { createClientComponentSupabaseClient } from "@/lib/supabase"
+import LoadingPage from "@/components/admin/LoadingPage"
 
 export default function AdminDashboard() {
   const user = useAdminUser()
@@ -66,7 +67,7 @@ export default function AdminDashboard() {
     router.push("/admin/login")
   }
 
-  if (!user) return <div>Loading...</div>
+  if (!user) return <LoadingPage message="Loading dashboard..." />
 
   return (
     <div className="min-h-screen bg-gray-50">

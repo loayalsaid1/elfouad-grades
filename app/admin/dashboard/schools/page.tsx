@@ -10,6 +10,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "
 import { Loader2, Plus, Pencil, School, AlertCircle, CheckCircle } from "lucide-react"
 import { useAdminUser } from "@/hooks/useAdminUser"
 import BackToDashboard from "@/components/admin/BackToDashboard"
+import LoadingPage from "@/components/admin/LoadingPage"
 
 export default function SchoolsPage() {
   const user = useAdminUser()
@@ -105,16 +106,7 @@ export default function SchoolsPage() {
   }, [message])
 
   if (!user) {
-    return (
-      <div className="min-h-screen bg-gray-50 py-8">
-        <div className="max-w-4xl mx-auto px-4">
-          <div className="flex items-center justify-center p-8">
-            <Loader2 className="h-6 w-6 animate-spin mr-2" />
-            <span>Loading schools...</span>
-          </div>
-        </div>
-      </div>
-    )
+    return <LoadingPage message="Loading schools..." />
   }
 
   return (

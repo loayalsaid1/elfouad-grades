@@ -13,8 +13,11 @@ import { usePDFGeneration } from "@/hooks/usePDFGeneration"
 import Instructions from "@/components/Instructions"
 import { createClientComponentSupabaseClient } from "@/lib/supabase"
 import BackToDashboard from "@/components/admin/BackToDashboard"
+import { useAdminUser } from "@/hooks/useAdminUser"
+import LoadingPage from "@/components/admin/LoadingPage"
 
 export default function AdminTestResultsPage() {
+  const user = useAdminUser()
   // Use school slug for querying, so fetch all schools with id/slug mapping
   const [schoolOptions, setSchoolOptions] = useState<{ id: number; slug: string; name: string }[]>([])
   const [selection, setSelection] = useState({
@@ -144,6 +147,8 @@ export default function AdminTestResultsPage() {
   const handleSelectionChange = (field: keyof typeof selection, value: any) => {
     setSelection(prev => ({ ...prev, [field]: value }))
   }
+
+  if (!user) return <LoadingPage message="Loading test-results page..." />
 
   return (
     <div className="container mx-auto px-4 py-8">

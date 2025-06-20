@@ -10,6 +10,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Loader2, Settings, AlertCircle, CheckCircle } from "lucide-react"
 import { useAdminUser } from "@/hooks/useAdminUser"
 import BackToDashboard from "@/components/admin/BackToDashboard"
+import LoadingPage from "@/components/admin/LoadingPage"
 
 export default function SettingsPage() {
   const user = useAdminUser()
@@ -138,16 +139,7 @@ export default function SettingsPage() {
   })
 
   if (loading || !user) {
-    return (
-      <div className="min-h-screen bg-gray-50 py-8">
-        <div className="max-w-4xl mx-auto px-4">
-          <div className="flex items-center justify-center p-8">
-            <Loader2 className="h-6 w-6 animate-spin mr-2" />
-            <span>Loading settings...</span>
-          </div>
-        </div>
-      </div>
-    )
+    return <LoadingPage message="Loading settings..." />
   }
 
   return (
