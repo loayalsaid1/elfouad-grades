@@ -37,10 +37,28 @@ export function AcademicContextsCard({
   })
 
   const toggleContext = (contextId: string, active: boolean) => {
-    setActiveContexts((prev) => ({
-      ...prev,
-      [contextId]: active,
-    }))
+    // Find the context being toggled
+    const toggledContext = contexts.find((c) => c.id === contextId)
+    if (!toggledContext) return setActiveContexts((prev) => ({ ...prev, [contextId]: active }))
+
+    setActiveContexts((prev) => {
+      // If activating, detoggle all with same school and grade
+      if (active) {
+        const updated: Record<string, boolean> = { ...prev }
+        contexts.forEach((c) => {
+          if (
+            c.schools?.name === toggledContext.schools?.name &&
+            c.grade === toggledContext.grade
+          ) {
+            updated[c.id] = c.id === contextId
+          }
+        })
+        return updated
+      } else {
+        // Just deactivate this one
+        return { ...prev, [contextId]: false }
+      }
+    })
   }
 
   return (
