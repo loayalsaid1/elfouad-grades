@@ -11,12 +11,15 @@ import { useActiveContext } from "@/hooks/useActiveContext"
 import { useStudentSearch } from "@/hooks/useStudentSearch"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { AlertCircle, Database } from "lucide-react"
+import { AlertCircle, ArrowLeft, Database } from "lucide-react"
 import { usePDFGeneration } from "@/hooks/usePDFGeneration"
 import Instructions from "@/components/Instructions"
+import { useRouter } from "next/navigation"
+import { Button } from "@/components/ui/button"
 
 
 export default function GradePage() {
+  const router = useRouter()
   const params = useParams()
   const school = params.school as string
   const grade = params.grade as string
@@ -55,6 +58,10 @@ const { pdfLoading, generatePDF } = usePDFGeneration()
       (referenceRef.current || tableRef.current)?.scrollIntoView({ behavior: "smooth" });
   }, [student])
 
+  const handleBack = () => {
+    router.push(`/${school}`)
+  }
+  
   // Show context loading state
   if (contextLoading) {
     return (
@@ -73,6 +80,10 @@ const { pdfLoading, generatePDF } = usePDFGeneration()
   if (contextError) {
     return (
       <div className="container h-full mx-auto px-4 py-8">
+        <Button variant="outline" onClick={handleBack} className="mb-8 hover:bg-[#223152] hover:text-white">
+          <ArrowLeft className="w-4 h-4 mr-2" />
+          Back to Grades
+        </Button>
         <Alert variant="destructive">
           <AlertCircle className="h-4 w-4" />
           <AlertDescription>
@@ -89,6 +100,11 @@ const { pdfLoading, generatePDF } = usePDFGeneration()
 
   return (
     <div className="container mx-auto px-4 py-8">
+      <Button variant="outline" onClick={handleBack} className="mb-8 hover:bg-[#223152] hover:text-white">
+        <ArrowLeft className="w-4 h-4 mr-2" />
+        Back to Grades
+      </Button>
+      
       <div className="mb-8">
         <h1 className="text-3xl font-bold mb-2">
           {school === "international" ? "El-Fouad International School" : "El-Fouad Modern Schools"} - Grade {grade}
