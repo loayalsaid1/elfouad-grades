@@ -96,14 +96,19 @@ export function useSettingsPage() {
         value: { enabled: systemEnabled },
       }, {onConflict: 'key'})
       if (systemError) throw systemError
-      // Update active contexts
-      for (const [contextId, isActive] of Object.entries(activeContexts)) {
-        const { error: contextError } = await supabase
+
+      // Bulk update active contexts in a transaction
+      const updates = Object.entries(activeContexts).map(([contextId, isActive]) => ({
+        id: contextId,
+        is_active: isActive,
+      }))
+      if (updates.length > 0) {
+        const { error: contextsError } = await supabase
           .from("academic_contexts")
-          .update({ is_active: isActive })
-          .eq("id", contextId)
-        if (contextError) throw contextError
+          .upsert(updates, { onConflict: "id" })
+        if (contextsError) throw contextsError
       }
+
       setMessage("Settings saved successfully!")
     } catch (err: any) {
       setError("Failed to save settings: " + err.message)
