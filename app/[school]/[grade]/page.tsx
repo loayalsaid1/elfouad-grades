@@ -72,7 +72,7 @@ const { pdfLoading, generatePDF } = usePDFGeneration()
   // Show context error
   if (contextError) {
     return (
-      <div className="container mx-auto px-4 py-8">
+      <div className="container h-full mx-auto px-4 py-8">
         <Alert variant="destructive">
           <AlertCircle className="h-4 w-4" />
           <AlertDescription>

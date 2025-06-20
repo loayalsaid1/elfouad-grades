@@ -37,7 +37,7 @@ export default function SchoolPage() {
   }
 
   return (
-    <div className="bg-gradient-to-br from-slate-50 to-blue-50 min-h-screen">
+    <div className="bg-gradient-to-br from-slate-50 to-blue-50 h-full">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
         {/* Back Button */}
         <Button variant="outline" onClick={handleBack} className="mb-8 hover:bg-[#223152] hover:text-white">
