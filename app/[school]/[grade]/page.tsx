@@ -99,57 +99,59 @@ const { pdfLoading, generatePDF } = usePDFGeneration()
   }
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <Button variant="outline" onClick={handleBack} className="mb-8 hover:bg-[#223152] hover:text-white">
-        <ArrowLeft className="w-4 h-4 mr-2" />
-        Back to Grades
-      </Button>
-      
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold mb-2">
-          {school === "international" ? "El-Fouad International School" : "El-Fouad Modern Schools"} - Grade {grade}
-        </h1>
-        <p className="text-muted-foreground">
-          Academic Year {year}/{year + 1} - Term {term}
-        </p>
-      </div>
+    <div className="h-full bg-gradient-to-br from-slate-50 to-blue-50">
+      <div className="container mx-auto px-4 py-8">
+        <Button variant="outline" onClick={handleBack} className="mb-8 hover:bg-[#223152] hover:text-white">
+          <ArrowLeft className="w-4 h-4 mr-2" />
+          Back to Grades
+        </Button>
+        
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold mb-2">
+            {school === "international" ? "El-Fouad International School" : "El-Fouad Modern Schools"} - Grade {grade}
+          </h1>
+          <p className="text-muted-foreground">
+            Academic Year {year}/{year + 1} - Term {term}
+          </p>
+        </div>
 
-      <div className="flex flex-col gap-6">
-        <StudentSearchForm onSearch={handleSearch} loading={loading} />
+        <div className="flex flex-col gap-6">
+          <StudentSearchForm onSearch={handleSearch} loading={loading} />
 
-        {error && (
-          <Alert variant="destructive">
-            <AlertCircle className="h-4 w-4" />
-            <AlertDescription>{error}</AlertDescription>
-          </Alert>
-        )}
+          {error && (
+            <Alert variant="destructive">
+              <AlertCircle className="h-4 w-4" />
+              <AlertDescription>{error}</AlertDescription>
+            </Alert>
+          )}
 
-        {student && (
-          <>
-            {/* GradeReference (with ref) */}
-            {Number.parseInt(grade) < 7 && (
-              <div ref={referenceRef}>
-                <GradeReference />
+          {student && (
+            <>
+              {/* GradeReference (with ref) */}
+              {Number.parseInt(grade) < 7 && (
+                <div ref={referenceRef}>
+                  <GradeReference />
+                </div>
+              )}
+              {/* ResultsTable (with ref) */}
+              <div ref={tableRef}>
+                <ResultsTable student={student} onExportPDF={() => generatePDF(student)} pdfLoading={pdfLoading} />
               </div>
-            )}
-            {/* ResultsTable (with ref) */}
-            <div ref={tableRef}>
-              <ResultsTable student={student} onExportPDF={() => generatePDF(student)} pdfLoading={pdfLoading} />
-            </div>
-          </>
-        )}
+            </>
+          )}
 
-        {!student && <Instructions />}
+          {!student && <Instructions />}
+        </div>
+
+        <ParentPasswordDialog
+          open={showPasswordDialog}
+          onCancel={cancelPasswordDialog}
+          onSubmit={handlePasswordSubmit}
+          loading={passwordLoading}
+          error={passwordError}
+          studentName={student?.name}
+        />
       </div>
-
-      <ParentPasswordDialog
-        open={showPasswordDialog}
-        onCancel={cancelPasswordDialog}
-        onSubmit={handlePasswordSubmit}
-        loading={passwordLoading}
-        error={passwordError}
-        studentName={student?.name}
-      />
     </div>
   )
 }
