@@ -69,6 +69,7 @@ export default function SettingsPage() {
           setActiveContexts={settings.setActiveContexts}
           filters={settings.filters}
           setFilters={settings.setFilters}
+          deleteContext={settings.deleteContext}
         />
         <div className="flex justify-end">
           <SaveSettingsButton

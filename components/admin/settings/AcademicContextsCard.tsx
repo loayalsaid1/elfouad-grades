@@ -8,6 +8,7 @@ interface AcademicContextsCardProps {
   setActiveContexts: React.Dispatch<React.SetStateAction<Record<string, boolean>>>
   filters: SettingsPageFilters
   setFilters: React.Dispatch<React.SetStateAction<SettingsPageFilters>>
+  deleteContext: (contextId: string) => void 
 }
 
 function getOptions(contexts: AcademicContext[]) {
@@ -24,6 +25,7 @@ export function AcademicContextsCard({
   setActiveContexts,
   filters,
   setFilters,
+  deleteContext,
 }: AcademicContextsCardProps) {
   const { schoolOptions, yearOptions, gradeOptions, termOptions } = getOptions(contexts)
 
@@ -134,6 +136,7 @@ export function AcademicContextsCard({
                 context={context}
                 isActive={activeContexts[context.id] || false}
                 onToggle={(checked) => toggleContext(context.id, checked)}
+                onDelete={() => deleteContext(context.id)} // Pass delete handler
               />
             ))
           ) : (

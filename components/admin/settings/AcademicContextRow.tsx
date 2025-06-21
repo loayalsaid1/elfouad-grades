@@ -5,12 +5,14 @@ interface AcademicContextRowProps {
   context: AcademicContext
   isActive: boolean
   onToggle: (checked: boolean) => void
+  onDelete: () => void // Add this prop
 }
 
 export function AcademicContextRow({
   context,
   isActive,
   onToggle,
+  onDelete,
 }: AcademicContextRowProps) {
   return (
     <div className="flex items-center justify-between border-b pb-3">
@@ -28,10 +30,19 @@ export function AcademicContextRow({
           </span>
         </div>
       </div>
-      <Switch
-        checked={isActive}
-        onCheckedChange={onToggle}
-      />
+      <div className="flex items-center gap-2">
+        <Switch
+          checked={isActive}
+          onCheckedChange={onToggle}
+        />
+        <button
+          onClick={onDelete}
+          className="ml-2 text-red-600 hover:underline text-xs"
+          title="Delete context"
+        >
+          Delete
+        </button>
+      </div>
     </div>
   )
 }

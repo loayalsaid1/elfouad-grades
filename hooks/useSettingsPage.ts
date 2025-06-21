@@ -135,6 +135,25 @@ export function useSettingsPage() {
     }
   }
 
+  const deleteContext = async (contextId: string) => {
+    try {
+      setSaving(true)
+      setError("")
+      await supabase.from("academic_contexts").delete().eq("id", contextId)
+      setContexts((prev) => prev.filter((c) => c.id !== contextId))
+      setActiveContexts((prev) => {
+        const updated = { ...prev }
+        delete updated[contextId]
+        return updated
+      })
+      setMessage("Academic context deleted.")
+    } catch (err: any) {
+      setError("Failed to delete context: " + err.message)
+    } finally {
+      setSaving(false)
+    }
+  }
+
   return {
     loading,
     saving,
@@ -148,5 +167,6 @@ export function useSettingsPage() {
     filters,
     setFilters,
     handleSaveSettings,
+    deleteContext,
   }
 }
