@@ -30,9 +30,9 @@ export function ContextSelector({ onContextChange }: ContextSelectorProps) {
 
   const supabase = createClientComponentSupabaseClient()
 
-  // Generate year options (current year and 5 years back/forward)
+  // Generate year options (from 2004 to 5 years from now)
   const currentYear = new Date().getFullYear()
-  const yearOptions = Array.from({ length: 11 }, (_, i) => currentYear - 5 + i)
+  const yearOptions = Array.from({ length: currentYear + 5 - 2004 + 1 }, (_, i) => 2004 + i)
 
   // Grade options (1-12)
   const gradeOptions = Array.from({ length: 12 }, (_, i) => i + 1)
