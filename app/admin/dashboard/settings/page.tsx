@@ -9,13 +9,42 @@ import { SystemAvailabilityCard } from "@/components/admin/settings/SystemAvaila
 import { AcademicContextsCard } from "@/components/admin/settings/AcademicContextsCard"
 import { SaveSettingsButton } from "@/components/admin/settings/SaveSettingsButton"
 import { useSettingsPage } from "@/hooks/useSettingsPage"
+import { useEffect, useState } from "react"
+import { ActiveContextsConfirmDialog } from "@/components/admin/settings/ActiveContextsConfirmDialog"
+import { useActiveContextChanges } from "@/hooks/useActiveContextChanges"
 
 export default function SettingsPage() {
   const user = useAdminUser()
   const settings = useSettingsPage()
+  const [showConfirm, setShowConfirm] = useState(false)
+  const [pendingSave, setPendingSave] = useState(false)
+  const [changes, setChanges] = useState<{ id: string; name: string; from: boolean; to: boolean }[]>([])
+
+  const {
+    getChanges,
+    resetInitial,
+  } = useActiveContextChanges(settings.contexts, settings.activeContexts, settings.loading)
 
   if (settings.loading || !user) {
     return <LoadingPage message="Loading settings..." />
+  }
+
+  const handleSave = () => {
+    const diff = getChanges()
+    setChanges(diff)
+    if (diff.length > 0) {
+      setShowConfirm(true)
+    } else {
+      settings.handleSaveSettings()
+    }
+  }
+
+  const handleConfirm = async () => {
+    setPendingSave(true)
+    await settings.handleSaveSettings()
+    setShowConfirm(false)
+    setPendingSave(false)
+    resetInitial()
   }
 
   return (
@@ -44,9 +73,17 @@ export default function SettingsPage() {
         <div className="flex justify-end">
           <SaveSettingsButton
             saving={settings.saving}
-            onSave={settings.handleSaveSettings}
+            onSave={handleSave}
           />
         </div>
+        {/* Confirmation Modal */}
+        <ActiveContextsConfirmDialog
+          open={showConfirm}
+          onOpenChange={setShowConfirm}
+          changes={changes}
+          pendingSave={pendingSave}
+          onConfirm={handleConfirm}
+        />
       </div>
     </div>
   )
