@@ -4,6 +4,7 @@ import type { AcademicContext, SettingsPageFilters } from "@/hooks/useSettingsPa
 import { useState } from "react"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
+import { Loader2 } from "lucide-react"
 
 interface AcademicContextsCardProps {
   contexts: AcademicContext[]
@@ -171,7 +172,7 @@ export function AcademicContextsCard({
             </div>
             <DialogFooter>
               <Button variant="outline" onClick={() => setPendingDelete(null)} disabled={deleting}>Cancel</Button>
-              <Button variant="destructive" onClick={handleDelete} loading={deleting}>Delete</Button>
+              <Button variant="destructive" onClick={handleDelete} disabled={deleting}>{deleting ? <Loader2 className="animate-spin h-4 w-4" /> : ""} Delete</Button>
             </DialogFooter>
           </DialogContent>
         </Dialog>
