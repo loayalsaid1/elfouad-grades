@@ -10,18 +10,52 @@ import { useAdminUser } from "@/hooks/useAdminUser"
 import LoadingPage from "@/components/admin/LoadingPage"
 import { format, subDays, subWeeks, subMonths, subYears } from "date-fns"
 
+type LoginRecord = {
+  id: string
+  email: string
+  created_at: string
+  ip_address: string | null
+  user_agent: string | undefined
+  latitude: number | null
+  longitude: number | null
+}
+
+type FilterType = "24h" | "7d" | "30d" | "year" | "all" | "custom"
+
+function getFilterLabel(filter: FilterType, customStart: string, customEnd: string): string {
+  switch (filter) {
+    case "24h":
+      return "Last 24 hours"
+    case "7d":
+      return "Last 7 days"
+    case "30d":
+      return "Last 30 days"
+    case "year":
+      return "Last year"
+    case "all":
+      return "All logins"
+    case "custom":
+      if (customStart && customEnd) {
+        return `Custom range: ${customStart} to ${customEnd}`
+      }
+      return "Custom range"
+    default:
+      return ""
+  }
+}
+
 export default function AdminLoginsPage() {
   const user = useAdminUser()
-  const [logins, setLogins] = useState<any[]>([])
-  const [loading, setLoading] = useState(true)
+  const [logins, setLogins] = useState<LoginRecord[]>([])
+  const [loading, setLoading] = useState<boolean>(true)
   const [error, setError] = useState<string | null>(null)
-  const [filter, setFilter] = useState<"24h" | "7d" | "30d" | "year" | "all" | "custom">("7d")
+  const [filter, setFilter] = useState<FilterType>("7d")
   const [customStart, setCustomStart] = useState<string>("")
   const [customEnd, setCustomEnd] = useState<string>("")
   const supabase = createClientComponentSupabaseClient()
 
   useEffect(() => {
-    const fetchLogins = async () => {
+    const fetchLogins = async (): Promise<void> => {
       setLoading(true)
       setError(null)
       try {
@@ -57,7 +91,7 @@ export default function AdminLoginsPage() {
 
         const { data, error } = await query
         if (error) throw error
-        setLogins(data || [])
+        setLogins((data as LoginRecord[]) || [])
       } catch (err: any) {
         setError(err.message || "Failed to load logins")
       } finally {
@@ -77,9 +111,9 @@ export default function AdminLoginsPage() {
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-gray-900 flex items-center">
             <Users className="mr-3" />
-            Latest Admin Logins
+            Admin Logins
           </h1>
-          <p className="text-gray-600 mt-2">Recent admin login activity</p>
+          <p className="text-gray-600 mt-2">View admin login activity for the selected period</p>
         </div>
         {/* Time Filter UI */}
         <div className="mb-4 flex flex-wrap items-center gap-2">
@@ -124,8 +158,10 @@ export default function AdminLoginsPage() {
         )}
         <Card>
           <CardHeader>
-            <CardTitle>Recent Logins</CardTitle>
-            <CardDescription>Last 20 admin login events</CardDescription>
+            <CardTitle>Admin Logins ({getFilterLabel(filter, customStart, customEnd)})</CardTitle>
+            <CardDescription>
+              Admin Login Activity - {getFilterLabel(filter, customStart, customEnd)}
+            </CardDescription>
           </CardHeader>
           <CardContent>
             {loading ? (
