@@ -26,7 +26,7 @@ export default function AdminLogin() {
     setError(null)
 
     try {
-      const { error } = await supabase.auth.signInWithPassword({
+      const { error, data } = await supabase.auth.signInWithPassword({
         email,
         password,
       })
@@ -34,6 +34,47 @@ export default function AdminLogin() {
       if (error) {
         setError(error.message)
       } else {
+        // Log admin login event
+        try {
+          const user = (await supabase.auth.getUser()).data.user
+          let ip_address = null
+          let latitude = null
+          let longitude = null
+          // Fetch public IP
+          try {
+            const ipRes = await fetch('https://api.ipify.org?format=json')
+            const ipData = await ipRes.json()
+            ip_address = ipData.ip
+          } catch {}
+          // Fetch geolocation
+          if (typeof window !== 'undefined' && navigator.geolocation) {
+            try {
+              await new Promise((resolve) => {
+                navigator.geolocation.getCurrentPosition(
+                  (pos) => {
+                    latitude = pos.coords.latitude
+                    longitude = pos.coords.longitude
+                    resolve()
+                  },
+                  () => resolve(),
+                  { timeout: 3000 }
+                )
+              })
+            } catch {}
+          }
+          if (user) {
+            await supabase.from("admin_logins").insert({
+              user_id: user.id,
+              email: user.email,
+              ip_address,
+              user_agent: (typeof window !== 'undefined' && window.navigator.userAgent) ? window.navigator.userAgent : null,
+              latitude,
+              longitude,
+            })
+          }
+        } catch (logErr) {
+          // Ignore logging errors
+        }
         router.push("/admin/dashboard")
       }
     } catch (err) {

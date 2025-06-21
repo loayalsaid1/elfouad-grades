@@ -18,12 +18,19 @@ export default function AdminDashboard() {
     activeContexts: 0,
     systemStatus: "enabled",
   })
+  const [lastLogin, setLastLogin] = useState<null | {
+    created_at: string;
+    ip_address: string | null;
+    latitude: number | null;
+    longitude: number | null;
+  }>(null)
   const router = useRouter()
   const supabase = createClientComponentSupabaseClient()
 
   useEffect(() => {
     if (user) {
       loadStats()
+      fetchLastLogin()
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user])
@@ -62,6 +69,20 @@ export default function AdminDashboard() {
     }
   }
 
+  const fetchLastLogin = async () => {
+    // Fetch the last two logins for this user, show the second one if it exists
+    const { data } = await supabase
+      .from("admin_logins")
+      .select("created_at, ip_address, latitude, longitude")
+      .order("created_at", { ascending: false })
+      .limit(2)
+    if (data && data.length === 2) {
+      setLastLogin(data[1])
+    } else {
+      setLastLogin(null)
+    }
+  }
+
   const handleLogout = async () => {
     await supabase.auth.signOut()
     router.push("/admin/login")
@@ -93,7 +114,7 @@ export default function AdminDashboard() {
       {/* Main Content */}
       <main className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
         {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">Total Students</CardTitle>
@@ -125,6 +146,23 @@ export default function AdminDashboard() {
               <div className="text-2xl font-bold capitalize">{stats.systemStatus}</div>
             </CardContent>
           </Card>
+
+          {/* Previous Login Card */}
+          {lastLogin && (
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">Previous Login</CardTitle>
+                <LogOut className="h-4 w-4 text-muted-foreground" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-xs text-gray-700">
+                  <div><span className="font-semibold">Date:</span> {new Date(lastLogin.created_at).toLocaleString()}</div>
+                  <div><span className="font-semibold">IP:</span> {lastLogin.ip_address || <span className="italic text-gray-400">N/A</span>}</div>
+                  <div><span className="font-semibold">Location:</span> {lastLogin.latitude !== null && lastLogin.longitude !== null ? `${lastLogin.latitude}, ${lastLogin.longitude}` : <span className="italic text-gray-400">N/A</span>}</div>
+                </div>
+              </CardContent>
+            </Card>
+          )}
         </div>
 
         {/* Quick Actions */}
@@ -180,6 +218,25 @@ export default function AdminDashboard() {
             <CardContent>
               <Button variant="outline" className="w-full">
                 Open Test Results
+              </Button>
+            </CardContent>
+          </Card>
+
+          {/* Latest Logins Card */}
+          <Card
+            className="cursor-pointer hover:shadow-lg transition-shadow"
+            onClick={() => router.push("/admin/dashboard/logins")}
+          >
+            <CardHeader>
+              <CardTitle className="flex items-center">
+                <Users className="h-5 w-5 mr-2" />
+                Latest Logins
+              </CardTitle>
+              <CardDescription>View recent admin login activity</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Button variant="outline" className="w-full">
+                View Logins
               </Button>
             </CardContent>
           </Card>

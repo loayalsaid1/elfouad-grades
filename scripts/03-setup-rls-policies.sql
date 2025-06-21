@@ -3,6 +3,7 @@ ALTER TABLE schools ENABLE ROW LEVEL SECURITY;
 ALTER TABLE academic_contexts ENABLE ROW LEVEL SECURITY;
 ALTER TABLE student_results ENABLE ROW LEVEL SECURITY;
 ALTER TABLE system_settings ENABLE ROW LEVEL SECURITY;
+ALTER TABLE admin_logins ENABLE ROW LEVEL SECURITY;
 
 -- Create policies for authenticated users (admins)
 -- Schools policies
@@ -56,6 +57,13 @@ CREATE POLICY "Admins can update system settings" ON system_settings
 
 CREATE POLICY "Admins can delete system settings" ON system_settings
   FOR DELETE USING (auth.role() = 'authenticated');
+
+-- Admin logins policies
+CREATE POLICY "Admins can insert login events" ON admin_logins
+  FOR INSERT WITH CHECK (auth.role() = 'authenticated');
+
+CREATE POLICY "Admins can view login events" ON admin_logins
+  FOR SELECT USING (auth.role() = 'authenticated');
 
 -- Public policies for student access (read-only for active contexts)
 CREATE POLICY "Students can view active academic contexts" ON academic_contexts
