@@ -8,12 +8,16 @@ import { Loader2, AlertCircle, Users } from "lucide-react"
 import BackToDashboard from "@/components/admin/BackToDashboard"
 import { useAdminUser } from "@/hooks/useAdminUser"
 import LoadingPage from "@/components/admin/LoadingPage"
+import { format, subDays, subWeeks, subMonths, subYears } from "date-fns"
 
 export default function AdminLoginsPage() {
   const user = useAdminUser()
   const [logins, setLogins] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [filter, setFilter] = useState<"24h" | "7d" | "30d" | "year" | "all" | "custom">("7d")
+  const [customStart, setCustomStart] = useState<string>("")
+  const [customEnd, setCustomEnd] = useState<string>("")
   const supabase = createClientComponentSupabaseClient()
 
   useEffect(() => {
@@ -21,11 +25,37 @@ export default function AdminLoginsPage() {
       setLoading(true)
       setError(null)
       try {
-        const { data, error } = await supabase
+        let query = supabase
           .from("admin_logins")
           .select("id, email, created_at, ip_address, user_agent, latitude, longitude")
           .order("created_at", { ascending: false })
-          .limit(20)
+
+        let fromDate: Date | null = null
+        let toDate: Date | null = null
+
+        if (filter === "24h") {
+          fromDate = subDays(new Date(), 1)
+        } else if (filter === "7d") {
+          fromDate = subDays(new Date(), 7)
+        } else if (filter === "30d") {
+          fromDate = subMonths(new Date(), 1)
+        } else if (filter === "year") {
+          fromDate = subYears(new Date(), 1)
+        } else if (filter === "custom" && customStart && customEnd) {
+          fromDate = new Date(customStart)
+          toDate = new Date(customEnd)
+        }
+
+        if (fromDate) {
+          query = query.gte("created_at", fromDate.toISOString())
+        }
+        if (toDate) {
+          const end = new Date(toDate)
+          end.setDate(end.getDate() + 1)
+          query = query.lt("created_at", end.toISOString())
+        }
+
+        const { data, error } = await query
         if (error) throw error
         setLogins(data || [])
       } catch (err: any) {
@@ -35,7 +65,8 @@ export default function AdminLoginsPage() {
       }
     }
     fetchLogins()
-  }, [supabase])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [supabase, filter, customStart, customEnd])
 
   if (!user) return <LoadingPage message="Loading logins..." />
 
@@ -49,6 +80,41 @@ export default function AdminLoginsPage() {
             Latest Admin Logins
           </h1>
           <p className="text-gray-600 mt-2">Recent admin login activity</p>
+        </div>
+        {/* Time Filter UI */}
+        <div className="mb-4 flex flex-wrap items-center gap-2">
+          <label className="font-medium mr-2">Show:</label>
+          <select
+            className="border rounded px-2 py-1"
+            value={filter}
+            onChange={e => setFilter(e.target.value as any)}
+          >
+            <option value="24h">Last 24 hours</option>
+            <option value="7d">Last 7 days</option>
+            <option value="30d">Last 30 days</option>
+            <option value="year">Last year</option>
+            <option value="all">All</option>
+            <option value="custom">Custom range</option>
+          </select>
+          {filter === "custom" && (
+            <>
+              <input
+                type="date"
+                className="border rounded px-2 py-1"
+                value={customStart}
+                onChange={e => setCustomStart(e.target.value)}
+                max={customEnd || undefined}
+              />
+              <span className="mx-1">to</span>
+              <input
+                type="date"
+                className="border rounded px-2 py-1"
+                value={customEnd}
+                onChange={e => setCustomEnd(e.target.value)}
+                min={customStart || undefined}
+              />
+            </>
+          )}
         </div>
         {error && (
           <Alert variant="destructive" className="mb-6">
