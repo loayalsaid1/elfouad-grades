@@ -30,18 +30,18 @@ export function AcademicContextRow({
           </span>
         </div>
       </div>
-      <div className="flex items-center gap-2">
-        <Switch
-          checked={isActive}
-          onCheckedChange={onToggle}
-        />
+      <div className="flex items-center gap-3">
         <button
           onClick={onDelete}
-          className="ml-2 text-red-600 hover:underline text-xs"
+          className="mr-2 text-red-600 hover:underline text-xs"
           title="Delete context"
         >
           Delete
         </button>
+        <Switch
+          checked={isActive}
+          onCheckedChange={onToggle}
+        />
       </div>
     </div>
   )

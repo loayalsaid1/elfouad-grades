@@ -1,6 +1,9 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { AcademicContextRow } from "./AcademicContextRow"
 import type { AcademicContext, SettingsPageFilters } from "@/hooks/useSettingsPage"
+import { useState } from "react"
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog"
+import { Button } from "@/components/ui/button"
 
 interface AcademicContextsCardProps {
   contexts: AcademicContext[]
@@ -61,6 +64,17 @@ export function AcademicContextsCard({
         return { ...prev, [contextId]: false }
       }
     })
+  }
+
+  const [pendingDelete, setPendingDelete] = useState<AcademicContext | null>(null)
+  const [deleting, setDeleting] = useState(false)
+
+  const handleDelete = async () => {
+    if (!pendingDelete) return
+    setDeleting(true)
+    await deleteContext(pendingDelete.id)
+    setDeleting(false)
+    setPendingDelete(null)
   }
 
   return (
@@ -136,7 +150,7 @@ export function AcademicContextsCard({
                 context={context}
                 isActive={activeContexts[context.id] || false}
                 onToggle={(checked) => toggleContext(context.id, checked)}
-                onDelete={() => deleteContext(context.id)} // Pass delete handler
+                onDelete={() => setPendingDelete(context)}
               />
             ))
           ) : (
@@ -145,6 +159,22 @@ export function AcademicContextsCard({
             </p>
           )}
         </div>
+        {/* Delete Confirmation Modal */}
+        <Dialog open={!!pendingDelete} onOpenChange={open => !open && setPendingDelete(null)}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Delete Academic Context?</DialogTitle>
+            </DialogHeader>
+            <div className="py-2">
+              Are you sure you want to delete the context for <b>{pendingDelete?.schools?.name || "Unknown School"}</b>, year <b>{pendingDelete?.year}-{pendingDelete ? pendingDelete.year + 1 : ""}</b>, grade <b>{pendingDelete?.grade}</b>, term <b>{pendingDelete?.term === 1 ? "First" : "Second"}</b>?<br/>
+              <span className="text-red-600 font-semibold">This action cannot be undone.</span>
+            </div>
+            <DialogFooter>
+              <Button variant="outline" onClick={() => setPendingDelete(null)} disabled={deleting}>Cancel</Button>
+              <Button variant="destructive" onClick={handleDelete} loading={deleting}>Delete</Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
       </CardContent>
     </Card>
   )
