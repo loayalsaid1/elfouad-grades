@@ -356,6 +356,97 @@ export default function UploadPage() {
           </p>
         </div>
 
+        {/* CSV Format Instructions */}
+        <Card className="mb-6 border-blue-200 bg-blue-50">
+          <CardHeader>
+            <CardTitle className="text-blue-900 text-lg flex items-center gap-2">
+              <Info className="h-5 w-5 text-blue-500" />
+              How to format your CSV file
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="mb-2 text-blue-900 font-medium">
+              <span className="bg-blue-100 px-2 py-1 rounded">Follow these steps to prepare your file:</span>
+            </div>
+            <ol className="list-decimal list-inside text-sm text-blue-900 space-y-2 pl-4">
+              <li>
+                <b>First row:</b> Start with <code className="bg-blue-100 px-1 rounded">id</code>,{" "}
+                <code className="bg-blue-100 px-1 rounded">student_name</code>,{" "}
+                <code className="bg-blue-100 px-1 rounded">parent_password</code>, then one column for each subject
+                (e.g. <code className="bg-blue-100 px-1 rounded">Arabic</code>,{" "}
+                <code className="bg-blue-100 px-1 rounded">Religion</code>,{" "}
+                <code className="bg-blue-100 px-1 rounded">Math</code>, ...).
+              </li>
+              <li>
+                <b>Second row:</b> Enter the{" "}
+                <span className="font-semibold">full mark</span> for each subject (first three columns can be blank).
+              </li>
+              <li>
+                <b>Each following row:</b> Fill in student info and their scores for each subject.
+              </li>
+              <li>
+                For <span className="font-semibold">absent students</span> in a subject, use{" "}
+                <code className="bg-blue-100 px-1 rounded">-</code> in that cell.
+              </li>
+              <li>
+                If a student <span className="font-semibold">does not take a subject at all</span>, use{" "}
+                <code className="bg-blue-100 px-1 rounded">N/A</code> in that cell.
+              </li>
+            </ol>
+            <div className="overflow-x-auto mt-4">
+              <table className="min-w-max text-xs border border-blue-200 rounded">
+                <tbody>
+                  <tr className="bg-blue-100">
+                    <td className="border border-blue-200 px-2 py-1">id</td>
+                    <td className="border border-blue-200 px-2 py-1">student_name</td>
+                    <td className="border border-blue-200 px-2 py-1">parent_password</td>
+                    <td className="border border-blue-200 px-2 py-1">Arabic</td>
+                    <td className="border border-blue-200 px-2 py-1">Religion</td>
+                    <td className="border border-blue-200 px-2 py-1">Math</td>
+                    <td className="border border-blue-200 px-2 py-1">Science</td>
+                  </tr>
+                  <tr>
+                    <td className="border border-blue-200 px-2 py-1"></td>
+                    <td className="border border-blue-200 px-2 py-1"></td>
+                    <td className="border border-blue-200 px-2 py-1"></td>
+                    <td className="border border-blue-200 px-2 py-1">100</td>
+                    <td className="border border-blue-200 px-2 py-1">100</td>
+                    <td className="border border-blue-200 px-2 py-1">100</td>
+                    <td className="border border-blue-200 px-2 py-1">100</td>
+                  </tr>
+                  <tr>
+                    <td className="border border-blue-200 px-2 py-1">123</td>
+                    <td className="border border-blue-200 px-2 py-1">Ali Ahmed</td>
+                    <td className="border border-blue-200 px-2 py-1">pw123</td>
+                    <td className="border border-blue-200 px-2 py-1">90</td>
+                    <td className="border border-blue-200 px-2 py-1">96</td>
+                    <td className="border border-blue-200 px-2 py-1">95</td>
+                    <td className="border border-blue-200 px-2 py-1">-</td>
+                  </tr>
+                  <tr>
+                    <td className="border border-blue-200 px-2 py-1">124</td>
+                    <td className="border border-blue-200 px-2 py-1">Sara Fathy</td>
+                    <td className="border border-blue-200 px-2 py-1"></td>
+                    <td className="border border-blue-200 px-2 py-1">98</td>
+                    <td className="border border-blue-200 px-2 py-1">100</td>
+                    <td className="border border-blue-200 px-2 py-1">90</td>
+                    <td className="border border-blue-200 px-2 py-1">96</td>
+                  </tr>
+                  <tr>
+                    <td className="border border-blue-200 px-2 py-1">125</td>
+                    <td className="border border-blue-200 px-2 py-1">Mohamed Samir</td>
+                    <td className="border border-blue-200 px-2 py-1">pw999</td>
+                    <td className="border border-blue-200 px-2 py-1">89</td>
+                    <td className="border border-blue-200 px-2 py-1">100</td>
+                    <td className="border border-blue-200 px-2 py-1">N/A</td>
+                    <td className="border border-blue-200 px-2 py-1">100</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </CardContent>
+        </Card>
+
         {/* Context Selection */}
         <div className="mb-6">
           <ContextSelector onContextChange={setContext} />
