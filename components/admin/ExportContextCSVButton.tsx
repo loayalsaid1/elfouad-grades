@@ -2,8 +2,9 @@ import { Button } from "@/components/ui/button"
 import { Download } from "lucide-react"
 import { useContextStudentsExport } from "@/hooks/useContextStudentsExport"
 
-export default function ExportContextCSVButton({ context }: { context: { id: number, year: number, term: number, grade: number, school_id: number, school_name?: string } }) {
+export default function ExportContextCSVButton({ context }: { context: { id: number, year: number, term: number, grade: number, school_id: number, school_slug?: string } }) {
   const { exportContextCSV, loading } = useContextStudentsExport()
+  console.log(context)
 
   return (
     <Button

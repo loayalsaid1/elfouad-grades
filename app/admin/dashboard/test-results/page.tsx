@@ -99,7 +99,7 @@ export default function AdminTestResultsPage() {
     }
     supabase
       .from("academic_contexts")
-      .select("id, year, term, grade, is_active")
+      .select("id, year, term, grade, is_active, school_id")
       .eq("school_id", schoolObj.id)
       .eq("grade", selection.grade)
       .then(({ data }) => {
@@ -241,7 +241,7 @@ export default function AdminTestResultsPage() {
                         term: ctx.term,
                         grade: ctx.grade,
                         school_id: ctx.school_id,
-                        school_name: schoolObj?.name,
+                        school_slug: schoolObj?.slug,
                       }}
                     />
                   )

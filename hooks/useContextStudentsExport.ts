@@ -8,7 +8,7 @@ export function useContextStudentsExport() {
   const [error, setError] = useState<string | null>(null)
 
   // context: { id, year, term, grade, school_id, ... }
-  const exportContextCSV = async (context: { id: number, year: number, term: number, grade: number, school_id: number, school_name?: string }) => {
+  const exportContextCSV = async (context: { id: number, year: number, term: number, grade: number, school_id: number, school_slug?: string }) => {
     setLoading(true)
     setError(null)
     try {
@@ -45,7 +45,7 @@ export function useContextStudentsExport() {
       const csv = Papa.unparse(csvData)
       // Download
       const blob = new Blob([csv], { type: "text/csv" })
-      const filename = `context_${context.school_name || context.school_id}_grade${context.grade}_y${context.year}_t${context.term}.csv`
+      const filename = `context_${context.school_slug || context.school_id}_grade${context.grade}_y${context.year}_t${context.term}.csv`
       const url = URL.createObjectURL(blob)
       const a = document.createElement("a")
       a.href = url
