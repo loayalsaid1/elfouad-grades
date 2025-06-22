@@ -1,13 +1,13 @@
 "use client"
 
-import { useState, useCallback } from "react"
+import { useState, useCallback, useMemo } from "react"
 import { useDropzone } from "react-dropzone"
 import Papa from "papaparse"
 import { createClientComponentSupabaseClient } from "@/lib/supabase"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Alert, AlertDescription } from "@/components/ui/alert"
-import { Loader2, Upload, FileText, CheckCircle, AlertCircle } from "lucide-react"
+import { Loader2, Upload, FileText, CheckCircle, AlertCircle, Settings } from "lucide-react"
 import type { CSVUploadContext, ParsedStudent } from "@/types/supabase"
 import { UploadContextSelector } from "./upload-context-selector"
 import { ResultsPreviewTable } from "./results-preview-table"
@@ -24,6 +24,18 @@ export function CSVUploader() {
   const [success, setSuccess] = useState(false)
   const supabase = createClientComponentSupabaseClient()
 
+  // Memoize dropzone configuration
+  const dropzoneConfig = useMemo(
+    () => ({
+      accept: {
+        "text/csv": [".csv"],
+        "application/vnd.ms-excel": [".csv"],
+      },
+      maxFiles: 1,
+    }),
+    [],
+  )
+
   const onDrop = useCallback((acceptedFiles: File[]) => {
     const file = acceptedFiles[0]
     if (file) {
@@ -39,106 +51,108 @@ export function CSVUploader() {
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
-    accept: {
-      "text/csv": [".csv"],
-      "application/vnd.ms-excel": [".csv"],
-    },
-    maxFiles: 1,
+    ...dropzoneConfig,
   })
 
-  const parseCSV = (file: File) => {
-    setLoading(true)
-    setError(null)
+  // Optimized CSV parsing with better error handling
+  const parseCSV = useCallback(
+    (file: File) => {
+      setLoading(true)
+      setError(null)
 
-    Papa.parse(file, {
-      header: true,
-      skipEmptyLines: true,
-      complete: (results) => {
-        try {
-          if (results.errors.length > 0) {
-            setError(`CSV parsing error: ${results.errors[0].message}`)
-            setLoading(false)
-            return
-          }
-
-          const rows = results.data as Record<string, string>[]
-          if (rows.length < 2) {
-            setError("CSV must contain at least 2 rows (header row, full marks row, and student data)")
-            setLoading(false)
-            return
-          }
-
-          // Extract subject names (all columns except id, student_name, parent_password)
-          const subjectNames = Object.keys(rows[0]).filter(
-            (key) => !["id", "student_id", "student_name", "parent_password"].includes(key),
-          )
-
-          if (subjectNames.length === 0) {
-            setError("No subject columns found in CSV")
-            setLoading(false)
-            return
-          }
-
-          setSubjects(subjectNames)
-
-          // Extract full marks from the first row
-          const fullMarksRow = rows[0]
-          const fullMarksObj: Record<string, number> = {}
-
-          subjectNames.forEach((subject) => {
-            const mark = Number.parseFloat(fullMarksRow[subject])
-            if (isNaN(mark)) {
-              throw new Error(`Invalid full mark for subject ${subject}`)
+      const parseConfig = {
+        header: true,
+        skipEmptyLines: true,
+        worker: false, // Disable worker for better performance in this case
+        chunk: undefined, // Process all at once for smaller files
+        complete: (results: Papa.ParseResult<Record<string, string>>) => {
+          try {
+            if (results.errors.length > 0) {
+              setError(`CSV parsing error: ${results.errors[0].message}`)
+              return
             }
-            fullMarksObj[subject] = mark
-          })
 
-          setFullMarks(fullMarksObj)
+            const rows = results.data
+            if (rows.length < 2) {
+              setError("CSV must contain at least 2 rows (header row, full marks row, and student data)")
+              return
+            }
 
-          // Parse student data (starting from the second row)
-          const studentData: ParsedStudent[] = rows.slice(1).map((row) => {
-            const scores: { subject: string; score: number; full_mark: number; absent: boolean }[] = []
+            // Extract subject names (all columns except id, student_name, parent_password)
+            const subjectNames = Object.keys(rows[0]).filter(
+              (key) => !["id", "student_id", "student_name", "parent_password"].includes(key),
+            )
 
-            subjectNames.forEach((subject) => {
-              const value = row[subject]?.trim().toLowerCase()
-              if (value === "n/a") {
-                // Skip this subject for this student
-                return
+            if (subjectNames.length === 0) {
+              setError("No subject columns found in CSV")
+              return
+            }
+
+            setSubjects(subjectNames)
+
+            // Extract full marks from the first row
+            const fullMarksRow = rows[0]
+            const fullMarksObj: Record<string, number> = {}
+
+            for (const subject of subjectNames) {
+              const mark = Number.parseFloat(fullMarksRow[subject])
+              if (isNaN(mark)) {
+                throw new Error(`Invalid full mark for subject ${subject}`)
               }
-              const score = Number.parseFloat(row[subject])
-              scores.push({
-                subject,
-                score: isNaN(score) ? 0 : score,
-                full_mark: fullMarksObj[subject],
-                absent: false, // CSV uploader does not handle absence, set to false
-              })
+              fullMarksObj[subject] = mark
+            }
+
+            setFullMarks(fullMarksObj)
+
+            // Parse student data (starting from the second row)
+            const studentData: ParsedStudent[] = rows.slice(1).map((row) => {
+              const scores: { subject: string; score: number; full_mark: number; absent: boolean }[] = []
+
+              for (const subject of subjectNames) {
+                const value = row[subject]?.trim().toLowerCase()
+                if (value === "n/a") {
+                  // Skip this subject for this student
+                  continue
+                }
+                const score = Number.parseFloat(row[subject])
+                scores.push({
+                  subject,
+                  score: isNaN(score) ? 0 : score,
+                  full_mark: fullMarksObj[subject],
+                  absent: false, // CSV uploader does not handle absence, set to false
+                })
+              }
+
+              return {
+                student_id: row.id || row.student_id,
+                student_name: row.student_name,
+                parent_password: row.parent_password || null,
+                scores,
+              }
             })
 
-            return {
-              student_id: row.id || row.student_id,
-              student_name: row.student_name,
-              parent_password: row.parent_password || null,
-              scores,
-            }
-          })
-
-          setParsedData(studentData)
-        } catch (err: any) {
-          setError(`Error processing CSV: ${err.message}`)
-        } finally {
+            setParsedData(studentData)
+          } catch (err: any) {
+            setError(`Error processing CSV: ${err.message}`)
+          } finally {
+            setLoading(false)
+          }
+        },
+        error: (error: Error) => {
+          setError(`Failed to parse CSV: ${error.message}`)
           setLoading(false)
-        }
-      },
-      error: (error) => {
-        setError(`Failed to parse CSV: ${error.message}`)
-        setLoading(false)
-      },
-    })
-  }
+        },
+      }
 
-  const handleContextChange = (context: CSVUploadContext) => {
+      Papa.parse(file, parseConfig)
+    },
+    [],
+  )
+
+  // Debounced context change handler
+  const handleContextChange = useCallback((context: CSVUploadContext) => {
     setUploadContext(context)
-  }
+  }, [])
 
   const handleSaveResults = async () => {
     if (!parsedData || !uploadContext) return
@@ -216,33 +230,47 @@ export function CSVUploader() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       {/* File Upload Area */}
-      <Card>
+      <Card className="shadow-xl border-2 hover:border-[#223152] transition-all duration-300">
         <CardContent className="pt-6">
           <div
             {...getRootProps()}
-            className={`border-2 border-dashed rounded-lg p-8 text-center cursor-pointer transition-colors ${
-              isDragActive ? "border-primary bg-primary/5" : "border-gray-300 hover:border-primary/50"
+            className={`border-2 border-dashed rounded-xl p-8 text-center cursor-pointer transition-all duration-300 ${
+              isDragActive
+                ? "border-[#223152] bg-blue-50 scale-[1.02]"
+                : "border-gray-300 hover:border-[#223152] hover:bg-gray-50"
             }`}
           >
             <input {...getInputProps()} />
-            <div className="flex flex-col items-center justify-center space-y-3">
-              <Upload className="h-10 w-10 text-gray-400" />
-              <div className="space-y-1">
-                <p className="text-sm font-medium">
+            <div className="flex flex-col items-center justify-center space-y-4">
+              <div
+                className={`p-4 rounded-full transition-all duration-300 ${
+                  isDragActive ? "bg-[#223152] scale-110" : "bg-gray-100 hover:bg-[#223152] hover:scale-110"
+                }`}
+              >
+                <Upload
+                  className={`h-8 w-8 transition-colors duration-300 ${
+                    isDragActive ? "text-white" : "text-gray-400 group-hover:text-white"
+                  }`}
+                />
+              </div>
+              <div className="space-y-2">
+                <p className="text-lg font-medium text-[#223152]">
                   {isDragActive ? "Drop the CSV file here" : "Drag & drop a CSV file here"}
                 </p>
-                <p className="text-xs text-gray-500">or click to browse files (CSV format only)</p>
+                <p className="text-sm text-gray-500">or click to browse files (CSV format only)</p>
               </div>
             </div>
           </div>
 
           {file && (
-            <div className="mt-4 flex items-center p-2 bg-gray-50 rounded-md">
-              <FileText className="h-5 w-5 text-blue-500 mr-2" />
-              <span className="text-sm font-medium">{file.name}</span>
-              <span className="text-xs text-gray-500 ml-2">({(file.size / 1024).toFixed(1)} KB)</span>
+            <div className="mt-6 flex items-center p-4 bg-gradient-to-r from-blue-50 to-green-50 rounded-lg border border-blue-200 animate-in slide-in-from-top-2 duration-300">
+              <FileText className="h-6 w-6 text-[#223152] mr-3" />
+              <div className="flex-1">
+                <span className="text-sm font-medium text-[#223152]">{file.name}</span>
+                <span className="text-xs text-gray-500 ml-2">({(file.size / 1024).toFixed(1)} KB)</span>
+              </div>
             </div>
           )}
         </CardContent>
@@ -250,15 +278,19 @@ export function CSVUploader() {
 
       {/* Loading State */}
       {loading && (
-        <div className="flex justify-center p-8">
-          <Loader2 className="h-8 w-8 animate-spin text-primary" />
-          <span className="ml-2 text-lg">Parsing CSV data...</span>
-        </div>
+        <Card className="shadow-lg animate-in fade-in-50 duration-500">
+          <CardContent className="pt-6">
+            <div className="flex justify-center items-center p-8">
+              <Loader2 className="h-8 w-8 animate-spin text-[#223152] mr-3" />
+              <span className="text-lg text-[#223152] font-medium">Parsing CSV data...</span>
+            </div>
+          </CardContent>
+        </Card>
       )}
 
       {/* Error Message */}
       {error && (
-        <Alert variant="destructive">
+        <Alert variant="destructive" className="animate-in slide-in-from-top-2 duration-300 shadow-lg">
           <AlertCircle className="h-4 w-4" />
           <AlertDescription>{error}</AlertDescription>
         </Alert>
@@ -266,50 +298,90 @@ export function CSVUploader() {
 
       {/* Success Message */}
       {success && (
-        <Alert className="bg-green-50 border-green-200">
+        <Alert className="bg-green-50 border-green-200 animate-in slide-in-from-top-2 duration-300 shadow-lg">
           <CheckCircle className="h-4 w-4 text-green-600" />
-          <AlertDescription className="text-green-800">Student results successfully uploaded!</AlertDescription>
+          <AlertDescription className="text-green-800 font-medium">
+            Student results successfully uploaded!
+          </AlertDescription>
         </Alert>
       )}
 
       {/* Data Preview and Context Selection */}
       {parsedData && parsedData.length > 0 && (
         <>
-          <div className="bg-white p-6 rounded-lg border shadow-sm">
-            <h3 className="text-lg font-medium mb-4">Select Academic Context</h3>
-            <UploadContextSelector onChange={handleContextChange} />
-          </div>
+          <Card className="shadow-xl border-2 hover:border-[#223152] transition-all duration-300 animate-in slide-in-from-bottom-4 duration-500">
+            <CardContent className="p-6">
+              <h3 className="text-xl font-semibold text-[#223152] mb-6 flex items-center">
+                <div className="bg-[#223152] p-2 rounded-full mr-3">
+                  <Settings className="h-5 w-5 text-white" />
+                </div>
+                Select Academic Context
+              </h3>
+              <UploadContextSelector onChange={handleContextChange} />
+            </CardContent>
+          </Card>
 
-          <div className="bg-white p-6 rounded-lg border shadow-sm">
-            <h3 className="text-lg font-medium mb-4">Preview Results</h3>
-            <ResultsPreviewTable students={parsedData} subjects={subjects} fullMarks={fullMarks} />
+          <Card className="shadow-xl border-2 hover:border-[#223152] transition-all duration-300 animate-in slide-in-from-bottom-4 duration-700">
+            <CardContent className="p-6">
+              <h3 className="text-xl font-semibold text-[#223152] mb-6 flex items-center">
+                <div className="bg-[#223152] p-2 rounded-full mr-3">
+                  <FileText className="h-5 w-5 text-white" />
+                </div>
+                Preview Results
+              </h3>
+              <ResultsPreviewTable students={parsedData} subjects={subjects} fullMarks={fullMarks} />
 
-            <div className="mt-6 flex justify-end">
-              <Button onClick={handleSaveResults} disabled={!uploadContext || uploading} className="min-w-[150px]">
-                {uploading ? (
-                  <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Saving...
-                  </>
-                ) : (
-                  "Save Results"
-                )}
-              </Button>
-            </div>
-          </div>
+              <div className="mt-8 flex justify-end">
+                <Button
+                  onClick={handleSaveResults}
+                  disabled={!uploadContext || uploading}
+                  className="min-w-[180px] bg-[#223152] hover:bg-[#1a2642] text-white font-medium py-3 px-6 shadow-lg hover:shadow-xl transition-all duration-300"
+                >
+                  {uploading ? (
+                    <>
+                      <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                      Saving Results...
+                    </>
+                  ) : (
+                    <>
+                      <CheckCircle className="mr-2 h-5 w-5" />
+                      Save Results
+                    </>
+                  )}
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
         </>
       )}
 
       {/* CSV Format Instructions */}
-      <div className="bg-blue-50 p-6 rounded-lg border border-blue-100">
-        <h3 className="text-md font-medium text-blue-800 mb-2">CSV Format Instructions</h3>
-        <ul className="list-disc list-inside text-sm text-blue-700 space-y-1">
-          <li>First row: Column headers (id, student_name, parent_password, followed by subject names)</li>
-          <li>Second row: Full marks for each subject</li>
-          <li>Remaining rows: Student data with scores for each subject</li>
-          <li>The parent_password column is optional</li>
-        </ul>
-      </div>
+      <Card className="bg-gradient-to-r from-blue-50 to-indigo-50 border-2 border-blue-200 shadow-lg">
+        <CardContent className="p-6">
+          <h3 className="text-lg font-semibold text-[#223152] mb-4 flex items-center">
+            <div className="bg-blue-500 p-2 rounded-full mr-3">
+              <AlertCircle className="h-5 w-5 text-white" />
+            </div>
+            CSV Format Instructions
+          </h3>
+          <div className="bg-white p-4 rounded-lg border border-blue-200">
+            <ul className="list-disc list-inside text-sm text-[#223152] space-y-2">
+              <li>
+                <strong>First row:</strong> Column headers (id, student_name, parent_password, followed by subject names)
+              </li>
+              <li>
+                <strong>Second row:</strong> Full marks for each subject
+              </li>
+              <li>
+                <strong>Remaining rows:</strong> Student data with scores for each subject
+              </li>
+              <li>
+                <strong>Optional:</strong> The parent_password column can be left empty
+              </li>
+            </ul>
+          </div>
+        </CardContent>
+      </Card>
     </div>
   )
 }

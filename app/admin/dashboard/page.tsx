@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { Upload, Settings, School, Users, Database, LogOut } from "lucide-react"
+import { Upload, Settings, School, Users, Database, LogOut, TestTube, History } from "lucide-react"
 import { useAdminUser } from "@/hooks/useAdminUser"
 import { createClientComponentSupabaseClient } from "@/lib/supabase"
 import LoadingPage from "@/components/admin/LoadingPage"
@@ -91,18 +91,23 @@ export default function AdminDashboard() {
   if (!user) return <LoadingPage message="Loading dashboard..." />
 
   return (
-    <div className="h-full bg-gray-50">
+    <div className="h-full bg-gradient-to-br from-slate-50 to-blue-50">
       {/* Header */}
-      <header className="bg-white shadow-sm border-b">
+      <header className="bg-white shadow-xl border-b border-gray-200 mb-8 rounded-lg mx-4 mt-4">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center py-4">
+          <div className="flex justify-between items-center py-6">
             <div>
-              <h1 className="text-2xl font-bold text-gray-900">Admin Dashboard</h1>
-              <p className="text-sm text-gray-600">El Fouad Schools Group</p>
+              <h1 className="text-3xl font-bold text-[#223152]">Admin Dashboard</h1>
+              <p className="text-sm text-gray-600 mt-1">El Fouad Schools Group Management</p>
             </div>
             <div className="flex items-center space-x-4">
-              <Badge variant="outline">{user.email}</Badge>
-              <Button variant="outline" size="sm" onClick={handleLogout}>
+              <Badge variant="outline" className="px-3 py-1 text-[#223152] border-[#223152]">{user.email}</Badge>
+              <Button 
+                variant="outline" 
+                size="sm" 
+                onClick={handleLogout}
+                className="hover:bg-red-50 hover:border-red-200 hover:text-red-600 transition-all duration-300"
+              >
                 <LogOut className="h-4 w-4 mr-2" />
                 Logout
               </Button>
@@ -115,50 +120,58 @@ export default function AdminDashboard() {
       <main className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
         {/* Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          <Card>
+          <Card className="hover:shadow-xl transition-all duration-300 hover:scale-[1.02] border-2 hover:border-[#223152]">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Total Students</CardTitle>
-              <Users className="h-4 w-4 text-muted-foreground" />
+              <CardTitle className="text-sm font-medium text-gray-700">Total Students</CardTitle>
+              <div className="bg-blue-100 p-2 rounded-full">
+                <Users className="h-4 w-4 text-blue-600" />
+              </div>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{stats.totalStudents}</div>
+              <div className="text-2xl font-bold text-[#223152]">{stats.totalStudents}</div>
+              <p className="text-xs text-gray-500 mt-1">Active student records</p>
             </CardContent>
           </Card>
 
-          <Card>
+          <Card className="hover:shadow-xl transition-all duration-300 hover:scale-[1.02] border-2 hover:border-[#223152]">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Active Contexts</CardTitle>
-              <Database className="h-4 w-4 text-muted-foreground" />
+              <CardTitle className="text-sm font-medium text-gray-700">Active Contexts</CardTitle>
+              <div className="bg-green-100 p-2 rounded-full">
+                <Database className="h-4 w-4 text-green-600" />
+              </div>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{stats.activeContexts}</div>
+              <div className="text-2xl font-bold text-[#223152]">{stats.activeContexts}</div>
+              <p className="text-xs text-gray-500 mt-1">Currently active periods</p>
             </CardContent>
           </Card>
 
-          <Card>
+          <Card className="hover:shadow-xl transition-all duration-300 hover:scale-[1.02] border-2 hover:border-[#223152]">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">System Status</CardTitle>
-              <div
-                className={`h-2 w-2 rounded-full ${stats.systemStatus === "enabled" ? "bg-green-500" : "bg-red-500"}`}
-              />
+              <CardTitle className="text-sm font-medium text-gray-700">System Status</CardTitle>
+              <div className={`p-2 rounded-full ${stats.systemStatus === "enabled" ? "bg-green-100" : "bg-red-100"}`}>
+                <div className={`h-4 w-4 rounded-full ${stats.systemStatus === "enabled" ? "bg-green-500" : "bg-red-500"}`} />
+              </div>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold capitalize">{stats.systemStatus}</div>
+              <div className="text-2xl font-bold text-[#223152] capitalize">{stats.systemStatus}</div>
+              <p className="text-xs text-gray-500 mt-1">System availability</p>
             </CardContent>
           </Card>
 
           {/* Previous Login Card */}
           {lastLogin && (
-            <Card>
+            <Card className="hover:shadow-xl transition-all duration-300 hover:scale-[1.02] border-2 hover:border-[#223152]">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Previous Login</CardTitle>
-                <LogOut className="h-4 w-4 text-muted-foreground" />
+                <CardTitle className="text-sm font-medium text-gray-700">Previous Login</CardTitle>
+                <div className="bg-purple-100 p-2 rounded-full">
+                  <History className="h-4 w-4 text-purple-600" />
+                </div>
               </CardHeader>
               <CardContent>
-                <div className="text-xs text-gray-700">
-                  <div><span className="font-semibold">Date:</span> {new Date(lastLogin.created_at).toLocaleString()}</div>
+                <div className="text-xs text-gray-700 space-y-1">
+                  <div><span className="font-semibold">Date:</span> {new Date(lastLogin.created_at).toLocaleDateString()}</div>
                   <div><span className="font-semibold">IP:</span> {lastLogin.ip_address || <span className="italic text-gray-400">N/A</span>}</div>
-                  <div><span className="font-semibold">Location:</span> {lastLogin.latitude !== null && lastLogin.longitude !== null ? `${lastLogin.latitude}, ${lastLogin.longitude}` : <span className="italic text-gray-400">N/A</span>}</div>
                 </div>
               </CardContent>
             </Card>
@@ -168,47 +181,54 @@ export default function AdminDashboard() {
         {/* Quick Actions */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           <Card
-            className="cursor-pointer hover:shadow-lg transition-shadow"
+            className="cursor-pointer hover:shadow-xl transition-all duration-300 hover:scale-[1.02] border-2 hover:border-[#223152] group"
             onClick={() => router.push("/admin/dashboard/upload")}
           >
             <CardHeader>
-              <CardTitle className="flex items-center">
-                <Upload className="h-5 w-5 mr-2" />
+              <CardTitle className="flex items-center text-[#223152] group-hover:text-[#1a2642]">
+                <div className="bg-blue-100 p-3 rounded-full mr-3 group-hover:bg-[#223152] group-hover:text-white transition-all duration-300">
+                  <Upload className="h-5 w-5" />
+                </div>
                 Upload Results
               </CardTitle>
               <CardDescription>Upload CSV files with student results</CardDescription>
             </CardHeader>
             <CardContent>
-              <Button className="w-full">Start Upload</Button>
+              <Button className="w-full bg-[#223152] hover:bg-[#1a2642] text-white transition-all duration-300">
+                Start Upload
+              </Button>
             </CardContent>
           </Card>
 
           <Card
-            className="cursor-pointer hover:shadow-lg transition-shadow"
+            className="cursor-pointer hover:shadow-xl transition-all duration-300 hover:scale-[1.02] border-2 hover:border-[#223152] group"
             onClick={() => router.push("/admin/dashboard/settings")}
           >
             <CardHeader>
-              <CardTitle className="flex items-center">
-                <Settings className="h-5 w-5 mr-2" />
+              <CardTitle className="flex items-center text-[#223152] group-hover:text-[#1a2642]">
+                <div className="bg-green-100 p-3 rounded-full mr-3 group-hover:bg-[#223152] group-hover:text-white transition-all duration-300">
+                  <Settings className="h-5 w-5" />
+                </div>
                 System Settings
               </CardTitle>
               <CardDescription>Manage system configuration and active contexts</CardDescription>
             </CardHeader>
             <CardContent>
-              <Button variant="outline" className="w-full">
+              <Button variant="outline" className="w-full border-[#223152] text-[#223152] hover:bg-[#223152] hover:text-white transition-all duration-300">
                 Open Settings
               </Button>
             </CardContent>
           </Card>
 
-          {/* New: Test Student Results Card */}
           <Card
-            className="cursor-pointer hover:shadow-lg transition-shadow"
+            className="cursor-pointer hover:shadow-xl transition-all duration-300 hover:scale-[1.02] border-2 hover:border-[#223152] group"
             onClick={() => router.push("/admin/dashboard/test-results")}
           >
             <CardHeader>
-              <CardTitle className="flex items-center">
-                <Users className="h-5 w-5 mr-2" />
+              <CardTitle className="flex items-center text-[#223152] group-hover:text-[#1a2642]">
+                <div className="bg-purple-100 p-3 rounded-full mr-3 group-hover:bg-[#223152] group-hover:text-white transition-all duration-300">
+                  <TestTube className="h-5 w-5" />
+                </div>
                 Test Student Results
               </CardTitle>
               <CardDescription>
@@ -216,26 +236,49 @@ export default function AdminDashboard() {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <Button variant="outline" className="w-full">
+              <Button variant="outline" className="w-full border-[#223152] text-[#223152] hover:bg-[#223152] hover:text-white transition-all duration-300">
                 Open Test Results
               </Button>
             </CardContent>
           </Card>
 
-          {/* Latest Logins Card */}
           <Card
-            className="cursor-pointer hover:shadow-lg transition-shadow"
+            className="cursor-pointer hover:shadow-xl transition-all duration-300 hover:scale-[1.02] border-2 hover:border-[#223152] group"
+            onClick={() => router.push("/admin/dashboard/schools")}
+          >
+            <CardHeader>
+              <CardTitle className="flex items-center text-[#223152] group-hover:text-[#1a2642]">
+                <div className="bg-orange-100 p-3 rounded-full mr-3 group-hover:bg-[#223152] group-hover:text-white transition-all duration-300">
+                  <School className="h-5 w-5" />
+                </div>
+                Schools Management
+              </CardTitle>
+              <CardDescription>
+                Manage schools and their configurations
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Button variant="outline" className="w-full border-[#223152] text-[#223152] hover:bg-[#223152] hover:text-white transition-all duration-300">
+                Manage Schools
+              </Button>
+            </CardContent>
+          </Card>
+
+          <Card
+            className="cursor-pointer hover:shadow-xl transition-all duration-300 hover:scale-[1.02] border-2 hover:border-[#223152] group"
             onClick={() => router.push("/admin/dashboard/logins")}
           >
             <CardHeader>
-              <CardTitle className="flex items-center">
-                <Users className="h-5 w-5 mr-2" />
+              <CardTitle className="flex items-center text-[#223152] group-hover:text-[#1a2642]">
+                <div className="bg-red-100 p-3 rounded-full mr-3 group-hover:bg-[#223152] group-hover:text-white transition-all duration-300">
+                  <History className="h-5 w-5" />
+                </div>
                 Latest Logins
               </CardTitle>
               <CardDescription>View recent admin login activity</CardDescription>
             </CardHeader>
             <CardContent>
-              <Button variant="outline" className="w-full">
+              <Button variant="outline" className="w-full border-[#223152] text-[#223152] hover:bg-[#223152] hover:text-white transition-all duration-300">
                 View Logins
               </Button>
             </CardContent>

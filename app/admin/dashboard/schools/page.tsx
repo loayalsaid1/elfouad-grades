@@ -110,67 +110,80 @@ export default function SchoolsPage() {
   }
 
   return (
-    <div className="h-full bg-gray-50 py-8">
+    <div className="h-full bg-gradient-to-br from-slate-50 to-blue-50 py-8">
       <div className="max-w-4xl mx-auto px-4">
         <BackToDashboard />
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 flex items-center">
-            <School className="mr-3" />
+          <h1 className="text-3xl font-bold text-[#223152] flex items-center">
+            <div className="bg-[#223152] p-3 rounded-full mr-4">
+              <School className="h-8 w-8 text-white" />
+            </div>
             Schools Management
           </h1>
           <p className="text-gray-600 mt-2">Manage schools in the system</p>
         </div>
 
         {error && (
-          <Alert variant="destructive" className="mb-6">
+          <Alert variant="destructive" className="mb-6 animate-in slide-in-from-top-2 duration-300">
             <AlertCircle className="h-4 w-4" />
             <AlertDescription>{error}</AlertDescription>
           </Alert>
         )}
 
         {message && (
-          <Alert className="mb-6 bg-green-50 border-green-200">
+          <Alert className="mb-6 bg-green-50 border-green-200 animate-in slide-in-from-top-2 duration-300">
             <CheckCircle className="h-4 w-4 text-green-600" />
             <AlertDescription className="text-green-800">{message}</AlertDescription>
           </Alert>
         )}
 
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between">
+        <Card className="shadow-xl border-2 hover:border-[#223152] transition-all duration-300">
+          <CardHeader className="flex flex-row items-center justify-between bg-gradient-to-r from-[#223152] to-[#2a3f66] text-white rounded-t-lg">
             <div>
-              <CardTitle>Schools</CardTitle>
-              <CardDescription>Add and manage schools in the system</CardDescription>
+              <CardTitle className="text-white">Schools</CardTitle>
+              <CardDescription className="text-blue-100">Add and manage schools in the system</CardDescription>
             </div>
-            <Button onClick={handleAddSchool} size="sm">
+            <Button 
+              onClick={handleAddSchool} 
+              size="sm"
+              className="bg-white text-[#223152] hover:bg-gray-100 transition-all duration-300"
+            >
               <Plus className="h-4 w-4 mr-1" />
               Add School
             </Button>
           </CardHeader>
-          <CardContent>
+          <CardContent className="p-6">
             {loading ? (
-              <div className="flex justify-center p-4">
-                <Loader2 className="h-6 w-6 animate-spin" />
+              <div className="flex justify-center p-8">
+                <Loader2 className="h-8 w-8 animate-spin text-[#223152]" />
               </div>
             ) : (
               <div className="space-y-4">
                 {schools.length > 0 ? (
                   schools.map((school) => (
-                    <div key={school.id} className="flex items-center justify-between p-4 border rounded-lg">
+                    <div key={school.id} className="flex items-center justify-between p-6 border-2 rounded-lg hover:border-[#223152] hover:shadow-lg transition-all duration-300 bg-white">
                       <div>
-                        <h3 className="font-medium">{school.name}</h3>
+                        <h3 className="font-medium text-[#223152] text-lg">{school.name}</h3>
                         <p className="text-sm text-gray-500">ID: {school.id}</p>
                         <p className="text-xs text-gray-400">Slug: {school.slug || <span className="italic text-gray-300">none</span>}</p>
                       </div>
-                      <Button variant="outline" size="sm" onClick={() => handleEditSchool(school)}>
+                      <Button 
+                        variant="outline" 
+                        size="sm" 
+                        onClick={() => handleEditSchool(school)}
+                        className="border-[#223152] text-[#223152] hover:bg-[#223152] hover:text-white transition-all duration-300"
+                      >
                         <Pencil className="h-4 w-4 mr-1" />
                         Edit
                       </Button>
                     </div>
                   ))
                 ) : (
-                  <div className="text-center py-8 text-gray-500">
-                    <School className="h-12 w-12 mx-auto mb-4 opacity-50" />
-                    <p>No schools found</p>
+                  <div className="text-center py-12 text-gray-500">
+                    <div className="bg-gray-100 p-6 rounded-full w-24 h-24 mx-auto mb-4 flex items-center justify-center">
+                      <School className="h-12 w-12 opacity-50" />
+                    </div>
+                    <p className="text-lg font-medium">No schools found</p>
                     <p className="text-sm">Add your first school to get started</p>
                   </div>
                 )}
@@ -181,13 +194,13 @@ export default function SchoolsPage() {
 
         {/* Add/Edit School Dialog */}
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-          <DialogContent>
+          <DialogContent className="sm:max-w-md">
             <DialogHeader>
-              <DialogTitle>{editingSchool ? "Edit School" : "Add New School"}</DialogTitle>
+              <DialogTitle className="text-[#223152]">{editingSchool ? "Edit School" : "Add New School"}</DialogTitle>
             </DialogHeader>
             <div className="space-y-4 py-4">
               <div className="space-y-2">
-                <label htmlFor="school-name" className="text-sm font-medium">
+                <label htmlFor="school-name" className="text-sm font-medium text-gray-700">
                   School Name
                 </label>
                 <Input
@@ -195,10 +208,11 @@ export default function SchoolsPage() {
                   value={schoolName}
                   onChange={(e) => setSchoolName(e.target.value)}
                   placeholder="Enter school name"
+                  className="focus:border-[#223152] focus:ring-[#223152]"
                 />
               </div>
               <div className="space-y-2">
-                <label htmlFor="school-slug" className="text-sm font-medium">
+                <label htmlFor="school-slug" className="text-sm font-medium text-gray-700">
                   Slug
                 </label>
                 <Input
@@ -206,14 +220,24 @@ export default function SchoolsPage() {
                   value={schoolSlug}
                   onChange={(e) => setSchoolSlug(e.target.value)}
                   placeholder="Enter school slug (e.g. el-fouad-primary)"
+                  className="focus:border-[#223152] focus:ring-[#223152]"
                 />
               </div>
             </div>
             <DialogFooter>
-              <Button variant="outline" onClick={() => setIsDialogOpen(false)} disabled={isSaving}>
+              <Button 
+                variant="outline" 
+                onClick={() => setIsDialogOpen(false)} 
+                disabled={isSaving}
+                className="border-gray-300 hover:bg-gray-50"
+              >
                 Cancel
               </Button>
-              <Button onClick={handleSaveSchool} disabled={!schoolName.trim() || !schoolSlug.trim() || isSaving}>
+              <Button 
+                onClick={handleSaveSchool} 
+                disabled={!schoolName.trim() || !schoolSlug.trim() || isSaving}
+                className="bg-[#223152] hover:bg-[#1a2642] text-white"
+              >
                 {isSaving ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />

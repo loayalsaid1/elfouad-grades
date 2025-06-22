@@ -107,28 +107,28 @@ export default function AdminLogin() {
   }
 
   return (
-    <div className="flex items-center justify-center h-full px-2 py-14 bg-gray-100">
-      <Card className="w-full max-w-md">
-        <CardHeader>
-          <CardTitle className="text-2xl font-bold">Admin Login</CardTitle>
-          <CardDescription>Sign in to access the El Fouad Schools admin dashboard</CardDescription>
+    <div className="flex items-center justify-center h-full px-2 py-14 bg-gradient-to-br from-slate-50 to-blue-50">
+      <Card className="w-full max-w-md shadow-2xl border-2 hover:border-[#223152] transition-all duration-300">
+        <CardHeader className="text-center">
+          <CardTitle className="text-3xl font-bold text-[#223152]">Admin Login</CardTitle>
+          <CardDescription className="text-gray-600">Sign in to access the El Fouad Schools admin dashboard</CardDescription>
         </CardHeader>
         <CardContent>
-          <form onSubmit={handleLogin} className="space-y-4">
+          <form onSubmit={handleLogin} className="space-y-6">
             {error && (
-              <Alert variant="destructive">
+              <Alert variant="destructive" className="animate-in slide-in-from-top-2 duration-300">
                 <AlertDescription>{error}</AlertDescription>
               </Alert>
             )}
             {resetSent && (
-              <Alert className="mb-4 bg-green-50 border-green-200">
+              <Alert className="mb-4 bg-green-50 border-green-200 animate-in slide-in-from-top-2 duration-300">
                 <AlertDescription className="text-green-800">
                   Password reset email sent. Please check your inbox.
                 </AlertDescription>
               </Alert>
             )}
             <div className="space-y-2">
-              <label htmlFor="email" className="text-sm font-medium">
+              <label htmlFor="email" className="text-sm font-medium text-gray-700">
                 Email
               </label>
               <Input
@@ -137,11 +137,12 @@ export default function AdminLogin() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="admin@example.com"
+                className="transition-all duration-300 focus:border-[#223152] focus:ring-[#223152]"
                 required
               />
             </div>
             <div className="space-y-2">
-              <label htmlFor="password" className="text-sm font-medium">
+              <label htmlFor="password" className="text-sm font-medium text-gray-700">
                 Password
               </label>
               <Input
@@ -149,6 +150,7 @@ export default function AdminLogin() {
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
+                className="transition-all duration-300 focus:border-[#223152] focus:ring-[#223152]"
                 required
               />
             </div>
@@ -157,14 +159,18 @@ export default function AdminLogin() {
                 type="button"
                 variant="link"
                 size="sm"
-                className="px-0 font-normal"
+                className="px-0 font-normal text-[#223152] hover:text-[#1a2642]"
                 onClick={handleResetPassword}
                 disabled={resetLoading}
               >
                 Forgot password?
               </Button>
             </div>
-            <Button type="submit" className="w-full" disabled={loading}>
+            <Button 
+              type="submit" 
+              className="w-full bg-[#223152] hover:bg-[#1a2642] text-white transition-all duration-300 hover:shadow-lg" 
+              disabled={loading}
+            >
               {loading ? "Signing in..." : "Sign In"}
             </Button>
           </form>

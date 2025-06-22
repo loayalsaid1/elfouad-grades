@@ -7,7 +7,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Badge } from "@/components/ui/badge"
-import { Upload, FileText, AlertCircle, CheckCircle, Info } from "lucide-react"
+import { Upload, FileText, AlertCircle, CheckCircle, Info, Loader2 } from "lucide-react"
 import { ContextSelector } from "@/components/admin/context-selector"
 import Papa from "papaparse"
 import { useAdminUser } from "@/hooks/useAdminUser"
@@ -21,7 +21,7 @@ interface ParsedStudent {
   scores: { subject: string; score: number | null; full_mark: number; absent: boolean }[]
 }
 
-interface UploadContext {
+interface apge {
   school_id: number
   year: number
   term: number
@@ -344,102 +344,108 @@ export default function UploadPage() {
   }
 
   return (
-    <div className="h-full bg-gray-50 py-8">
+    <div className="h-full bg-gradient-to-br from-slate-50 to-blue-50 py-8">
       <div className="max-w-6xl mx-auto px-4">
         <BackToDashboard />
 
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">Upload Student Results</h1>
+          <h1 className="text-3xl font-bold text-[#223152] flex items-center">
+            <div className="bg-[#223152] p-3 rounded-full mr-4">
+              <Upload className="h-8 w-8 text-white" />
+            </div>
+            Upload Student Results
+          </h1>
           <p className="text-gray-600 mt-2">
-            Upload CSV files with student results data. Use "-" or leave empty for absent students in subject columns
-            only.
+            Upload CSV files with student results data. Use "-" or leave empty for absent students in subject columns only.
           </p>
         </div>
 
         {/* CSV Format Instructions */}
-        <Card className="mb-6 border-blue-200 bg-blue-50">
-          <CardHeader>
-            <CardTitle className="text-blue-900 text-lg flex items-center gap-2">
-              <Info className="h-5 w-5 text-blue-500" />
+        <Card className="mb-6 border-2 border-blue-200 bg-gradient-to-r from-blue-50 to-indigo-50 shadow-xl hover:shadow-2xl transition-all duration-300">
+          <CardHeader className="bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-t-lg">
+            <CardTitle className="text-white text-lg flex items-center gap-2">
+              <div className="bg-white/20 p-2 rounded-full">
+                <Info className="h-5 w-5" />
+              </div>
               How to format your CSV file
             </CardTitle>
           </CardHeader>
-          <CardContent>
-            <div className="mb-2 text-blue-900 font-medium">
-              <span className="bg-blue-100 px-2 py-1 rounded">Follow these steps to prepare your file:</span>
+          <CardContent className="p-6">
+            <div className="mb-4 p-4 bg-white rounded-lg border border-blue-200">
+              <span className="bg-blue-100 px-3 py-1 rounded-full text-blue-800 font-medium">Follow these steps to prepare your file:</span>
             </div>
-            <ol className="list-decimal list-inside text-sm text-blue-900 space-y-2 pl-4">
+            <ol className="list-decimal list-inside text-sm text-[#223152] space-y-3 pl-4">
               <li>
-                <b>First row:</b> Start with <code className="bg-blue-100 px-1 rounded">id</code>,{" "}
-                <code className="bg-blue-100 px-1 rounded">student_name</code>,{" "}
-                <code className="bg-blue-100 px-1 rounded">parent_password</code>, then one column for each subject
-                (e.g. <code className="bg-blue-100 px-1 rounded">Arabic</code>,{" "}
-                <code className="bg-blue-100 px-1 rounded">Religion</code>,{" "}
-                <code className="bg-blue-100 px-1 rounded">Math</code>, ...).
+                <b>First row:</b> Start with <code className="bg-blue-100 px-2 py-1 rounded font-mono">id</code>,{" "}
+                <code className="bg-blue-100 px-2 py-1 rounded font-mono">student_name</code>,{" "}
+                <code className="bg-blue-100 px-2 py-1 rounded font-mono">parent_password</code>, then one column for each subject
+                (e.g. <code className="bg-blue-100 px-2 py-1 rounded font-mono">Arabic</code>,{" "}
+                <code className="bg-blue-100 px-2 py-1 rounded font-mono">Religion</code>,{" "}
+                <code className="bg-blue-100 px-2 py-1 rounded font-mono">Math</code>, ...).
               </li>
               <li>
                 <b>Second row:</b> Enter the{" "}
-                <span className="font-semibold">full mark</span> for each subject (first three columns can be blank).
+                <span className="font-semibold text-[#223152]">full mark</span> for each subject (first three columns can be blank).
               </li>
               <li>
                 <b>Each following row:</b> Fill in student info and their scores for each subject.
               </li>
               <li>
-                For <span className="font-semibold">absent students</span> in a subject, use{" "}
-                <code className="bg-blue-100 px-1 rounded">-</code> in that cell.
+                For <span className="font-semibold text-red-600">absent students</span> in a subject, use{" "}
+                <code className="bg-red-100 px-2 py-1 rounded font-mono text-red-700">-</code> in that cell.
               </li>
               <li>
-                If a student <span className="font-semibold">does not take a subject at all</span>, use{" "}
-                <code className="bg-blue-100 px-1 rounded">N/A</code> in that cell.
+                If a student <span className="font-semibold text-orange-600">does not take a subject at all</span>, use{" "}
+                <code className="bg-orange-100 px-2 py-1 rounded font-mono text-orange-700">N/A</code> in that cell.
               </li>
             </ol>
-            <div className="overflow-x-auto mt-4">
-              <table className="min-w-max text-xs border border-blue-200 rounded">
+            <div className="overflow-x-auto mt-6 bg-white rounded-lg border-2 border-blue-200 shadow-inner">
+              <table className="min-w-max text-xs">
                 <tbody>
-                  <tr className="bg-blue-100">
-                    <td className="border border-blue-200 px-2 py-1">id</td>
-                    <td className="border border-blue-200 px-2 py-1">student_name</td>
-                    <td className="border border-blue-200 px-2 py-1">parent_password</td>
-                    <td className="border border-blue-200 px-2 py-1">Arabic</td>
-                    <td className="border border-blue-200 px-2 py-1">Religion</td>
-                    <td className="border border-blue-200 px-2 py-1">Math</td>
-                    <td className="border border-blue-200 px-2 py-1">Science</td>
+                  <tr className="bg-gradient-to-r from-blue-100 to-blue-200">
+                    <td className="border border-blue-300 px-3 py-2 font-semibold">id</td>
+                    <td className="border border-blue-300 px-3 py-2 font-semibold">student_name</td>
+                    <td className="border border-blue-300 px-3 py-2 font-semibold">parent_password</td>
+                    <td className="border border-blue-300 px-3 py-2 font-semibold">Arabic</td>
+                    <td className="border border-blue-300 px-3 py-2 font-semibold">Religion</td>
+                    <td className="border border-blue-300 px-3 py-2 font-semibold">Math</td>
+                    <td className="border border-blue-300 px-3 py-2 font-semibold">Science</td>
                   </tr>
-                  <tr>
-                    <td className="border border-blue-200 px-2 py-1"></td>
-                    <td className="border border-blue-200 px-2 py-1"></td>
-                    <td className="border border-blue-200 px-2 py-1"></td>
-                    <td className="border border-blue-200 px-2 py-1">100</td>
-                    <td className="border border-blue-200 px-2 py-1">100</td>
-                    <td className="border border-blue-200 px-2 py-1">100</td>
-                    <td className="border border-blue-200 px-2 py-1">100</td>
+                  <tr className="bg-yellow-50">
+                    <td className="border border-blue-200 px-3 py-2 text-gray-400">-</td>
+                    <td className="border border-blue-200 px-3 py-2 text-gray-400">-</td>
+                    <td className="border border-blue-200 px-3 py-2 text-gray-400">-</td>
+                    <td className="border border-blue-200 px-3 py-2 font-semibold text-yellow-700">100</td>
+                    <td className="border border-blue-200 px-3 py-2 font-semibold text-yellow-700">100</td>
+                    <td className="border border-blue-200 px-3 py-2 font-semibold text-yellow-700">100</td>
+                    <td className="border border-blue-200 px-3 py-2 font-semibold text-yellow-700">100</td>
                   </tr>
-                  <tr>
-                    <td className="border border-blue-200 px-2 py-1">123</td>
-                    <td className="border border-blue-200 px-2 py-1">Ali Ahmed</td>
-                    <td className="border border-blue-200 px-2 py-1">pw123</td>
-                    <td className="border border-blue-200 px-2 py-1">90</td>
-                    <td className="border border-blue-200 px-2 py-1">96</td>
-                    <td className="border border-blue-200 px-2 py-1">95</td>
-                    <td className="border border-blue-200 px-2 py-1">-</td>
+                  <tr className="bg-white hover:bg-gray-50">
+                    <td className="border border-blue-200 px-3 py-2">123</td>
+                    <td className="border border-blue-200 px-3 py-2">Ali Ahmed</td>
+                    <td className="border border-blue-200 px-3 py-2">pw123</td>
+                    <td className="border border-blue-200 px-3 py-2">90</td>
+                    <td className="border border-blue-200 px-3 py-2">96</td>
+                    <td className="border border-blue-200 px-3 py-2">95</td>
+                    <td className="border border-blue-200 px-3 py-2 bg-red-50 text-red-600 font-semibold">-</td>
                   </tr>
-                  <tr>
-                    <td className="border border-blue-200 px-2 py-1">124</td>
-                    <td className="border border-blue-200 px-2 py-1">Sara Fathy</td>
-                    <td className="border border-blue-200 px-2 py-1"></td>
-                    <td className="border border-blue-200 px-2 py-1">98</td>
-                    <td className="border border-blue-200 px-2 py-1">100</td>
-                    <td className="border border-blue-200 px-2 py-1">90</td>
-                    <td className="border border-blue-200 px-2 py-1">96</td>
+                  <tr className="bg-white hover:bg-gray-50">
+                    <td className="border border-blue-200 px-3 py-2">124</td>
+                    <td className="border border-blue-200 px-3 py-2">Sara Fathy</td>
+                    <td className="border border-blue-200 px-3 py-2 text-gray-400">-</td>
+                    <td className="border border-blue-200 px-3 py-2">98</td>
+                    <td className="border border-blue-200 px-3 py-2">100</td>
+                    <td className="border border-blue-200 px-3 py-2">90</td>
+                    <td className="border border-blue-200 px-3 py-2">96</td>
                   </tr>
-                  <tr>
-                    <td className="border border-blue-200 px-2 py-1">125</td>
-                    <td className="border border-blue-200 px-2 py-1">Mohamed Samir</td>
-                    <td className="border border-blue-200 px-2 py-1">pw999</td>
-                    <td className="border border-blue-200 px-2 py-1">89</td>
-                    <td className="border border-blue-200 px-2 py-1">100</td>
-                    <td className="border border-blue-200 px-2 py-1">N/A</td>
-                    <td className="border border-blue-200 px-2 py-1">100</td>
+                  <tr className="bg-white hover:bg-gray-50">
+                    <td className="border border-blue-200 px-3 py-2">125</td>
+                    <td className="border border-blue-200 px-3 py-2">Mohamed Samir</td>
+                    <td className="border border-blue-200 px-3 py-2">pw999</td>
+                    <td className="border border-blue-200 px-3 py-2">89</td>
+                    <td className="border border-blue-200 px-3 py-2">100</td>
+                    <td className="border border-blue-200 px-3 py-2 bg-orange-50 text-orange-600 font-semibold">N/A</td>
+                    <td className="border border-blue-200 px-3 py-2">100</td>
                   </tr>
                 </tbody>
               </table>
@@ -453,36 +459,58 @@ export default function UploadPage() {
         </div>
 
         {/* Upload Area */}
-        <Card className="mb-6">
-          <CardHeader>
-            <CardTitle>Select CSV File</CardTitle>
-            <CardDescription>
+        <Card className="mb-6 shadow-xl border-2 hover:border-[#223152] transition-all duration-300">
+          <CardHeader className="bg-gradient-to-r from-[#223152] to-[#2a3f66] text-white rounded-t-lg">
+            <CardTitle className="text-white flex items-center">
+              <div className="bg-white/20 p-2 rounded-full mr-3">
+                <Upload className="h-5 w-5" />
+              </div>
+              Select CSV File
+            </CardTitle>
+            <CardDescription className="text-blue-100">
               Upload a CSV file with student results. <b>The first row must start with columns: "id", "student_name", "parent_password" (in this order), then subject columns.</b> Use "-" or leave empty for absent students in subject columns only.
             </CardDescription>
           </CardHeader>
-          <CardContent>
+          <CardContent className="p-6">
             <div
               {...getRootProps()}
-              className={`border-2 border-dashed rounded-lg p-8 text-center cursor-pointer transition-colors ${
-                isDragActive ? "border-blue-400 bg-blue-50" : "border-gray-300 hover:border-gray-400"
+              className={`border-2 border-dashed rounded-xl p-8 text-center cursor-pointer transition-all duration-300 ${
+                isDragActive 
+                  ? "border-[#223152] bg-blue-50 scale-[1.02]" 
+                  : "border-gray-300 hover:border-[#223152] hover:bg-gray-50"
               }`}
             >
               <input {...getInputProps()} />
-              <Upload className="mx-auto h-12 w-12 text-gray-400 mb-4" />
-              {isDragActive ? (
-                <p className="text-blue-600">Drop the CSV file here...</p>
-              ) : (
-                <div>
-                  <p className="text-gray-600 mb-2">Drag and drop a CSV file here, or click to select</p>
-                  <Button variant="outline">Choose File</Button>
+              <div className="flex flex-col items-center space-y-4">
+                <div className={`p-4 rounded-full transition-all duration-300 ${
+                  isDragActive ? "bg-[#223152] scale-110" : "bg-gray-100 hover:bg-[#223152] hover:scale-110"
+                }`}>
+                  <Upload className={`h-8 w-8 transition-colors duration-300 ${
+                    isDragActive ? "text-white" : "text-gray-400 group-hover:text-white"
+                  }`} />
                 </div>
-              )}
+                <div className="space-y-2">
+                  {isDragActive ? (
+                    <p className="text-lg font-medium text-[#223152]">Drop the CSV file here...</p>
+                  ) : (
+                    <div>
+                      <p className="text-lg font-medium text-[#223152] mb-2">Drag and drop a CSV file here, or click to select</p>
+                      <Button variant="outline" className="border-[#223152] text-[#223152] hover:bg-[#223152] hover:text-white">
+                        Choose File
+                      </Button>
+                    </div>
+                  )}
+                </div>
+              </div>
             </div>
 
             {file && (
-              <div className="mt-4 flex items-center text-sm text-gray-600">
-                <FileText className="h-4 w-4 mr-2" />
-                {file.name} ({(file.size / 1024).toFixed(1)} KB)
+              <div className="mt-6 flex items-center p-4 bg-gradient-to-r from-green-50 to-blue-50 rounded-lg border border-green-200 animate-in slide-in-from-top-2 duration-300">
+                <FileText className="h-6 w-6 text-[#223152] mr-3" />
+                <div className="flex-1">
+                  <span className="text-sm font-medium text-[#223152]">{file.name}</span>
+                  <span className="text-xs text-gray-500 ml-2">({(file.size / 1024).toFixed(1)} KB)</span>
+                </div>
               </div>
             )}
           </CardContent>
@@ -491,25 +519,44 @@ export default function UploadPage() {
         {/* Messages */}
         {message && (
           <Alert
-            className={`mb-6 ${message.type === "error" ? "border-red-200" : message.type === "success" ? "border-green-200" : ""}`}
+            className={`mb-6 shadow-lg animate-in slide-in-from-top-2 duration-300 ${
+              message.type === "error" 
+                ? "border-red-200 bg-red-50" 
+                : message.type === "success" 
+                  ? "border-green-200 bg-green-50" 
+                  : "border-blue-200 bg-blue-50"
+            }`}
           >
-            {message.type === "error" && <AlertCircle className="h-4 w-4" />}
-            {message.type === "success" && <CheckCircle className="h-4 w-4" />}
-            {message.type === "info" && <Info className="h-4 w-4" />}
-            <AlertDescription>{message.text}</AlertDescription>
+            {message.type === "error" && <AlertCircle className="h-4 w-4 text-red-600" />}
+            {message.type === "success" && <CheckCircle className="h-4 w-4 text-green-600" />}
+            {message.type === "info" && <Info className="h-4 w-4 text-blue-600" />}
+            <AlertDescription className={`font-medium ${
+              message.type === "error" 
+                ? "text-red-800" 
+                : message.type === "success" 
+                  ? "text-green-800" 
+                  : "text-blue-800"
+            }`}>
+              {message.text}
+            </AlertDescription>
           </Alert>
         )}
 
         {/* Validation Errors */}
         {validationErrors.length > 0 && (
-          <Card className="mb-6 border-red-200">
-            <CardHeader>
-              <CardTitle className="text-red-700">Validation Errors</CardTitle>
+          <Card className="mb-6 border-2 border-red-200 shadow-xl animate-in slide-in-from-top-2 duration-300">
+            <CardHeader className="bg-gradient-to-r from-red-500 to-red-600 text-white rounded-t-lg">
+              <CardTitle className="text-white flex items-center">
+                <div className="bg-white/20 p-2 rounded-full mr-3">
+                  <AlertCircle className="h-5 w-5" />
+                </div>
+                Validation Errors
+              </CardTitle>
             </CardHeader>
-            <CardContent>
-              <ul className="list-disc list-inside space-y-1 text-sm text-red-600">
+            <CardContent className="p-6 bg-red-50">
+              <ul className="list-disc list-inside space-y-2 text-sm text-red-700">
                 {validationErrors.map((error, index) => (
-                  <li key={index}>{error}</li>
+                  <li key={index} className="font-medium">{error}</li>
                 ))}
               </ul>
             </CardContent>
@@ -518,35 +565,50 @@ export default function UploadPage() {
 
         {/* Preview */}
         {parsedData && (
-          <Card className="mb-6">
-            <CardHeader>
-              <CardTitle>Data Preview</CardTitle>
-              <CardDescription>
-                Review the parsed data before saving to database. Absent students (in subject columns) are highlighted
-                in red.
+          <Card className="mb-6 shadow-xl border-2 hover:border-[#223152] transition-all duration-300 animate-in slide-in-from-bottom-4 duration-500">
+            <CardHeader className="bg-gradient-to-r from-[#223152] to-[#2a3f66] text-white rounded-t-lg">
+              <CardTitle className="text-white flex items-center">
+                <div className="bg-white/20 p-2 rounded-full mr-3">
+                  <FileText className="h-5 w-5" />
+                </div>
+                Data Preview
+              </CardTitle>
+              <CardDescription className="text-blue-100">
+                Review the parsed data before saving to database. Absent students (in subject columns) are highlighted in red.
                 {processedStudents.length > 0 && (
                   <span className="ml-2">
-                    <Badge variant="secondary">{processedStudents.length} students processed</Badge>
+                    <Badge variant="secondary" className="bg-white/20 text-white border-white/30">
+                      {processedStudents.length} students processed
+                    </Badge>
                   </span>
                 )}
               </CardDescription>
             </CardHeader>
-            <CardContent>
-              <div className="overflow-x-auto">
-                <table className="min-w-full border border-gray-200">
+            <CardContent className="p-6">
+              <div className="overflow-x-auto border-2 rounded-lg shadow-inner">
+                <table className="min-w-full border-collapse">
                   <tbody>
                     {parsedData.slice(0, 10).map((row, index) => (
                       <tr
                         key={index}
-                        className={index === 0 ? "bg-blue-50" : index === 1 ? "bg-yellow-50" : "bg-white"}
+                        className={`transition-colors duration-200 ${
+                          index === 0 
+                            ? "bg-gradient-to-r from-blue-100 to-blue-200" 
+                            : index === 1 
+                              ? "bg-gradient-to-r from-yellow-100 to-yellow-200" 
+                              : "bg-white hover:bg-gray-50"
+                        }`}
                       >
                         {row.map((cell, cellIndex) => {
                           const isAbsentCell = shouldHighlightAsAbsent(index, cellIndex, cell)
                           return (
                             <td
                               key={cellIndex}
-                              className={`border border-gray-200 px-3 py-2 text-sm ${
-                                isAbsentCell ? "bg-red-50 text-red-600" : ""
+                              className={`border border-gray-200 px-3 py-2 text-sm transition-colors duration-200 ${
+                                isAbsentCell ? "bg-red-100 text-red-700 font-semibold" : ""
+                              } ${
+                                index === 0 ? "font-semibold text-blue-800" : 
+                                index === 1 ? "font-semibold text-yellow-800" : ""
                               }`}
                             >
                               {cell || (isAbsentCell ? "ABSENT" : "-")}
@@ -559,10 +621,12 @@ export default function UploadPage() {
                 </table>
               </div>
               {parsedData.length > 10 && (
-                <p className="text-sm text-gray-500 mt-2">Showing first 10 rows of {parsedData.length} total rows</p>
+                <p className="text-sm text-gray-500 mt-3 text-center font-medium">
+                  Showing first 10 rows of {parsedData.length} total rows
+                </p>
               )}
 
-              <div className="mt-4 flex justify-end space-x-4">
+              <div className="mt-6 flex justify-end space-x-4">
                 <Button
                   variant="outline"
                   onClick={() => {
@@ -572,11 +636,26 @@ export default function UploadPage() {
                     setValidationErrors([])
                     setMessage(null)
                   }}
+                  className="border-gray-300 hover:bg-gray-50 transition-all duration-300"
                 >
                   Clear
                 </Button>
-                <Button onClick={handleSave} disabled={loading || !canSave}>
-                  {loading ? "Saving..." : "Save to Database"}
+                <Button 
+                  onClick={handleSave} 
+                  disabled={loading || !canSave}
+                  className="bg-[#223152] hover:bg-[#1a2642] text-white min-w-[150px] font-medium shadow-lg hover:shadow-xl transition-all duration-300"
+                >
+                  {loading ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Saving...
+                    </>
+                  ) : (
+                    <>
+                      <CheckCircle className="mr-2 h-4 w-4" />
+                      Save to Database
+                    </>
+                  )}
                 </Button>
               </div>
             </CardContent>

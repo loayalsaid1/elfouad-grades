@@ -9,7 +9,7 @@ export default function BackToDashboard() {
   return (
     <Button
       variant="outline"
-      className="mb-4 flex items-center gap-2"
+      className="mb-6 flex items-center gap-2 hover:bg-[#223152] hover:text-white hover:border-[#223152] transition-all duration-300 shadow-md"
       onClick={() => router.push("/admin/dashboard")}
     >
       <ArrowLeft className="h-4 w-4" />

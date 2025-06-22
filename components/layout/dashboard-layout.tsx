@@ -60,11 +60,11 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
   }, [pathname])
 
   return (
-    <div className="flex min-h-screen bg-gray-50">
+    <div className="flex min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
       {/* Mobile Sidebar Toggle */}
       <Sheet open={open} onOpenChange={setOpen}>
         <SheetTrigger asChild className="lg:hidden fixed left-4 top-4 z-10">
-          <Button variant="outline" size="icon">
+          <Button variant="outline" size="icon" className="shadow-lg bg-white hover:bg-[#223152] hover:text-white transition-all duration-300">
             <Menu className="h-5 w-5" />
             <span className="sr-only">Toggle Menu</span>
           </Button>
@@ -75,7 +75,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
       </Sheet>
 
       {/* Desktop Sidebar */}
-      <aside className="hidden lg:flex flex-col w-72 border-r bg-white">
+      <aside className="hidden lg:flex flex-col w-72 border-r bg-white shadow-xl">
         <DesktopSidebar routes={routes} onSignOut={handleSignOut} />
       </aside>
 
@@ -100,9 +100,9 @@ interface SidebarProps {
 function MobileSidebar({ routes, onSignOut }: SidebarProps) {
   return (
     <div className="flex flex-col h-full bg-white">
-      <div className="p-6">
-        <h2 className="text-2xl font-bold text-gray-900">Admin Portal</h2>
-        <p className="text-sm text-gray-500 mt-1">School Group Management</p>
+      <div className="p-6 bg-gradient-to-r from-[#223152] to-[#2a3f66] text-white">
+        <h2 className="text-2xl font-bold">Admin Portal</h2>
+        <p className="text-sm opacity-90 mt-1">El Fouad Schools Group</p>
       </div>
       <Separator />
       <ScrollArea className="flex-1 p-6">
@@ -111,7 +111,11 @@ function MobileSidebar({ routes, onSignOut }: SidebarProps) {
             <Button
               key={route.href}
               variant={route.active ? "default" : "ghost"}
-              className={`justify-start ${route.active ? "bg-primary text-primary-foreground" : ""}`}
+              className={`justify-start transition-all duration-300 ${
+                route.active 
+                  ? "bg-[#223152] text-white shadow-md" 
+                  : "hover:bg-[#223152] hover:text-white hover:shadow-lg hover:scale-[1.02]"
+              }`}
               asChild
             >
               <a href={route.href}>
@@ -124,7 +128,11 @@ function MobileSidebar({ routes, onSignOut }: SidebarProps) {
       </ScrollArea>
       <Separator />
       <div className="p-6">
-        <Button variant="outline" className="w-full justify-start" onClick={onSignOut}>
+        <Button 
+          variant="outline" 
+          className="w-full justify-start hover:bg-red-50 hover:border-red-200 hover:text-red-600 transition-all duration-300" 
+          onClick={onSignOut}
+        >
           <LogOut className="h-5 w-5 mr-2" />
           Sign Out
         </Button>
@@ -136,9 +144,9 @@ function MobileSidebar({ routes, onSignOut }: SidebarProps) {
 function DesktopSidebar({ routes, onSignOut }: SidebarProps) {
   return (
     <div className="flex flex-col h-full">
-      <div className="p-6">
-        <h2 className="text-2xl font-bold text-gray-900">Admin Portal</h2>
-        <p className="text-sm text-gray-500 mt-1">School Group Management</p>
+      <div className="p-6 bg-gradient-to-r from-[#223152] to-[#2a3f66] text-white">
+        <h2 className="text-2xl font-bold">Admin Portal</h2>
+        <p className="text-sm opacity-90 mt-1">El Fouad Schools Group</p>
       </div>
       <Separator />
       <ScrollArea className="flex-1 p-6">
@@ -147,7 +155,11 @@ function DesktopSidebar({ routes, onSignOut }: SidebarProps) {
             <Button
               key={route.href}
               variant={route.active ? "default" : "ghost"}
-              className={`justify-start ${route.active ? "bg-primary text-primary-foreground" : ""}`}
+              className={`justify-start transition-all duration-300 ${
+                route.active 
+                  ? "bg-[#223152] text-white shadow-md" 
+                  : "hover:bg-[#223152] hover:text-white hover:shadow-lg hover:scale-[1.02]"
+              }`}
               asChild
             >
               <a href={route.href}>
@@ -160,7 +172,11 @@ function DesktopSidebar({ routes, onSignOut }: SidebarProps) {
       </ScrollArea>
       <Separator />
       <div className="p-6">
-        <Button variant="outline" className="w-full justify-start" onClick={onSignOut}>
+        <Button 
+          variant="outline" 
+          className="w-full justify-start hover:bg-red-50 hover:border-red-200 hover:text-red-600 transition-all duration-300" 
+          onClick={onSignOut}
+        >
           <LogOut className="h-5 w-5 mr-2" />
           Sign Out
         </Button>

@@ -105,96 +105,114 @@ export default function AdminLoginsPage() {
   if (!user) return <LoadingPage message="Loading logins..." />
 
   return (
-    <div className="h-full bg-gray-50 py-8">
-      <div className="max-w-4xl mx-auto px-4">
+    <div className="h-full bg-gradient-to-br from-slate-50 to-blue-50 py-8">
+      <div className="max-w-6xl mx-auto px-4">
         <BackToDashboard />
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 flex items-center">
-            <Users className="mr-3" />
+          <h1 className="text-3xl font-bold text-[#223152] flex items-center">
+            <div className="bg-[#223152] p-3 rounded-full mr-4">
+              <Users className="h-8 w-8 text-white" />
+            </div>
             Admin Logins
           </h1>
           <p className="text-gray-600 mt-2">View admin login activity for the selected period</p>
         </div>
+
         {/* Time Filter UI */}
-        <div className="mb-4 flex flex-wrap items-center gap-2">
-          <label className="font-medium mr-2">Show:</label>
-          <select
-            className="border rounded px-2 py-1"
-            value={filter}
-            onChange={e => setFilter(e.target.value as any)}
-          >
-            <option value="24h">Last 24 hours</option>
-            <option value="7d">Last 7 days</option>
-            <option value="30d">Last 30 days</option>
-            <option value="year">Last year</option>
-            <option value="all">All</option>
-            <option value="custom">Custom range</option>
-          </select>
-          {filter === "custom" && (
-            <>
-              <input
-                type="date"
-                className="border rounded px-2 py-1"
-                value={customStart}
-                onChange={e => setCustomStart(e.target.value)}
-                max={customEnd || undefined}
-              />
-              <span className="mx-1">to</span>
-              <input
-                type="date"
-                className="border rounded px-2 py-1"
-                value={customEnd}
-                onChange={e => setCustomEnd(e.target.value)}
-                min={customStart || undefined}
-              />
-            </>
-          )}
-        </div>
+        <Card className="mb-6 shadow-lg border-2 hover:border-[#223152] transition-all duration-300">
+          <CardContent className="p-6">
+            <div className="flex flex-wrap items-center gap-4">
+              <label className="font-medium text-[#223152]">Show:</label>
+              <select
+                className="border-2 border-gray-200 rounded-lg px-3 py-2 focus:border-[#223152] focus:ring-[#223152] transition-all duration-300"
+                value={filter}
+                onChange={e => setFilter(e.target.value as any)}
+              >
+                <option value="24h">Last 24 hours</option>
+                <option value="7d">Last 7 days</option>
+                <option value="30d">Last 30 days</option>
+                <option value="year">Last year</option>
+                <option value="all">All</option>
+                <option value="custom">Custom range</option>
+              </select>
+              {filter === "custom" && (
+                <>
+                  <input
+                    type="date"
+                    className="border-2 border-gray-200 rounded-lg px-3 py-2 focus:border-[#223152] focus:ring-[#223152] transition-all duration-300"
+                    value={customStart}
+                    onChange={e => setCustomStart(e.target.value)}
+                    max={customEnd || undefined}
+                  />
+                  <span className="mx-2 text-gray-500 font-medium">to</span>
+                  <input
+                    type="date"
+                    className="border-2 border-gray-200 rounded-lg px-3 py-2 focus:border-[#223152] focus:ring-[#223152] transition-all duration-300"
+                    value={customEnd}
+                    onChange={e => setCustomEnd(e.target.value)}
+                    min={customStart || undefined}
+                  />
+                </>
+              )}
+            </div>
+          </CardContent>
+        </Card>
+
         {error && (
-          <Alert variant="destructive" className="mb-6">
+          <Alert variant="destructive" className="mb-6 animate-in slide-in-from-top-2 duration-300">
             <AlertCircle className="h-4 w-4" />
             <AlertDescription>{error}</AlertDescription>
           </Alert>
         )}
-        <Card>
-          <CardHeader>
-            <CardTitle>Admin Logins ({getFilterLabel(filter, customStart, customEnd)})</CardTitle>
-            <CardDescription>
+
+        <Card className="shadow-xl border-2 hover:border-[#223152] transition-all duration-300">
+          <CardHeader className="bg-gradient-to-r from-[#223152] to-[#2a3f66] text-white rounded-t-lg">
+            <CardTitle className="text-white">Admin Logins ({getFilterLabel(filter, customStart, customEnd)})</CardTitle>
+            <CardDescription className="text-blue-100">
               Admin Login Activity - {getFilterLabel(filter, customStart, customEnd)}
             </CardDescription>
           </CardHeader>
-          <CardContent>
+          <CardContent className="p-0">
             {loading ? (
-              <div className="flex justify-center p-4">
-                <Loader2 className="h-6 w-6 animate-spin" />
+              <div className="flex justify-center p-8">
+                <Loader2 className="h-8 w-8 animate-spin text-[#223152]" />
               </div>
             ) : (
               <div className="overflow-x-auto">
-                <table className="min-w-full border border-gray-200">
+                <table className="min-w-full">
                   <thead>
-                    <tr className="bg-gray-100">
-                      <th className="px-4 py-2 text-left text-xs font-semibold text-gray-700">Email</th>
-                      <th className="px-4 py-2 text-left text-xs font-semibold text-gray-700">Date</th>
-                      <th className="px-4 py-2 text-left text-xs font-semibold text-gray-700">IP Address</th>
-                      <th className="px-4 py-2 text-left text-xs font-semibold text-gray-700">User Agent</th>
-                      <th className="px-4 py-2 text-left text-xs font-semibold text-gray-700">Latitude</th>
-                      <th className="px-4 py-2 text-left text-xs font-semibold text-gray-700">Longitude</th>
+                    <tr className="bg-gray-50 border-b">
+                      <th className="px-6 py-4 text-left text-xs font-semibold text-[#223152] uppercase tracking-wider">Email</th>
+                      <th className="px-6 py-4 text-left text-xs font-semibold text-[#223152] uppercase tracking-wider">Date</th>
+                      <th className="px-6 py-4 text-left text-xs font-semibold text-[#223152] uppercase tracking-wider">IP Address</th>
+                      <th className="px-6 py-4 text-left text-xs font-semibold text-[#223152] uppercase tracking-wider">User Agent</th>
+                      <th className="px-6 py-4 text-left text-xs font-semibold text-[#223152] uppercase tracking-wider">Location</th>
                     </tr>
                   </thead>
-                  <tbody>
+                  <tbody className="bg-white divide-y divide-gray-200">
                     {logins.length === 0 ? (
                       <tr>
-                        <td colSpan={6} className="text-center py-6 text-gray-500">No logins found</td>
+                        <td colSpan={5} className="text-center py-12 text-gray-500">
+                          <div className="flex flex-col items-center">
+                            <Users className="h-12 w-12 opacity-50 mb-4" />
+                            <p className="text-lg font-medium">No logins found</p>
+                            <p className="text-sm">for the selected time period</p>
+                          </div>
+                        </td>
                       </tr>
                     ) : (
-                      logins.map((login) => (
-                        <tr key={login.id} className="border-b">
-                          <td className="px-4 py-2 text-sm">{login.email}</td>
-                          <td className="px-4 py-2 text-sm">{new Date(login.created_at).toLocaleString()}</td>
-                          <td className="px-4 py-2 text-sm">{login.ip_address || <span className="text-gray-400 italic">N/A</span>}</td>
-                          <td className="px-4 py-2 text-xs max-w-xs truncate" title={login.user_agent}>{login.user_agent || <span className="text-gray-400 italic">N/A</span>}</td>
-                          <td className="px-4 py-2 text-xs">{login.latitude !== null ? login.latitude : <span className="text-gray-400 italic">N/A</span>}</td>
-                          <td className="px-4 py-2 text-xs">{login.longitude !== null ? login.longitude : <span className="text-gray-400 italic">N/A</span>}</td>
+                      logins.map((login, index) => (
+                        <tr key={login.id} className={`hover:bg-gray-50 transition-colors duration-200 ${index % 2 === 0 ? 'bg-white' : 'bg-gray-25'}`}>
+                          <td className="px-6 py-4 text-sm font-medium text-[#223152]">{login.email}</td>
+                          <td className="px-6 py-4 text-sm text-gray-700">{new Date(login.created_at).toLocaleString()}</td>
+                          <td className="px-6 py-4 text-sm text-gray-700">{login.ip_address || <span className="text-gray-400 italic">N/A</span>}</td>
+                          <td className="px-6 py-4 text-xs text-gray-600 max-w-xs truncate" title={login.user_agent}>{login.user_agent || <span className="text-gray-400 italic">N/A</span>}</td>
+                          <td className="px-6 py-4 text-xs text-gray-600">
+                            {login.latitude !== null && login.longitude !== null 
+                              ? `${login.latitude}, ${login.longitude}` 
+                              : <span className="text-gray-400 italic">N/A</span>
+                            }
+                          </td>
                         </tr>
                       ))
                     )}
