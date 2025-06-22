@@ -15,6 +15,7 @@ import { createClientComponentSupabaseClient } from "@/lib/supabase"
 import BackToDashboard from "@/components/admin/BackToDashboard"
 import { useAdminUser } from "@/hooks/useAdminUser"
 import LoadingPage from "@/components/admin/LoadingPage"
+import ExportContextCSVButton from "@/components/admin/ExportContextCSVButton"
 
 export default function AdminTestResultsPage() {
   const user = useAdminUser()
@@ -222,6 +223,32 @@ export default function AdminTestResultsPage() {
               </select>
             </div>
           </div>
+
+          {/* Export buttons for all available contexts */}
+          {contextState.contexts.length > 0 && (
+            <div className="mt-4">
+              <div className="font-semibold mb-2 text-sm">Export CSV for any context:</div>
+              <div className="flex flex-wrap gap-2">
+                {contextState.contexts.map((ctx) => {
+                  // Find school name for this context
+                  const schoolObj = schoolOptions.find((s) => s.id === ctx.school_id)
+                  return (
+                    <ExportContextCSVButton
+                      key={ctx.id}
+                      context={{
+                        id: ctx.id,
+                        year: ctx.year,
+                        term: ctx.term,
+                        grade: ctx.grade,
+                        school_id: ctx.school_id,
+                        school_name: schoolObj?.name,
+                      }}
+                    />
+                  )
+                })}
+              </div>
+            </div>
+          )}
         </CardContent>
       </Card>
 
