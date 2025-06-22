@@ -25,6 +25,16 @@ export default function SettingsPage() {
     resetInitial,
   } = useActiveContextChanges(settings.contexts, settings.activeContexts, settings.loading)
 
+  // Auto-scroll to top when error or success message appears
+  useEffect(() => {
+    if (settings.error || settings.message) {
+      window.scrollTo({ 
+        top: 0, 
+        behavior: 'smooth' 
+      })
+    }
+  }, [settings.error, settings.message])
+
   if (settings.loading || !user) {
     return <LoadingPage message="Loading settings..." />
   }
@@ -48,21 +58,29 @@ export default function SettingsPage() {
   }
 
   return (
-    <div className="h-full bg-gray-50 py-8">
-      <div className="max-w-4xl mx-auto px-4">
+    <div className="h-full bg-gradient-to-br from-slate-50 to-blue-50 py-8">
+      <div className="max-w-6xl mx-auto px-4">
         <BackToDashboard />
+        
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 flex items-center">
-            <Settings className="mr-3" />
+          <h1 className="text-3xl font-bold text-[#223152] flex items-center">
+            <div className="bg-[#223152] p-3 rounded-full mr-4">
+              <Settings className="h-8 w-8 text-white" />
+            </div>
             System Settings
           </h1>
-          <p className="text-gray-600 mt-2">Manage system availability and active academic contexts</p>
+          <p className="text-gray-600 mt-2">
+            Manage system availability and active academic contexts
+          </p>
         </div>
+        
         <AlertMessage error={settings.error} message={settings.message} />
+        
         <SystemAvailabilityCard
           systemEnabled={settings.systemEnabled}
           setSystemEnabled={settings.setSystemEnabled}
         />
+        
         <AcademicContextsCard
           contexts={settings.contexts}
           activeContexts={settings.activeContexts}
@@ -71,12 +89,14 @@ export default function SettingsPage() {
           setFilters={settings.setFilters}
           deleteContext={settings.deleteContext}
         />
+        
         <div className="flex justify-end">
           <SaveSettingsButton
             saving={settings.saving}
             onSave={handleSave}
           />
         </div>
+        
         {/* Confirmation Modal */}
         <ActiveContextsConfirmDialog
           open={showConfirm}
