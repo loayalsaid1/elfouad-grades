@@ -3,7 +3,6 @@
 import { useState, useRef, useEffect } from "react"
 import { useParams } from "next/navigation"
 import StudentSearchForm from "@/components/search/StudentSearchForm"
-import StudentInfo from "@/components/results/StudentInfo"
 import ResultsTable from "@/components/results/ResultsTable"
 import GradeReference from "@/components/results/GradeReference"
 import ParentPasswordDialog from "@/components/search/ParentPasswordDialog"
