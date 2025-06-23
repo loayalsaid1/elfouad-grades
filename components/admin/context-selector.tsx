@@ -30,16 +30,35 @@ export function ContextSelector({ onContextChange }: ContextSelectorProps) {
 
   const supabase = createClientComponentSupabaseClient()
 
-  // Memoize options to prevent re-renders
-  const yearOptions = useMemo(() => {
+  // Memoize options to prevent re-renders and get current year
+  const { yearOptions, currentAcademicYear } = useMemo(() => {
     const currentYear = new Date().getFullYear()
-    return Array.from({ length: currentYear + 5 - 2004 + 1 }, (_, i) => 2004 + i)
+    const currentMonth = new Date().getMonth() + 1 // 1-12
+    
+    // Academic year starts in September (month 9)
+    // If we're in Jan-Aug, we're in the second half of the academic year
+    // If we're in Sep-Dec, we're in the first half of the academic year
+    const academicYear = currentMonth >= 9 ? currentYear : currentYear - 1
+    
+    const years = Array.from({ length: currentYear + 5 - 2004 + 1 }, (_, i) => 2004 + i)
+    
+    return {
+      yearOptions: years,
+      currentAcademicYear: academicYear
+    }
   }, [])
 
   const gradeOptions = useMemo(() => 
     Array.from({ length: 12 }, (_, i) => i + 1),
     []
   )
+
+  // Set default year to current academic year on component mount
+  useEffect(() => {
+    if (!selectedYear && currentAcademicYear) {
+      setSelectedYear(currentAcademicYear.toString())
+    }
+  }, [currentAcademicYear, selectedYear])
 
   // Fetch schools on component mount
   useEffect(() => {
@@ -159,10 +178,24 @@ export function ContextSelector({ onContextChange }: ContextSelectorProps) {
               <SelectTrigger id="year" className="focus:border-[#223152] focus:ring-[#223152] transition-all duration-300">
                 <SelectValue placeholder="Select year" />
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent 
+                className="max-h-[300px] overflow-y-auto"
+                onOpenAutoFocus={(e) => {
+                  // Auto-scroll to current year when dropdown opens
+                  const currentYearElement = e.currentTarget.querySelector(`[data-value="${currentAcademicYear}"]`)
+                  if (currentYearElement) {
+                    currentYearElement.scrollIntoView({ block: "center" })
+                  }
+                }}
+              >
                 {yearOptions.map((year) => (
-                  <SelectItem key={year} value={year.toString()}>
-                    {year}-{year + 1}
+                  <SelectItem 
+                    key={year} 
+                    value={year.toString()}
+                    data-value={year}
+                    className={year === currentAcademicYear ? "bg-blue-50 font-medium" : ""}
+                  >
+                    {year}-{year + 1} {year === currentAcademicYear && "(Current)"}
                   </SelectItem>
                 ))}
               </SelectContent>
