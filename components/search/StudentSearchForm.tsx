@@ -1,85 +1,65 @@
 "use client"
 
-import { useState, useCallback } from "react"
+import type React from "react"
+
+import { useState } from "react"
+import { Search } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Search, User, Loader2 } from "lucide-react"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import LoadingSpinner from "@/components/ui/LoadingSpinner"
 
 interface StudentSearchFormProps {
-  onSearch?: (studentId: string) => Promise<void>
-  loading?: boolean
+  onSearch: (studentId: string) => Promise<void> 
+  loading: boolean
 }
 
-export default function StudentSearchForm({ onSearch, loading = false }: StudentSearchFormProps) {
+export default function StudentSearchForm({ onSearch, loading }: StudentSearchFormProps) {
   const [studentId, setStudentId] = useState("")
 
-  const handleSubmit = useCallback(async (e: React.FormEvent) => {
-    e.preventDefault()
-    if (studentId.trim() && onSearch) {
+  const handleSearch = async () => {
+    if (studentId.trim()) {
       await onSearch(studentId.trim())
     }
-  }, [studentId, onSearch])
+  }
 
-  const handleInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    setStudentId(e.target.value)
-  }, [])
+  const handleKeyPress = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter") {
+      handleSearch()
+    }
+  }
 
   return (
-    <Card className="shadow-xl border-2 hover:border-[#223152] transition-all duration-300">
-      <CardHeader className="bg-gradient-to-r from-[#223152] to-[#2a3f66] text-white rounded-t-lg">
-        <CardTitle className="text-white flex items-center">
-          <div className="bg-white/20 p-2 rounded-full mr-3">
-            <User className="h-5 w-5" />
-          </div>
-          Student Search
+    <div className="mb-8">
+      <Card className="border-l-4 border-l-[#223152]">
+      <CardHeader>
+        <CardTitle className="flex items-center space-x-2">
+          <Search className="h-5 w-5" />
+          <span>Search Student Results</span>
         </CardTitle>
+        <CardDescription>Enter the student's National ID to view exam results and generate reports</CardDescription>
       </CardHeader>
-      <CardContent className="p-6">
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="space-y-2">
-            <label htmlFor="student-id" className="text-sm font-medium text-[#223152]">
-              Student National ID
-            </label>
-            <div className="relative">
-              <Input
-                id="student-id"
-                type="text"
-                placeholder="Enter student national ID"
-                value={studentId}
-                onChange={handleInputChange}
-                disabled={loading || !onSearch}
-                className="pl-10 focus:border-[#223152] focus:ring-[#223152] transition-all duration-300 text-lg py-3"
-              />
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
-            </div>
-          </div>
-          
+      <CardContent>
+        <div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
+          <Input
+            placeholder="Student's National ID"
+            value={studentId}
+            onChange={(e) => setStudentId(e.target.value)}
+            className="flex-1"
+            onKeyPress={handleKeyPress}
+            disabled={loading}
+          />
           <Button
-            type="submit"
-            disabled={!studentId.trim() || loading || !onSearch}
-            className="w-full bg-[#223152] hover:bg-[#1a2642] text-white font-medium py-3 text-lg shadow-lg hover:shadow-xl transition-all duration-300"
+            onClick={handleSearch}
+            disabled={loading || !studentId.trim() || onSearch === undefined}
+            className="bg-[#223152] hover:bg-[#1a2642] w-full sm:w-auto"
           >
-            {loading ? (
-              <>
-                <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                Searching...
-              </>
-            ) : (
-              <>
-                <Search className="mr-2 h-5 w-5" />
-                Search Student
-              </>
-            )}
+            {loading ? <LoadingSpinner size="sm" /> : <Search className="w-4 h-4" />}
+            {loading ? "Searching..." : "Search"}
           </Button>
-          
-          {!onSearch && (
-            <p className="text-sm text-orange-600 text-center font-medium bg-orange-50 p-2 rounded">
-              Please select all academic context fields above to enable search
-            </p>
-          )}
-        </form>
+        </div>
       </CardContent>
     </Card>
+    </div>
   )
 }
