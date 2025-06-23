@@ -7,6 +7,7 @@ import { ContextSelector } from "@/components/admin/context-selector"
 import { useAdminUser } from "@/hooks/useAdminUser"
 import { useCSVParser } from "@/hooks/useCSVParser"
 import { useUploadResults } from "@/hooks/useUploadResults"
+import { useCSVBackupUpload } from "@/hooks/useCSVBackupUpload"
 import BackToDashboard from "@/components/admin/BackToDashboard"
 import LoadingPage from "@/components/admin/LoadingPage"
 import { CSVFormatInstructions } from "@/components/admin/upload/CSVFormatInstructions"
@@ -37,11 +38,23 @@ export default function UploadPage() {
   } = useCSVParser()
   
   const { loading, uploadResults } = useUploadResults()
+  const { uploadCSVBackup, uploading: backupUploading, error: backupError, success: backupSuccess } = useCSVBackupUpload()
 
-  const handleFileSelect = (selectedFile: File) => {
+  const handleFileSelect = async (selectedFile: File) => {
     setFile(selectedFile)
     setMessage({ type: "info", text: "Parsing CSV file..." })
     parseCSV(selectedFile)
+
+    // Upload backup if context is selected
+    if (context) {
+      setMessage({ type: "info", text: "Uploading backup to Supabase..." })
+      const result = await uploadCSVBackup(selectedFile, context)
+      if (!result.success) {
+        setMessage({ type: "error", text: `Backup upload failed: ${result.error}` })
+      } else {
+        setMessage({ type: "success", text: "Backup uploaded to Supabase successfully." })
+      }
+    }
   }
 
   const handleSave = async () => {
@@ -95,6 +108,22 @@ export default function UploadPage() {
   }, [parsedData, processedStudents, validationErrors])
 
   const canSave = context && processedStudents.length > 0 && validationErrors.length === 0
+
+  // ContextSelector: when context changes, if file is already selected, upload backup
+  useEffect(() => {
+    if (context && file) {
+      (async () => {
+        setMessage({ type: "info", text: "Uploading backup to Supabase..." })
+        const result = await uploadCSVBackup(file, context)
+        if (!result.success) {
+          setMessage({ type: "error", text: `Backup upload failed: ${result.error}` })
+        } else {
+          setMessage({ type: "success", text: "Backup uploaded to Supabase successfully." })
+        }
+      })()
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [context])
 
   if (!user) {
     return <LoadingPage message="Loading upload page..." />
