@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { Upload, Settings, School, Users, Database, LogOut, TestTube, History } from "lucide-react"
+import { Upload, Settings, Users, Database, LogOut, TestTube, History } from "lucide-react"
 import { useAdminUser } from "@/hooks/useAdminUser"
 import { createClientComponentSupabaseClient } from "@/lib/supabase"
 import LoadingPage from "@/components/admin/LoadingPage"
@@ -179,7 +179,7 @@ export default function AdminDashboard() {
         </div>
 
         {/* Quick Actions */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6">
           <Card
             className="cursor-pointer hover:shadow-xl transition-all duration-300 hover:scale-[1.02] border-2 hover:border-[#223152] group"
             onClick={() => router.push("/admin/dashboard/upload")}
@@ -238,28 +238,6 @@ export default function AdminDashboard() {
             <CardContent>
               <Button variant="outline" className="w-full border-[#223152] text-[#223152] hover:bg-[#223152] hover:text-white transition-all duration-300">
                 Open Test Results
-              </Button>
-            </CardContent>
-          </Card>
-
-          <Card
-            className="cursor-pointer hover:shadow-xl transition-all duration-300 hover:scale-[1.02] border-2 hover:border-[#223152] group"
-            onClick={() => router.push("/admin/dashboard/schools")}
-          >
-            <CardHeader>
-              <CardTitle className="flex items-center text-[#223152] group-hover:text-[#1a2642]">
-                <div className="bg-orange-100 p-3 rounded-full mr-3 group-hover:bg-[#223152] group-hover:text-white transition-all duration-300">
-                  <School className="h-5 w-5" />
-                </div>
-                Schools Management
-              </CardTitle>
-              <CardDescription>
-                Manage schools and their configurations
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <Button variant="outline" className="w-full border-[#223152] text-[#223152] hover:bg-[#223152] hover:text-white transition-all duration-300">
-                Manage Schools
               </Button>
             </CardContent>
           </Card>
