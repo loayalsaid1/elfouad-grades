@@ -63,7 +63,7 @@ export default function AdminTestResultsPage() {
 
   // Memoize grade options to prevent re-rendering
   const gradeOptions = useMemo(() => 
-    Array.from({ length: 8 }, (_, i) => i + 1),
+    Array.from({ length: 12 }, (_, i) => i + 1),
     []
   )
 
