@@ -257,29 +257,20 @@ export default function AdminTestResultsPage() {
               </div>
             </div>
 
-            {/* Export buttons for all available contexts */}
-            {contextState.contexts.length > 0 && (
+            {/* Export button for the selected context */}
+            {contextState.activeContext && (
               <div className="mt-6 p-4 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg border border-blue-200">
-                <div className="font-semibold mb-3 text-sm text-[#223152]">Export CSV for any context:</div>
-                <div className="flex flex-wrap gap-2">
-                  {contextState.contexts.map((ctx) => {
-                    // Find school name for this context
-                    const schoolObj = schoolOptions.find((s) => s.id === ctx.school_id)
-                    return (
-                      <ExportContextCSVButton
-                        key={ctx.id}
-                        context={{
-                          id: ctx.id,
-                          year: ctx.year,
-                          term: ctx.term,
-                          grade: ctx.grade,
-                          school_id: ctx.school_id,
-                          school_slug: schoolObj?.slug,
-                        }}
-                      />
-                    )
-                  })}
-                </div>
+                <div className="font-semibold mb-3 text-sm text-[#223152]">Export CSV for selected context:</div>
+                <ExportContextCSVButton
+                  context={{
+                    id: contextState.activeContext.id,
+                    year: contextState.activeContext.year,
+                    term: contextState.activeContext.term,
+                    grade: contextState.activeContext.grade,
+                    school_id: contextState.activeContext.school_id,
+                    school_slug: schoolOptions.find((s) => s.id === contextState.activeContext.school_id)?.slug,
+                  }}
+                />
               </div>
             )}
           </CardContent>
