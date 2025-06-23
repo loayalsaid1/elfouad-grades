@@ -51,6 +51,17 @@ export function useCSVParser(): UseCSVParserReturn {
         return
       }
 
+      // NEW VALIDATION: Check for duplicate subject names (after first three columns)
+      const subjectHeaders = headers.slice(3).map((h) => h.toLowerCase())
+      const seenSubjects = new Set<string>()
+      subjectHeaders.forEach((subject, idx) => {
+        if (seenSubjects.has(subject)) {
+          errors.push(`Duplicate subject name found in header: "${headers[idx + 3]}"`)
+        } else {
+          seenSubjects.add(subject)
+        }
+      })
+
       // NEW VALIDATION: Check that first 3 columns in second row (full marks) are empty
       for (let i = 0; i < 3; i++) {
         const cell = fullMarks[i]?.trim()
