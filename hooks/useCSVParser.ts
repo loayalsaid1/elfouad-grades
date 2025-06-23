@@ -51,6 +51,14 @@ export function useCSVParser(): UseCSVParserReturn {
         return
       }
 
+      // NEW VALIDATION: Check that first 3 columns in second row (full marks) are empty
+      for (let i = 0; i < 3; i++) {
+        const cell = fullMarks[i]?.trim()
+        if (cell && cell !== "") {
+          errors.push(`Second row (full marks): Column ${i + 1} must be empty (found "${cell}").`)
+        }
+      }
+
       // Find column indices (now fixed)
       const studentIdIndex = 0
       const studentNameIndex = 1
@@ -64,6 +72,19 @@ export function useCSVParser(): UseCSVParserReturn {
       if (subjectIndices.length === 0) {
         errors.push("No subject columns found (must be after the first three columns).")
       }
+
+      // NEW VALIDATION: Check that all subject columns have full mark values
+      subjectIndices.forEach(({ header, index }) => {
+        const fullMarkStr = fullMarks[index]?.trim()
+        if (!fullMarkStr || fullMarkStr === "") {
+          errors.push(`Second row (full marks): Subject "${header}" must have a full mark value.`)
+        } else {
+          const fullMark = Number.parseFloat(fullMarkStr)
+          if (isNaN(fullMark)) {
+            errors.push(`Second row (full marks): Subject "${header}" has invalid full mark "${fullMarkStr}".`)
+          }
+        }
+      })
 
       if (errors.length > 0) {
         setValidationErrors(errors)
