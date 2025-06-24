@@ -9,7 +9,7 @@ import { useStudentSearch } from "@/hooks/useStudentSearch"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { AlertCircle, TestTube, Edit2 } from "lucide-react"
+import { AlertCircle, TestTube } from "lucide-react"
 import { usePDFGeneration } from "@/hooks/usePDFGeneration"
 import Instructions from "@/components/Instructions"
 import { createClientComponentSupabaseClient } from "@/lib/supabase"
@@ -309,18 +309,12 @@ export default function AdminTestResultsPage() {
                 </div>
               )}
               <div ref={tableRef}>
-                <div className="flex justify-end mb-2">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="flex items-center gap-2 border-[#223152] text-[#223152] hover:bg-[#223152] hover:text-white transition-all duration-300"
-                    onClick={() => startEdit(student)}
-                  >
-                    <Edit2 className="h-4 w-4" />
-                    Edit Student
-                  </Button>
-                </div>
-                <ResultsTable student={student} onExportPDF={() => generatePDF(student)} pdfLoading={pdfLoading} />
+                <ResultsTable
+                  student={student}
+                  onExportPDF={() => generatePDF(student)}
+                  pdfLoading={pdfLoading}
+                  onEdit={() => startEdit(student)} // Pass onEdit for admin
+                />
               </div>
             </>
           )}

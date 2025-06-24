@@ -3,7 +3,7 @@
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardHeader, CardDescription, CardTitle } from "@/components/ui/card"
 import { formatScore, getGradeLevel } from "@/utils/gradeUtils"
-import { Download } from "lucide-react"
+import { Download, Edit2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import LoadingSpinner from "@/components/ui/LoadingSpinner"
 import type { StudentResult } from "@/types/student"
@@ -12,9 +12,10 @@ interface ResultsTableProps {
   student: StudentResult
   onExportPDF: () => void
   pdfLoading: boolean
+  onEdit?: () => void // Add optional onEdit prop
 }
 
-export default function ResultsTable({ student, onExportPDF, pdfLoading }: ResultsTableProps) {
+export default function ResultsTable({ student, onExportPDF, pdfLoading, onEdit }: ResultsTableProps) {
   const showGrade = student.grade < 7
   console.log(student);
   // Find subjects with score < 50 or absent
@@ -36,10 +37,24 @@ export default function ResultsTable({ student, onExportPDF, pdfLoading }: Resul
               <div className="text-sm text-gray-600">Student ID: {student.id}</div>
             </CardDescription>
           </div>
-          <Button onClick={onExportPDF} className="bg-orange-500 hover:bg-orange-600 w-full sm:w-auto">
-            {pdfLoading ? <LoadingSpinner size="sm" className="mr-2" /> : <Download className="w-4 h-4 mr-2" />}
-            Download PDF
-          </Button>
+          <div className="flex flex-col align-center sm:flex-row gap-2 w-full sm:w-auto">
+                        {onEdit && (
+              <Button
+                variant="outline"
+                size="sm"
+                className="flex items-center gap-2 border-[#223152] text-[#223152] hover:bg-[#223152] hover:text-white transition-all duration-300"
+                onClick={onEdit}
+              >
+                <Edit2 className="h-4 w-4" />
+                Edit Student
+              </Button>
+            )}
+            <Button onClick={onExportPDF} className="bg-orange-500 hover:bg-orange-600 w-full sm:w-auto">
+              {pdfLoading ? <LoadingSpinner size="sm" className="mr-2" /> : <Download className="w-4 h-4 mr-2" />}
+              Download PDF
+            </Button>
+
+          </div>
         </div>
       </CardHeader>
       <CardContent>

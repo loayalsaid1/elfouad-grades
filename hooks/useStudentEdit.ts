@@ -32,7 +32,7 @@ export function useStudentEdit() {
       // Prepare scores for DB (convert to expected JSON structure)
       const scores = updated.scores.map(s => ({
         subject: s.subject,
-        score: s.absent ? null : s.score,
+        score: s.absent ? null : (s.score !== null && s.score !== "" ? parseFloat(s.score) : null),
         full_mark: s.full_mark,
         absent: !!s.absent,
       }))
