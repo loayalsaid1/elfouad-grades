@@ -8,7 +8,8 @@ import ParentPasswordDialog from "@/components/search/ParentPasswordDialog"
 import { useStudentSearch } from "@/hooks/useStudentSearch"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { AlertCircle, TestTube } from "lucide-react"
+import { Button } from "@/components/ui/button"
+import { AlertCircle, TestTube, Edit2 } from "lucide-react"
 import { usePDFGeneration } from "@/hooks/usePDFGeneration"
 import Instructions from "@/components/Instructions"
 import { createClientComponentSupabaseClient } from "@/lib/supabase"
@@ -16,6 +17,9 @@ import BackToDashboard from "@/components/admin/BackToDashboard"
 import { useAdminUser } from "@/hooks/useAdminUser"
 import LoadingPage from "@/components/admin/LoadingPage"
 import ExportContextCSVButton from "@/components/admin/ExportContextCSVButton"
+import { useStudentEdit } from "@/hooks/useStudentEdit"
+import { EditStudentDialog } from "@/components/results/EditStudentDialog"
+
 
 export default function AdminTestResultsPage() {
   const user = useAdminUser()
@@ -56,6 +60,17 @@ export default function AdminTestResultsPage() {
     typeof selection.year === "number" ? selection.year : undefined,
     typeof selection.term === "number" ? selection.term : undefined
   )
+
+  // Edit student hook
+  const {
+    editing,
+    startEdit,
+    cancelEdit,
+    saveEdit,
+    pending: editPending,
+    error: editError,
+    success: editSuccess,
+  } = useStudentEdit()
 
   // Add refs for GradeReference and ResultsTable
   const referenceRef = useRef<HTMLDivElement | null>(null)
@@ -294,6 +309,17 @@ export default function AdminTestResultsPage() {
                 </div>
               )}
               <div ref={tableRef}>
+                <div className="flex justify-end mb-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="flex items-center gap-2 border-[#223152] text-[#223152] hover:bg-[#223152] hover:text-white transition-all duration-300"
+                    onClick={() => startEdit(student)}
+                  >
+                    <Edit2 className="h-4 w-4" />
+                    Edit Student
+                  </Button>
+                </div>
                 <ResultsTable student={student} onExportPDF={() => generatePDF(student)} pdfLoading={pdfLoading} />
               </div>
             </>
@@ -309,6 +335,24 @@ export default function AdminTestResultsPage() {
           loading={passwordLoading}
           error={passwordError}
           studentName={student?.name}
+        />
+
+        {/* Edit Student Dialog */}
+        <EditStudentDialog
+          open={!!editing}
+          student={editing}
+          onCancel={cancelEdit}
+          onSave={async (updated) => {
+            if (!contextState.activeContext) return false
+            const ok = await saveEdit(updated, { id: contextState.activeContext.id })
+            // Optionally, you could refresh the student result here
+            if (ok && canSearch && student) {
+              await searchStudent(student.id)
+            }
+            return ok
+          }}
+          pending={editPending}
+          error={editError}
         />
       </div>
     </div>
