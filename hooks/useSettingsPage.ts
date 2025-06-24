@@ -8,7 +8,7 @@ export interface AcademicContext {
   grade: number
   is_active: boolean
   school_id: string
-  schools?: { name: string }
+  schools: { name: string, slug: string }
 }
 
 export interface SettingsPageFilters {
@@ -82,7 +82,8 @@ export function useSettingsPage() {
           is_active,
           school_id,
           schools (
-            name
+            name,
+            slug
           )
         `)
         .order("year", { ascending: false })
@@ -147,6 +148,12 @@ export function useSettingsPage() {
         return updated
       })
       setMessage("Academic context deleted.")
+      const context: AcademicContext | undefined = contexts.find((c) => c.id === contextId)
+      if (context) {
+        await supabase.storage.from('student-results-csv-backups').remove([
+          `${context.schools.slug}/${context.year}/t${context.term}/grade_${context.grade}.csv`,
+        ])
+      }
     } catch (err: any) {
       setError("Failed to delete context: " + err.message)
     } finally {
