@@ -124,15 +124,14 @@ const { pdfLoading, generatePDF } = usePDFGeneration()
             </Alert>
           )}
 
+          {/* GradeReference (with ref) */}
+          {Number.parseInt(grade) < 7 && (
+            <div ref={referenceRef}>
+              <GradeReference />
+            </div>
+          )}
           {student && (
             <>
-              {/* GradeReference (with ref) */}
-              {Number.parseInt(grade) < 7 && (
-                <div ref={referenceRef}>
-                  <GradeReference />
-                </div>
-              )}
-              {/* ResultsTable (with ref) */}
               <div ref={tableRef}>
                 <ResultsTable student={student} onExportPDF={() => generatePDF(student)} pdfLoading={pdfLoading} />
               </div>

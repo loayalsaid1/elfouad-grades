@@ -31,7 +31,15 @@ export default function StudentSearchForm({ onSearch, loading }: StudentSearchFo
 
   return (
     <div className="mb-8">
-      <Card className="border-l-4 border-l-[#223152]">
+      <Card
+        className="
+          border-l-4 border-l-[#223152]
+          bg-white
+          transition-all duration-300
+          hover:border-l-[#3b5998] hover:bg-[#f5f7fa]
+          shadow
+        "
+      >
       <CardHeader>
         <CardTitle className="flex items-center space-x-2">
           <Search className="h-5 w-5" />
@@ -45,7 +53,9 @@ export default function StudentSearchForm({ onSearch, loading }: StudentSearchFo
             placeholder="Student's National ID"
             value={studentId}
             onChange={(e) => setStudentId(e.target.value)}
-            className="flex-1"
+            className={
+              "flex-1 placeholder:text-[#3b5998]  placeholder:text-sm placeholder:opacity-80 placeholder:italic"
+            }
             onKeyPress={handleKeyPress}
             disabled={loading}
             autoFocus
