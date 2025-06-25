@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { Upload, Settings, Users, Database, LogOut, TestTube, History } from "lucide-react"
+import { Upload, Settings, Users, Database, LogOut, TestTube, History, FileDiff } from "lucide-react"
 import { useAdminUser } from "@/hooks/useAdminUser"
 import { createClientComponentSupabaseClient } from "@/lib/supabase"
 import LoadingPage from "@/components/admin/LoadingPage"
@@ -258,6 +258,28 @@ export default function AdminDashboard() {
             <CardContent>
               <Button variant="outline" className="w-full border-[#223152] text-[#223152] hover:bg-[#223152] hover:text-white transition-all duration-300">
                 View Logins
+              </Button>
+            </CardContent>
+          </Card>
+
+          <Card
+            className="cursor-pointer hover:shadow-xl transition-all duration-300 hover:scale-[1.02] border-2 hover:border-[#223152] group"
+            onClick={() => router.push("/admin/dashboard/diffs")}
+          >
+            <CardHeader>
+              <CardTitle className="flex items-center text-[#223152] group-hover:text-[#1a2642]">
+                <div className="bg-yellow-100 p-3 rounded-full mr-3 group-hover:bg-[#223152] group-hover:text-white transition-all duration-300">
+                  <FileDiff className="h-5 w-5" />
+                </div>
+                Compare Backup vs Exported
+              </CardTitle>
+              <CardDescription>
+                View and download differences between uploaded CSV and exported data
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Button variant="outline" className="w-full border-[#223152] text-[#223152] hover:bg-[#223152] hover:text-white transition-all duration-300">
+                Open Diff Tool
               </Button>
             </CardContent>
           </Card>
