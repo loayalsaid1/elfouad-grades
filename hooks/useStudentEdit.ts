@@ -36,15 +36,31 @@ export function useStudentEdit() {
         full_mark: s.full_mark,
         absent: !!s.absent,
       }))
-      const { error } = await supabase
-        .from("student_results")
-        .update({
-          student_name: updated.name,
-          scores,
-        })
-        .eq("student_id", updated.id)
-        .eq("context_id", context.id)
-      if (error) throw error
+      // If student ID changed, update the row with the old ID, then set the new ID
+      if (editing && updated.id !== editing.id) {
+        // Update the row with the old ID, set new ID
+        const { error } = await supabase
+          .from("student_results")
+          .update({
+            student_id: updated.id,
+            student_name: updated.name,
+            scores,
+          })
+          .eq("student_id", editing.id)
+          .eq("context_id", context.id)
+        if (error) throw error
+      } else {
+        // Normal update
+        const { error } = await supabase
+          .from("student_results")
+          .update({
+            student_name: updated.name,
+            scores,
+          })
+          .eq("student_id", updated.id)
+          .eq("context_id", context.id)
+        if (error) throw error
+      }
       setSuccess("Student updated successfully.")
       setEditing(null)
       return true

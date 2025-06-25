@@ -33,6 +33,7 @@ export function EditStudentDialog({
     if (!student || !form) return null
     const changed: Record<string, boolean> = {}
     if (form.name !== student.name) changed["name"] = true
+    if (form.id !== student.id) changed["id"] = true
     form.scores.forEach((s, idx) => {
       const orig = student.scores[idx]
       if (!orig) return
@@ -138,7 +139,12 @@ export function EditStudentDialog({
               </div>
               <div>
                 <label className="block text-sm font-medium mb-1">Student ID</label>
-                <Input value={form.id} disabled className="bg-gray-100" />
+                <Input
+                  value={form.id}
+                  onChange={e => handleField("id", e.target.value)}
+                  disabled={pending}
+                  className="rounded border-gray-300 focus:border-[#223152] focus:ring-[#223152]/30"
+                />
               </div>
               <div>
                 <label className="block text-sm font-medium mb-1">Scores</label>
@@ -185,9 +191,32 @@ export function EditStudentDialog({
             <div>
               <div className="mb-4">
                 <div className="font-semibold text-[#223152]">Confirm changes for:</div>
-                <div className={changes?.name ? "mb-2 font-bold text-blue-700" : "mb-2"}>
-                  {form.name} (ID: {form.id})
-                  {changes?.name && <span className="ml-2 text-xs text-blue-700">(changed)</span>}
+                <div
+                  className={
+                    (changes?.name || changes?.id)
+                      ? "mb-2 font-bold text-blue-700"
+                      : "mb-2"
+                  }
+                >
+                  {form.name}
+                  {changes?.name && student && (
+                    <span className="ml-2 text-xs text-gray-500">
+                      (was <span className="text-red-700">{student.name}</span>)
+                    </span>
+                  )}
+                  {changes?.name && (
+                    <span className="ml-1 text-xs text-blue-700">(changed)</span>
+                  )}
+                  <span> (ID: {form.id}
+                    {changes?.id && student && (
+                      <span className="ml-2 text-xs text-gray-500">
+                        was <span className="text-red-700">{student.id}</span>
+                      </span>
+                    )}
+                    {changes?.id && (
+                      <span className="ml-1 text-xs text-blue-700">(changed)</span>
+                    )}
+                  )</span>
                 </div>
                 <div className="overflow-x-auto">
                   <table className="w-full text-sm border border-gray-300 rounded shadow">
