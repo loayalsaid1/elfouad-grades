@@ -48,6 +48,7 @@ export default function StudentSearchForm({ onSearch, loading }: StudentSearchFo
             className="flex-1"
             onKeyPress={handleKeyPress}
             disabled={loading}
+            autoFocus
           />
           <Button
             onClick={handleSearch}
