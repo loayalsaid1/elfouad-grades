@@ -139,6 +139,7 @@ export default function AdminLogin() {
                 placeholder="admin@example.com"
                 className="transition-all duration-300 focus:border-[#223152] focus:ring-[#223152]"
                 required
+                autoFocus
               />
             </div>
             <div className="space-y-2">
