@@ -76,6 +76,7 @@ export default function AdminResetPasswordPage() {
                 onChange={e => setPassword(e.target.value)}
                 required
                 minLength={6}
+                autoFocus
               />
             </div>
             <div className="space-y-2">
