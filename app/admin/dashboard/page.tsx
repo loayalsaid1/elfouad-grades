@@ -271,15 +271,15 @@ export default function AdminDashboard() {
                 <div className="bg-yellow-100 p-3 rounded-full mr-3 group-hover:bg-[#223152] group-hover:text-white transition-all duration-300">
                   <FileDiff className="h-5 w-5" />
                 </div>
-                Compare Backup vs Exported
+                Backup vs Database Comparison
               </CardTitle>
               <CardDescription>
-                View and download differences between uploaded CSV and exported data
+                Analyze differences between the uploaded backup file and the current database records for student results.
               </CardDescription>
             </CardHeader>
             <CardContent>
               <Button variant="outline" className="w-full border-[#223152] text-[#223152] hover:bg-[#223152] hover:text-white transition-all duration-300">
-                Open Diff Tool
+                Open Data Comparison
               </Button>
             </CardContent>
           </Card>

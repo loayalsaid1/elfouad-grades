@@ -20,10 +20,11 @@ export default function DiffsPage() {
             <div className="bg-[#223152] p-3 rounded-full mr-4">
               <Info className="h-8 w-8 text-white" />
             </div>
-            Compare Backup vs Exported Results
+            Compare Uploaded Backup with Current Database Records
           </h1>
           <p className="text-gray-600 mt-2">
-            Pick a context to view, download, and compare the backup file (uploaded CSV) and the exported file (current database snapshot). See differences for each student.
+            Select a context to compare the uploaded backup file (CSV) with the current database records. 
+            View differences in student results, including additions, removals, and updates.
           </p>
         </div>
         <div className="mb-6">
