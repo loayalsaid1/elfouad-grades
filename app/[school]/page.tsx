@@ -1,39 +1,64 @@
 "use client"
 import { useRouter, useParams } from "next/navigation"
+import { useEffect, useState } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { GraduationCap, ArrowLeft, BookOpen } from "lucide-react"
 import { getOrdinalInfo } from "@/utils/gradeUtils"
 import Image from "next/image"
+import { createClientComponentSupabaseClient } from "@/lib/supabase"
+import LoadingSpinner from "@/components/ui/LoadingSpinner"
 
 export default function SchoolPage() {
   const router = useRouter()
   const params = useParams()
-  const school = params.school as string
+  const schoolSlug = params.school as string
+  const supabase = createClientComponentSupabaseClient()
 
-  const schoolInfo = {
-    international: {
-      name: "El-Fouad International School",
-      logo: "/El-Fouad Internsational School Logo .jpg",
-    },
-    modern: {
-      name: "El-Fouad Modern Schools",
-      logo: "/El-Fouad Modern Schools logo jpg.jpg",
-    },
+  const [school, setSchool] = useState<any | null>(null)
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    fetchSchool()
+  }, [])
+
+  const fetchSchool = async () => {
+    try {
+      setLoading(true)
+      const { data, error } = await supabase
+        .from("schools")
+        .select("*")
+        .eq("slug", schoolSlug)
+        .single()
+
+      if (error) throw error
+      setSchool(data)
+    } catch (err: any) {
+      console.error("Failed to fetch school:", err.message)
+      setSchool(null)
+    } finally {
+      setLoading(false)
+    }
   }
 
-  const currentSchool = schoolInfo[school as keyof typeof schoolInfo]
-
   const handleGradeSelect = (grade: number) => {
-    router.push(`/${school}/${grade}`)
+    router.push(`/${schoolSlug}/${grade}`)
   }
 
   const handleBack = () => {
     router.push("/")
   }
 
-  if (!currentSchool) {
-    return <div>School not found</div>
+  if (loading) {
+    return (
+      <div className="flex-1 h-full flex items-center justify-center bg-blue-50">
+        <LoadingSpinner size="lg" className="w-18 h-18 border-4 border-cyan-500" />
+      </div>
+    )
+  }
+
+  if (!school) {
+    return <div className="text-center py-12">School not found</div>
   }
 
   return (
@@ -50,14 +75,14 @@ export default function SchoolPage() {
           <div className="flex justify-center mb-6">
             <div className="relative w-24 h-24 rounded-full overflow-hidden bg-white shadow-lg">
               <Image
-                src={currentSchool.logo || "/placeholder.svg"}
-                alt={`${currentSchool.name} Logo`}
+                src={school.logo ? `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/schools-logos/${school.logo}` : "/placeholder.svg"}
+                alt={`${school.name} Logo`}
                 fill
                 className="object-contain p-2"
               />
             </div>
           </div>
-          <h1 className="text-4xl sm:text-5xl font-bold text-gray-900 mb-4">{currentSchool.name}</h1>
+          <h1 className="text-4xl sm:text-5xl font-bold text-gray-900 mb-4">{school.name}</h1>
           <p className="text-xl text-gray-600 mb-2">Grade Selection</p>
           <p className="text-lg text-gray-500">Choose your grade to view exam results</p>
         </div>
@@ -110,7 +135,7 @@ export default function SchoolPage() {
                 <strong>Term:</strong> Second Term
               </div>
               <div>
-                <strong>School:</strong> {currentSchool.name}
+                <strong>School:</strong> {school.name}
               </div>
             </div>
           </div>
