@@ -283,6 +283,26 @@ export default function AdminDashboard() {
               </Button>
             </CardContent>
           </Card>
+
+          <Card
+            className="cursor-pointer hover:shadow-xl transition-all duration-300 hover:scale-[1.02] border-2 hover:border-[#223152] group"
+            onClick={() => router.push("/admin/dashboard/schools")}
+          >
+            <CardHeader>
+              <CardTitle className="flex items-center text-[#223152] group-hover:text-[#1a2642]">
+                <div className="bg-orange-100 p-3 rounded-full mr-3 group-hover:bg-[#223152] group-hover:text-white transition-all duration-300">
+                  <Users className="h-5 w-5" />
+                </div>
+                Schools Management
+              </CardTitle>
+              <CardDescription>Manage schools, including their details and logos</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Button variant="outline" className="w-full border-[#223152] text-[#223152] hover:bg-[#223152] hover:text-white transition-all duration-300">
+                Manage Schools
+              </Button>
+            </CardContent>
+          </Card>
         </div>
       </main>
     </div>

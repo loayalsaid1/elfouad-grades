@@ -22,6 +22,8 @@ export default function SchoolsPage() {
   const [editingSchool, setEditingSchool] = useState<any | null>(null)
   const [schoolName, setSchoolName] = useState("")
   const [schoolSlug, setSchoolSlug] = useState("")
+  const [schoolDescription, setSchoolDescription] = useState("")
+  const [schoolLogo, setSchoolLogo] = useState<File | null>(null)
   const [isSaving, setIsSaving] = useState(false)
 
   const supabase = createClientComponentSupabaseClient()
@@ -51,6 +53,8 @@ export default function SchoolsPage() {
     setEditingSchool(null)
     setSchoolName("")
     setSchoolSlug("")
+    setSchoolDescription("")
+    setSchoolLogo(null)
     setIsDialogOpen(true)
   }
 
@@ -58,6 +62,8 @@ export default function SchoolsPage() {
     setEditingSchool(school)
     setSchoolName(school.name)
     setSchoolSlug(school.slug || "")
+    setSchoolDescription(school.description || "")
+    setSchoolLogo(null)
     setIsDialogOpen(true)
   }
 
@@ -68,11 +74,32 @@ export default function SchoolsPage() {
       setIsSaving(true)
       setError("")
 
+      let logoPath = null
+      if (schoolLogo) {
+        const filePath = `${schoolSlug}/elfouad-${schoolSlug}-logo`
+        const { error: uploadError } = await supabase.storage
+          .from("schools-logos")
+          .upload(filePath, schoolLogo, {
+            upsert: true,
+          })
+        if (uploadError) throw uploadError
+
+        // Log the file path for debugging
+        console.log("Uploaded file path:", filePath)
+
+        logoPath = filePath
+      }
+
       if (editingSchool) {
         // Update existing school
         const { error } = await supabase
           .from("schools")
-          .update({ name: schoolName.trim(), slug: schoolSlug.trim() })
+          .update({
+            name: schoolName.trim(),
+            slug: schoolSlug.trim(),
+            description: schoolDescription.trim(),
+            logo: logoPath || editingSchool.logo,
+          })
           .eq("id", editingSchool.id)
 
         if (error) throw error
@@ -81,7 +108,12 @@ export default function SchoolsPage() {
         // Add new school
         const { error } = await supabase
           .from("schools")
-          .insert({ name: schoolName.trim(), slug: schoolSlug.trim() })
+          .insert({
+            name: schoolName.trim(),
+            slug: schoolSlug.trim(),
+            description: schoolDescription.trim(),
+            logo: logoPath,
+          })
 
         if (error) throw error
         setMessage(`School "${schoolName}" added successfully`)
@@ -223,18 +255,42 @@ export default function SchoolsPage() {
                   className="focus:border-[#223152] focus:ring-[#223152]"
                 />
               </div>
+              <div className="space-y-2">
+                <label htmlFor="school-description" className="text-sm font-medium text-gray-700">
+                  Description
+                </label>
+                <textarea
+                  id="school-description"
+                  value={schoolDescription}
+                  onChange={(e) => setSchoolDescription(e.target.value)}
+                  placeholder="Enter school description"
+                  className="w-full border rounded px-3 py-2 focus:border-[#223152] focus:ring-[#223152]"
+                />
+              </div>
+              <div className="space-y-2">
+                <label htmlFor="school-logo" className="text-sm font-medium text-gray-700">
+                  Logo
+                </label>
+                <input
+                  id="school-logo"
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => setSchoolLogo(e.target.files?.[0] || null)}
+                  className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+                />
+              </div>
             </div>
             <DialogFooter>
-              <Button 
-                variant="outline" 
-                onClick={() => setIsDialogOpen(false)} 
+              <Button
+                variant="outline"
+                onClick={() => setIsDialogOpen(false)}
                 disabled={isSaving}
                 className="border-gray-300 hover:bg-gray-50"
               >
                 Cancel
               </Button>
-              <Button 
-                onClick={handleSaveSchool} 
+              <Button
+                onClick={handleSaveSchool}
                 disabled={!schoolName.trim() || !schoolSlug.trim() || isSaving}
                 className="bg-[#223152] hover:bg-[#1a2642] text-white"
               >
