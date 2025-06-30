@@ -7,13 +7,15 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog"
-import { Loader2, Plus, Pencil, School, AlertCircle, CheckCircle } from "lucide-react"
+import { Loader2, Plus, Pencil, School, AlertCircle, CheckCircle, Trash2 } from "lucide-react"
 import { useAdminUser } from "@/hooks/useAdminUser"
 import BackToDashboard from "@/components/admin/BackToDashboard"
 import LoadingPage from "@/components/admin/LoadingPage"
+import { useRouter } from "next/navigation"
 
 export default function SchoolsPage() {
   const user = useAdminUser()
+  const router = useRouter()
   const [schools, setSchools] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string>("")
@@ -25,6 +27,8 @@ export default function SchoolsPage() {
   const [schoolDescription, setSchoolDescription] = useState("")
   const [schoolLogo, setSchoolLogo] = useState<File | null>(null)
   const [isSaving, setIsSaving] = useState(false)
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false)
+  const [schoolToDelete, setSchoolToDelete] = useState<any | null>(null)
 
   const supabase = createClientComponentSupabaseClient()
 
@@ -129,6 +133,48 @@ export default function SchoolsPage() {
     }
   }
 
+  const handleDeleteSchool = (school: any) => {
+    setSchoolToDelete(school)
+    setIsDeleteDialogOpen(true)
+  }
+
+  const confirmDeleteSchool = async () => {
+    if (!schoolToDelete) return
+
+    try {
+      setLoading(true)
+      setError("")
+
+      // Delete the logo file from the storage bucket
+      if (schoolToDelete.logo) {
+        const { error: storageError } = await supabase.storage
+          .from("schools-logos")
+          .remove([schoolToDelete.logo])
+
+        if (storageError) {
+          console.error("Failed to delete logo from storage:", storageError.message)
+        }
+      }
+
+      // Delete the school from the database
+      const { error } = await supabase
+        .from("schools")
+        .delete()
+        .eq("id", schoolToDelete.id)
+
+      if (error) throw error
+
+      setMessage(`School "${schoolToDelete.name}" deleted successfully`)
+      setSchoolToDelete(null)
+      setIsDeleteDialogOpen(false)
+      await fetchSchools()
+    } catch (err: any) {
+      setError("Failed to delete school: " + err.message)
+    } finally {
+      setLoading(false)
+    }
+  }
+
   // Clear message after 3 seconds
   useEffect(() => {
     if (message) {
@@ -199,15 +245,26 @@ export default function SchoolsPage() {
                         <p className="text-sm text-gray-500">ID: {school.id}</p>
                         <p className="text-xs text-gray-400">Slug: {school.slug || <span className="italic text-gray-300">none</span>}</p>
                       </div>
-                      <Button 
-                        variant="outline" 
-                        size="sm" 
-                        onClick={() => handleEditSchool(school)}
-                        className="border-[#223152] text-[#223152] hover:bg-[#223152] hover:text-white transition-all duration-300"
-                      >
-                        <Pencil className="h-4 w-4 mr-1" />
-                        Edit
-                      </Button>
+                      <div className="flex gap-2">
+                        <Button 
+                          variant="outline" 
+                          size="sm" 
+                          onClick={() => handleEditSchool(school)}
+                          className="border-[#223152] text-[#223152] hover:bg-[#223152] hover:text-white transition-all duration-300"
+                        >
+                          <Pencil className="h-4 w-4 mr-1" />
+                          Edit
+                        </Button>
+                        <Button 
+                          variant="destructive" 
+                          size="sm" 
+                          onClick={() => handleDeleteSchool(school)}
+                          className="border-red-500 bg-red-500 text-white hover:bg-red-600 hover:text-white transition-all duration-300"
+                        >
+                          <Trash2 className="h-4 w-4 mr-1" />
+                          Delete
+                        </Button>
+                      </div>
                     </div>
                   ))
                 ) : (
@@ -302,6 +359,57 @@ export default function SchoolsPage() {
                 ) : (
                   "Save"
                 )}
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+
+        {/* Delete Confirmation Dialog */}
+        <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
+          <DialogContent className="sm:max-w-md">
+            <DialogHeader>
+              <DialogTitle className="text-red-600">Delete School</DialogTitle>
+            </DialogHeader>
+            <div className="space-y-4 py-4">
+              <p className="text-gray-700">
+                Are you sure you want to delete the school <span className="font-semibold">{schoolToDelete?.name}</span>? 
+                This action cannot be undone. Please ensure you have downloaded backups of all related data.
+              </p>
+            </div>
+            <DialogFooter>
+              <Button
+                variant="outline"
+                onClick={() => setIsDeleteDialogOpen(false)}
+                disabled={loading} // Disable cancel button while loading
+                className="border-gray-300 hover:bg-gray-50"
+              >
+                Cancel
+              </Button>
+              <Button
+                variant="destructive"
+                onClick={confirmDeleteSchool}
+                disabled={loading} // Disable delete button while loading
+                className="bg-red-500 hover:bg-red-600 text-white"
+              >
+                {loading ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Deleting...
+                  </>
+                ) : (
+                  "Delete"
+                )}
+              </Button>
+              <Button
+                variant="outline"
+                onClick={() => {
+                  setIsDeleteDialogOpen(false)
+                  router.push("/admin/dashboard/diffs")
+                }}
+                disabled={loading} // Disable navigation button while loading
+                className="border-blue-500 text-blue-500 hover:bg-blue-500 hover:text-white transition-all duration-300"
+              >
+                Go to Backups
               </Button>
             </DialogFooter>
           </DialogContent>
