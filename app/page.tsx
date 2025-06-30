@@ -1,50 +1,56 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { GraduationCap, Building2 } from "lucide-react"
-import { useSystemStatus } from "@/contexts/SystemStatusContext"
+import { createClientComponentSupabaseClient } from "@/lib/supabase"
 import Image from "next/image"
 import LoadingSpinner from "@/components/ui/LoadingSpinner"
 import SystemDisabled from "@/components/SystemDisabled"
+import { useSystemStatus } from "@/contexts/SystemStatusContext"
 
 export default function HomePage() {
   const router = useRouter()
+  const supabase = createClientComponentSupabaseClient()
+  const [schools, setSchools] = useState<any[]>([])
+  const [loading, setLoading] = useState(true)
   const [selectedSchool, setSelectedSchool] = useState<string | null>(null)
-  
   const { enabled, loading: systemStatusLoading } = useSystemStatus()
-  
-  if (systemStatusLoading) {
+
+  useEffect(() => {
+    fetchSchools()
+  }, [])
+
+  const fetchSchools = async () => {
+    try {
+      setLoading(true)
+      const { data, error } = await supabase.from("schools").select("*").order("name")
+      if (error) throw error
+      setSchools(data || [])
+    } catch (err: any) {
+      console.error("Failed to fetch schools:", err.message)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const handleSchoolSelect = (schoolId: string) => {
+    setSelectedSchool(schoolId)
+    router.push(`/${schoolId}`)
+  }
+
+  if (systemStatusLoading || loading) {
     return (
       <div className="flex-1 h-full flex items-center justify-center bg-blue-50">
         <LoadingSpinner size="lg" className="w-18 h-18 border-4 border-cyan-500" />
       </div>
     )
   }
+
   if (!enabled) {
     return <SystemDisabled />
-  }
-
-  const schools = [
-    {
-      id: "international",
-      name: "El-Fouad International School",
-      description: "International curriculum with global standards",
-      logo: "/El-Fouad Internsational School Logo .jpg",
-    },
-    {
-      id: "modern",
-      name: "El-Fouad Modern Schools",
-      description: "Modern education with innovative teaching methods",
-      logo: "/El-Fouad Modern Schools logo jpg.jpg",
-    },
-  ]
-
-  const handleSchoolSelect = (schoolId: string) => {
-    setSelectedSchool(schoolId)
-    router.push(`/${schoolId}`)
   }
 
   return (
@@ -68,13 +74,13 @@ export default function HomePage() {
             <Card
               key={school.id}
               className="cursor-pointer transition-all duration-300 hover:shadow-xl hover:scale-105 border-2 hover:border-[#223152]"
-              onClick={() => handleSchoolSelect(school.id)}
+              onClick={() => handleSchoolSelect(school.slug)}
             >
               <CardHeader className="text-center pb-4">
                 <div className="flex justify-center mb-4">
                   <div className="relative w-24 h-24 rounded-full overflow-hidden bg-white shadow-lg">
                     <Image
-                      src={school.logo || "/placeholder.svg"}
+                      src={school.logo ? `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/schools-logos/${school.logo}` : "/placeholder.svg"}
                       alt={`${school.name} Logo`}
                       fill
                       className="object-contain p-2"
@@ -82,14 +88,14 @@ export default function HomePage() {
                   </div>
                 </div>
                 <CardTitle className="text-xl font-bold text-[#223152]">{school.name}</CardTitle>
-                <CardDescription className="text-gray-600">{school.description}</CardDescription>
+                <CardDescription className="text-gray-600">{school.description || "No description available"}</CardDescription>
               </CardHeader>
               <CardContent>
                 <Button
                   className="w-full bg-[#223152] hover:bg-[#1a2642] text-white"
                   onClick={(e) => {
                     e.stopPropagation()
-                    handleSchoolSelect(school.id)
+                    handleSchoolSelect(school.slug)
                   }}
                 >
                   <Building2 className="w-4 h-4 mr-2" />
