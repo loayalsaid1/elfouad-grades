@@ -1,5 +1,5 @@
 -- Enable Row Level Security
-ALTER DATABASE postgres SET "app.jwt_secret" TO 'your-jwt-secret-here';
+ALTER DATABASE postgres SET "app.jwt_secret" TO 'my-jwt-secret-here';
 
 -- Create Schools table
 CREATE TABLE IF NOT EXISTS schools (
