@@ -83,6 +83,7 @@ export default function SettingsPage() {
         
         <AcademicContextsCard
           contexts={settings.contexts}
+          schools={settings.schools}
           activeContexts={settings.activeContexts}
           setActiveContexts={settings.setActiveContexts}
           filters={settings.filters}

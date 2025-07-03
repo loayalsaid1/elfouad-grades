@@ -11,6 +11,11 @@ export interface AcademicContext {
   schools: { name: string, slug: string }
 }
 
+export interface School {
+  id: number
+  name: string
+}
+
 export interface SettingsPageFilters {
   year: string
   grade: string
@@ -41,6 +46,7 @@ export function useSettingsPage() {
   const [saving, setSaving] = useState<boolean>(false)
   const [systemEnabled, setSystemEnabled] = useState<boolean>(true)
   const [contexts, setContexts] = useState<AcademicContext[]>([])
+  const [schools, setSchools] = useState<School[]>([])
   const [activeContexts, setActiveContexts] = useState<Record<string, boolean>>({})
   const [message, setMessage] = useState<string>("")
   const [error, setError] = useState<string>("")
@@ -71,6 +77,15 @@ export function useSettingsPage() {
       if (settingsData) {
         setSystemEnabled(settingsData.value?.enabled !== false)
       }
+
+      // Fetch all schools
+      const { data: schoolsData, error: schoolsError } = await supabase
+        .from("schools")
+        .select("id, name")
+        .order("name")
+      if (schoolsError) throw schoolsError
+      setSchools(schoolsData || [])
+
       // Fetch academic contexts with school names and school_id
       const { data: contextsData, error: contextsError } = await supabase
         .from("academic_contexts")
@@ -93,7 +108,7 @@ export function useSettingsPage() {
       setContexts(contextsData || [])
       // Create active contexts map
       const activeMap: Record<string, boolean> = {}
-      contextsData?.forEach((context: AcademicContext) => {
+      contextsData?.forEach((context: any) => {
         activeMap[context.id] = context.is_active || false
       })
       setActiveContexts(activeMap)
@@ -167,6 +182,7 @@ export function useSettingsPage() {
     systemEnabled,
     setSystemEnabled,
     contexts,
+    schools,
     activeContexts,
     setActiveContexts,
     message,
