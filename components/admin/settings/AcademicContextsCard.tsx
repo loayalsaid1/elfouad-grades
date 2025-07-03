@@ -1,6 +1,6 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { AcademicContextRow } from "./AcademicContextRow"
-import type { AcademicContext, SettingsPageFilters } from "@/hooks/useSettingsPage"
+import type { AcademicContext, SettingsPageFilters, School } from "@/hooks/useSettingsPage"
 import { useState } from "react"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
@@ -8,6 +8,7 @@ import { Loader2 } from "lucide-react"
 
 interface AcademicContextsCardProps {
   contexts: AcademicContext[]
+  schools: School[]
   activeContexts: Record<string, boolean>
   setActiveContexts: React.Dispatch<React.SetStateAction<Record<string, boolean>>>
   filters: SettingsPageFilters
@@ -15,8 +16,8 @@ interface AcademicContextsCardProps {
   deleteContext: (contextId: string) => void 
 }
 
-function getOptions(contexts: AcademicContext[]) {
-  const schoolOptions = Array.from(new Set(contexts.map((c) => c.schools?.name).filter(Boolean)))
+function getOptions(contexts: AcademicContext[], schools: School[]) {
+  const schoolOptions = schools.map(school => school.name)
   const yearOptions = Array.from(new Set(contexts.map((c) => c.year))).sort((a, b) => b - a)
   const gradeOptions = Array.from(new Set(contexts.map((c) => c.grade))).sort((a, b) => a - b)
   const termOptions = Array.from(new Set(contexts.map((c) => c.term))).sort()
@@ -25,13 +26,14 @@ function getOptions(contexts: AcademicContext[]) {
 
 export function AcademicContextsCard({
   contexts,
+  schools,
   activeContexts,
   setActiveContexts,
   filters,
   setFilters,
   deleteContext,
 }: AcademicContextsCardProps) {
-  const { schoolOptions, yearOptions, gradeOptions, termOptions } = getOptions(contexts)
+  const { schoolOptions, yearOptions, gradeOptions, termOptions } = getOptions(contexts, schools)
 
   const filteredContexts = contexts.filter((context) => {
     return (
