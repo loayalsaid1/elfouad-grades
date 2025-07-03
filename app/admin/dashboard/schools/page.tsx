@@ -147,6 +147,13 @@ export default function SchoolsPage() {
 
       // Refresh schools list
       await fetchSchools()
+      
+      // Reset form state
+      setEditingSchool(null)
+      setSchoolName("")
+      setSchoolSlug("")
+      setSchoolDescription("")
+      setSchoolLogo(null)
       setIsDialogOpen(false)
     } catch (err: any) {
       setError("Failed to save school: " + err.message)
