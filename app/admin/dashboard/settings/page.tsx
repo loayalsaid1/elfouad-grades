@@ -14,7 +14,7 @@ import { ActiveContextsConfirmDialog } from "@/components/admin/settings/ActiveC
 import { useActiveContextChanges } from "@/hooks/useActiveContextChanges"
 
 export default function SettingsPage() {
-  const user = useAdminUser()
+  const {user, profile } = useAdminUser()
   const settings = useSettingsPage()
   const [showConfirm, setShowConfirm] = useState(false)
   const [pendingSave, setPendingSave] = useState(false)
@@ -39,19 +39,21 @@ export default function SettingsPage() {
     return <LoadingPage message="Loading settings..." />
   }
 
+  const isSuperAdmin = profile?.is_super_admin || false
+
   const handleSave = () => {
     const diff = getChanges()
     setChanges(diff)
     if (diff.length > 0) {
       setShowConfirm(true)
     } else {
-      settings.handleSaveSettings()
+      settings.handleSaveSettings(isSuperAdmin)
     }
   }
 
   const handleConfirm = async () => {
     setPendingSave(true)
-    await settings.handleSaveSettings()
+    await settings.handleSaveSettings(isSuperAdmin)
     setShowConfirm(false)
     setPendingSave(false)
     resetInitial()
@@ -75,12 +77,12 @@ export default function SettingsPage() {
         </div>
         
         <AlertMessage error={settings.error} message={settings.message} />
-        
-        <SystemAvailabilityCard
-          systemEnabled={settings.systemEnabled}
-          setSystemEnabled={settings.setSystemEnabled}
-        />
-        
+        { isSuperAdmin && (
+          <SystemAvailabilityCard
+            systemEnabled={settings.systemEnabled}
+            setSystemEnabled={settings.setSystemEnabled}
+          />          
+        )}
         <AcademicContextsCard
           contexts={settings.contexts}
           activeContexts={settings.activeContexts}

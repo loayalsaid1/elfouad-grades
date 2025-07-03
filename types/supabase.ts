@@ -86,6 +86,43 @@ export interface Database {
           value?: Json
         }
       }
+      users: {
+        Row: {
+          id: string
+          email: string
+          is_super_admin: boolean
+          created_at: string
+        }
+        Insert: {
+          id: string
+          email: string
+          is_super_admin?: boolean
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          email?: string
+          is_super_admin?: boolean
+          created_at?: string
+        }
+      }
+      user_school_access: {
+        Row: {
+          id: number
+          user_id: string
+          school_id: number
+        }
+        Insert: {
+          id?: number
+          user_id: string
+          school_id: number
+        }
+        Update: {
+          id?: number
+          user_id?: string
+          school_id?: number
+        }
+      }
     }
   }
 }
