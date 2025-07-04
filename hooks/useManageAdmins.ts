@@ -107,7 +107,14 @@ export function useManageAdmins() {
       return
     }
     try {
-      await supabase.from("users").delete().eq("id", userId)
+      // Call the new API route to delete the admin from auth.users
+      const res = await fetch("/api/admin/delete-admin", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ user_id: userId }),
+      })
+      const result = await res.json()
+      if (!res.ok) throw new Error(result.error || "Failed to remove admin")
       await fetchAll()
     } catch (err: any) {
       setError("Failed to remove admin: " + (err.message || err.toString()))
