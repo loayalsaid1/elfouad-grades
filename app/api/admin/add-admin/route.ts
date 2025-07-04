@@ -1,25 +1,23 @@
-import type { NextApiRequest, NextApiResponse } from "next"
 import { createClient } from "@supabase/supabase-js"
+import { NextRequest, NextResponse } from "next/server"
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
   process.env.SUPABASE_SERVICE_ROLE_KEY!
 )
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  if (req.method !== "POST") return res.status(405).json({ error: "Method not allowed" })
-
-  const { email, full_name, is_super_admin, school_ids } = req.body
+export async function POST(req: NextRequest) {
+  const { email, full_name, is_super_admin, school_ids } = await req.json()
 
   if (!email || !full_name) {
-    return res.status(400).json({ error: "Missing required fields" })
+    return NextResponse.json({ error: "Missing required fields" }, { status: 400 })
   }
 
   try {
     // Invite user by email
     const { data: authUser, error: authError } = await supabase.auth.admin.inviteUserByEmail(email)
     if (authError && !authError.message.includes("already registered")) {
-      return res.status(400).json({ error: authError.message })
+      return NextResponse.json({ error: authError.message }, { status: 400 })
     }
 
     // Get user id
@@ -29,7 +27,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       const { data: userRow } = await supabase.from("users").select("id").eq("email", email).single()
       userId = userRow?.id
     }
-    if (!userId) return res.status(400).json({ error: "Could not determine user id for admin." })
+    if (!userId) return NextResponse.json({ error: "Could not determine user id for admin." }, { status: 400 })
 
     // Upsert user row
     await supabase.from("users").upsert({
@@ -49,8 +47,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       await supabase.from("user_school_access").insert(accessRows)
     }
 
-    return res.status(200).json({ success: true })
+    return NextResponse.json({ success: true })
   } catch (err: any) {
-    return res.status(500).json({ error: err.message || "Failed to add admin" })
+    return NextResponse.json({ error: err.message || "Failed to add admin" }, { status: 500 })
   }
 }
