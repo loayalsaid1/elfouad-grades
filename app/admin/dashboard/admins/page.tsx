@@ -11,6 +11,9 @@ import BackToDashboard from "@/components/admin/BackToDashboard"
 import LoadingPage from "@/components/admin/LoadingPage"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { useAdminUser } from "@/hooks/useAdminUser"
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog"
+import { Loader2 } from "lucide-react"
+import { useState } from "react"
 
 export default function ManageAdminsPage() {
   const {
@@ -37,6 +40,23 @@ export default function ManageAdminsPage() {
     setEditDialogError,
   } = useManageAdmins()
   useAdminUser();
+  const [pendingDelete, setPendingDelete] = useState<any | null>(null)
+  const [deleting, setDeleting] = useState(false)
+
+  // Wrap handleRemoveAdmin to show confirmation dialog
+  const handleRemoveAdminWithConfirm = (adminId: string) => {
+    const admin = admins.find(a => a.id === adminId)
+    setPendingDelete(admin)
+  }
+
+  // Confirm delete handler
+  const confirmDeleteAdmin = async () => {
+    if (!pendingDelete) return
+    setDeleting(true)
+    await handleRemoveAdmin(pendingDelete.id)
+    setDeleting(false)
+    setPendingDelete(null)
+  }
 
   if (loading) return <LoadingPage message="Loading admins..." />
 
@@ -76,7 +96,7 @@ export default function ManageAdminsPage() {
             <AdminsTable
               admins={admins}
               schools={schools}
-              onRemove={handleRemoveAdmin}
+              onRemove={handleRemoveAdminWithConfirm}
               onToggleSuperAdmin={handleToggleSuperAdmin}
               onEdit={handleEditAdmin}
             />
@@ -99,6 +119,45 @@ export default function ManageAdminsPage() {
           setError={setEditDialogError}
           schoolOptions={schoolOptions}
         />
+        {/* Delete Confirmation Dialog */}
+        <Dialog open={!!pendingDelete} onOpenChange={open => !open && setPendingDelete(null)}>
+          <DialogContent className="sm:max-w-md">
+            <DialogHeader>
+              <DialogTitle className="text-red-600">Delete Admin</DialogTitle>
+            </DialogHeader>
+            <div className="space-y-4 py-4">
+              <p className="text-gray-700">
+                Are you sure you want to delete admin{" "}
+                <span className="font-semibold">{pendingDelete?.full_name || pendingDelete?.email}</span>? This action cannot be undone.
+              </p>
+            </div>
+            <DialogFooter>
+              <Button
+                variant="outline"
+                onClick={() => setPendingDelete(null)}
+                disabled={deleting}
+                className="border-gray-300 hover:bg-gray-50"
+              >
+                Cancel
+              </Button>
+              <Button
+                variant="destructive"
+                onClick={confirmDeleteAdmin}
+                disabled={deleting}
+                className="bg-red-500 hover:bg-red-600 text-white"
+              >
+                {deleting ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Deleting...
+                  </>
+                ) : (
+                  "Delete"
+                )}
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
       </div>
     </div>
   )
