@@ -1,13 +1,32 @@
 import { Button } from "@/components/ui/button"
 import { Pencil, Trash2 } from "lucide-react"
+import { useMemo } from "react";
+
+interface School {
+  id: string;
+  name: string;
+}
+
+interface Admin {
+  id: string;
+  full_name: string;
+  email: string;
+  is_super_admin: boolean;
+  school_ids: string[];
+}
 
 export function AdminsTable({ admins, schools, onRemove, onToggleSuperAdmin, onEdit }: {
-  admins: any[]
-  schools: any[]
+  admins: Admin[]
+  schools: School[]
   onRemove: (userId: string) => void
   onToggleSuperAdmin: (userId: string, isSuperAdmin: boolean) => void
-  onEdit: (admin: any) => void
+  onEdit: (admin: Admin) => void
 }) {
+  console.log(admins);
+  // Build a lookup map for schools to avoid repeated find calls
+  const schoolMap = useMemo(() => {
+    return new Map(schools.map((s: School) => [s.id, s]));
+  }, [schools]);
   return (
     <div className="overflow-x-auto">
       <table className="min-w-full">
@@ -34,17 +53,21 @@ export function AdminsTable({ admins, schools, onRemove, onToggleSuperAdmin, onE
                 />
               </td>
               <td className="px-4 py-2">
-                {admin.is_super_admin
-                  ? <span className="text-green-700 font-semibold">All Schools</span>
-                  : (admin.user_school_access || []).map((a: any) => {
-                      const school = schools.find((s: any) => s.id === a.school_id)
+                {admin.is_super_admin ? (
+                  <span className="text-green-700 font-semibold">All Schools</span>
+                ) : (admin.school_ids && admin.school_ids.length > 0 ? (
+                    (admin.school_ids).map((id: any) => {
+                      const school = schoolMap.get(id);
                       return (
-                        <span key={a.school_id} className="inline-block bg-blue-100 text-blue-800 rounded px-2 py-1 mr-1 text-xs">
-                          {school ? school.name : a.school_id}
+                        <span key={id} className="inline-block bg-blue-100 text-blue-800 rounded px-2 py-1 mr-1 text-xs">
+                          {school ? school.name : id}
                         </span>
                       )
                     })
-                }
+                  ) : (
+                    <span className="text-gray-500 italic">No Schools</span>
+                  )
+                )}
               </td>
               <td className="px-4 py-2">
                 <Button
