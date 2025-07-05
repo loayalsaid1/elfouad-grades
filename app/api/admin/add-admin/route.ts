@@ -12,10 +12,11 @@ export async function POST(req: NextRequest) {
   if (!email || !full_name) {
     return NextResponse.json({ error: "Missing required fields" }, { status: 400 })
   }
-
   try {
     // Invite user by email
-    const { data: authUser, error: authError } = await supabase.auth.admin.inviteUserByEmail(email)
+    const { data: authUser, error: authError } = await supabase.auth.admin.inviteUserByEmail(email, {
+      redirectTo: `${req.headers.get('origin')}/admin/create-password`
+    })
     if (authError && !authError.message.includes("already registered")) {
       return NextResponse.json({ error: authError.message }, { status: 400 })
     }
