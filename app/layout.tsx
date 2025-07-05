@@ -20,6 +20,11 @@ export const metadata: Metadata = {
     type: "website",
     locale: "en_US",
   },
+  icons: {
+    icon: "/square-logo.png",
+    shortcut: "/square-logo.png",
+    apple: "/square-logo.png"
+  },
   manifest: "/manifest.json",
 }
 
