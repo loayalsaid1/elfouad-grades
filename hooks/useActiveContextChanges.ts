@@ -3,12 +3,12 @@ import type { AcademicContext } from "@/hooks/useSettingsPage"
 
 export function useActiveContextChanges(contexts: AcademicContext[], activeContexts: Record<string, boolean>, loading: boolean) {
   const [initialActiveContexts, setInitialActiveContexts] = useState<Record<string, boolean>>({})
-
+  
   useEffect(() => {
     if (!loading && Object.keys(initialActiveContexts).length === 0) {
       setInitialActiveContexts({ ...activeContexts })
     }
-  }, [loading, activeContexts, initialActiveContexts])
+  }, [loading, activeContexts])
 
   const getContextName = (id: string) => {
     const ctx = contexts.find((c) => c.id == id)

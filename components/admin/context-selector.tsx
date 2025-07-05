@@ -7,6 +7,7 @@ import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Loader2, AlertCircle, Settings } from "lucide-react"
+import { useAdminUser } from "@/hooks/useAdminUser"
 
 interface ContextSelectorProps {
   onContextChange: (
@@ -29,6 +30,7 @@ export function ContextSelector({ onContextChange }: ContextSelectorProps) {
   const [error, setError] = useState<string | null>(null)
 
   const supabase = createClientComponentSupabaseClient()
+  const { profile, schoolAccess } = useAdminUser()
 
   // Memoize options to prevent re-renders and get current year
   const { yearOptions, currentAcademicYear } = useMemo(() => {
@@ -63,14 +65,18 @@ export function ContextSelector({ onContextChange }: ContextSelectorProps) {
   // Fetch schools on component mount
   useEffect(() => {
     let mounted = true
-    
+
     const fetchSchools = async () => {
       try {
         const { data, error } = await supabase.from("schools").select("id, name").order("name")
-
         if (error) throw error
         if (mounted) {
-          setSchools(data || [])
+          // Filter by schoolAccess if not super admin
+          let filtered = data || []
+          if (profile && !profile.is_super_admin) {
+            filtered = filtered.filter((s: any) => schoolAccess.includes(s.id))
+          }
+          setSchools(filtered)
         }
       } catch (err: any) {
         if (mounted) {
@@ -88,7 +94,7 @@ export function ContextSelector({ onContextChange }: ContextSelectorProps) {
     return () => {
       mounted = false
     }
-  }, [supabase])
+  }, [supabase, profile, schoolAccess])
 
   // Debounced context change to prevent excessive updates
   const debouncedOnContextChange = useCallback(

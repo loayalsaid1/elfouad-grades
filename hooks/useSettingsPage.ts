@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react"
 import { createClientComponentSupabaseClient } from "@/lib/supabase"
+import { useAdminUser } from "@/hooks/useAdminUser"
 
 export interface AcademicContext {
   id: string
@@ -51,6 +52,7 @@ export function useSettingsPage() {
     school: "",
   })
 
+  const { profile, schoolAccess } = useAdminUser()
   const supabase = createClientComponentSupabaseClient()
 
   useEffect(() => {
@@ -90,10 +92,15 @@ export function useSettingsPage() {
         .order("term")
         .order("grade")
       if (contextsError) throw contextsError
-      setContexts(contextsData || [])
+      // Filter by schoolAccess if not super admin
+      let filtered = contextsData || []
+      if (profile && !profile.is_super_admin) {
+        filtered = filtered.filter((c: any) => schoolAccess.includes(c.school_id))
+      }
+      setContexts(filtered)
       // Create active contexts map
       const activeMap: Record<string, boolean> = {}
-      contextsData?.forEach((context: AcademicContext) => {
+      filtered.forEach((context: AcademicContext) => {
         activeMap[context.id] = context.is_active || false
       })
       setActiveContexts(activeMap)
@@ -104,18 +111,20 @@ export function useSettingsPage() {
     }
   }
 
-  const handleSaveSettings = async () => {
+  const handleSaveSettings = async (isSuperAdmin: boolean) => {
     try {
       setSaving(true)
       setError("")
       setMessage("")
-      // Update system settings
-      const { error: systemError } = await supabase.from("system_settings").upsert({
-        key: "system_enabled",
-        value: { enabled: systemEnabled },
-      }, {onConflict: 'key'})
-      if (systemError) throw systemError
-
+      if (isSuperAdmin) {
+        // Update system settings
+        const { error: systemError } = await supabase.from("system_settings").upsert({
+          key: "system_enabled",
+          value: { enabled: systemEnabled },
+        }, {onConflict: 'key'})
+        if (systemError) throw systemError
+      }
+      
       // Prepare updates array for RPC
       const updates = contexts.map((context: AcademicContext) => ({
         id: context.id,

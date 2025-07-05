@@ -14,7 +14,7 @@ import LoadingPage from "@/components/admin/LoadingPage"
 import { useRouter } from "next/navigation"
 
 export default function SchoolsPage() {
-  const user = useAdminUser()
+  const { user, profile, schoolAccess } = useAdminUser()
   const router = useRouter()
   const [schools, setSchools] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
@@ -45,7 +45,12 @@ export default function SchoolsPage() {
 
       if (error) throw error
 
-      setSchools(data || [])
+      // Filter by schoolAccess if not super admin
+      let filtered = data || []
+      if (profile && !profile.is_super_admin) {
+        filtered = filtered.filter((s: any) => schoolAccess.includes(s.id))
+      }
+      setSchools(filtered)
     } catch (err: any) {
       setError("Failed to load schools: " + err.message)
     } finally {
@@ -221,14 +226,16 @@ export default function SchoolsPage() {
               <CardTitle className="text-white">Schools</CardTitle>
               <CardDescription className="text-blue-100">Add and manage schools in the system</CardDescription>
             </div>
-            <Button 
-              onClick={handleAddSchool} 
-              size="sm"
-              className="bg-white text-[#223152] hover:bg-gray-100 transition-all duration-300"
-            >
-              <Plus className="h-4 w-4 mr-1" />
-              Add School
-            </Button>
+            { profile?.is_super_admin && (
+              <Button 
+                onClick={handleAddSchool} 
+                size="sm"
+                className="bg-white text-[#223152] hover:bg-gray-100 transition-all duration-300"
+              >
+                <Plus className="h-4 w-4 mr-1" />
+                Add School
+              </Button>
+            )}
           </CardHeader>
           <CardContent className="p-6">
             {loading ? (
@@ -255,15 +262,17 @@ export default function SchoolsPage() {
                           <Pencil className="h-4 w-4 mr-1" />
                           Edit
                         </Button>
-                        <Button 
+                        { profile?.is_super_admin && (
+                          <Button 
                           variant="destructive" 
                           size="sm" 
                           onClick={() => handleDeleteSchool(school)}
                           className="border-red-500 bg-red-500 text-white hover:bg-red-600 hover:text-white transition-all duration-300"
-                        >
+                          >
                           <Trash2 className="h-4 w-4 mr-1" />
                           Delete
                         </Button>
+                        )}
                       </div>
                     </div>
                   ))

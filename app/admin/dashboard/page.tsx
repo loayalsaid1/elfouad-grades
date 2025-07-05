@@ -11,7 +11,7 @@ import { createClientComponentSupabaseClient } from "@/lib/supabase"
 import LoadingPage from "@/components/admin/LoadingPage"
 
 export default function AdminDashboard() {
-  const user = useAdminUser()
+  const { user, profile } = useAdminUser()
   const [stats, setStats] = useState({
     totalStudents: 0,
     totalSchools: 0,
@@ -160,22 +160,24 @@ export default function AdminDashboard() {
           </Card>
 
           {/* Previous Login Card */}
-          {lastLogin && (
-            <Card className="hover:shadow-xl transition-all duration-300 hover:scale-[1.02] border-2 hover:border-[#223152]">
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium text-gray-700">Previous Login</CardTitle>
-                <div className="bg-purple-100 p-2 rounded-full">
-                  <History className="h-4 w-4 text-purple-600" />
-                </div>
-              </CardHeader>
-              <CardContent>
+          <Card className="hover:shadow-xl transition-all duration-300 hover:scale-[1.02] border-2 hover:border-[#223152]">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium text-gray-700">Previous Login</CardTitle>
+              <div className="bg-purple-100 p-2 rounded-full">
+                <History className="h-4 w-4 text-purple-600" />
+              </div>
+            </CardHeader>
+            <CardContent>
+              {lastLogin ? (
                 <div className="text-xs text-gray-700 space-y-1">
                   <div><span className="font-semibold">Date:</span> {new Date(lastLogin.created_at).toLocaleDateString()}</div>
                   <div><span className="font-semibold">IP:</span> {lastLogin.ip_address || <span className="italic text-gray-400">N/A</span>}</div>
                 </div>
-              </CardContent>
-            </Card>
-          )}
+              ) : (
+                <div className="text-xs text-gray-400 italic">No previous logins found.</div>
+              )}
+            </CardContent>
+          </Card>
         </div>
 
         {/* Quick Actions */}
@@ -284,6 +286,7 @@ export default function AdminDashboard() {
             </CardContent>
           </Card>
 
+          
           <Card
             className="cursor-pointer hover:shadow-xl transition-all duration-300 hover:scale-[1.02] border-2 hover:border-[#223152] group"
             onClick={() => router.push("/admin/dashboard/schools")}
@@ -303,6 +306,29 @@ export default function AdminDashboard() {
               </Button>
             </CardContent>
           </Card>
+
+          {/* Add Manage Admins card for super admins only */}
+          {profile?.is_super_admin && (
+            <Card
+              className="cursor-pointer hover:shadow-xl transition-all duration-300 hover:scale-[1.02] border-2 hover:border-[#223152] group"
+              onClick={() => router.push("/admin/dashboard/admins")}
+            >
+              <CardHeader>
+                <CardTitle className="flex items-center text-[#223152] group-hover:text-[#1a2642]">
+                  <div className="bg-yellow-100 p-3 rounded-full mr-3 group-hover:bg-[#223152] group-hover:text-white transition-all duration-300">
+                    <Users className="h-5 w-5" />
+                  </div>
+                  Manage Admins
+                </CardTitle>
+                <CardDescription>View and manage admin users and their school access</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <Button variant="outline" className="w-full border-[#223152] text-[#223152] hover:bg-[#223152] hover:text-white transition-all duration-300">
+                  Manage Admins
+                </Button>
+              </CardContent>
+            </Card>
+          )}
         </div>
       </main>
     </div>
