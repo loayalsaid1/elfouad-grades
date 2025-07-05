@@ -29,36 +29,42 @@ export function AdminsTable({ admins, schools, onRemove, onToggleSuperAdmin, onE
   }, [schools]);
   return (
     <div className="overflow-x-auto">
-      <table className="min-w-full">
+      <table className="min-w-full bg-white rounded-lg shadow-sm border border-gray-200">
         <thead>
           <tr className="bg-gray-50 border-b">
-            <th className="px-4 py-2 text-left text-xs font-semibold text-[#223152] uppercase">Name</th>
-            <th className="px-4 py-2 text-left text-xs font-semibold text-[#223152] uppercase">Email</th>
-            <th className="px-4 py-2 text-left text-xs font-semibold text-[#223152] uppercase">School Access</th>
-            <th className="px-4 py-2"></th>
-            <th className="px-4 py-2"></th>
+            <th className="min-w-48 px-7 py-3 text-left text-xs font-semibold text-[#223152] uppercase rounded-tl-lg whitespace-nowrap">Name</th>
+            <th className="px-5 py-3 text-left text-xs font-semibold text-[#223152] uppercase">Email</th>
+            <th className="px-5 py-3 text-left text-xs font-semibold text-[#223152] uppercase">School Access</th>
+            <th className="px-5 py-3 rounded-tr-lg"></th>
+            <th className="px-5 py-3"></th>
           </tr>
         </thead>
         <tbody>
-          {admins.map((admin) => (
-            <tr key={admin.id} className="border-b">
-              <td className="px-4 py-2 text-sm">{admin.full_name}</td>
-              <td className="px-4 py-2 text-sm">{admin.email}</td>
-              <td className="px-4 py-2">
+          {admins.map((admin, idx) => (
+            <tr
+              key={admin.id}
+              className={`border-b transition-colors duration-150 ${idx % 2 === 0 ? "bg-gray-50" : "bg-white"} hover:bg-blue-50`}
+            >
+              <td className="px-7 py-3 text-sm font-medium text-[#223152] whitespace-nowrap">{admin.full_name}</td>
+              <td className="px-5 py-3 text-sm text-gray-700">{admin.email}</td>
+              <td className="px-5 py-3">
                 {(admin.school_ids && admin.school_ids.length > 0 ? (
                   (admin.school_ids).map((id: any) => {
                     const school = schoolMap.get(id);
                     return (
-                      <span key={id} className="inline-block bg-blue-100 text-blue-800 rounded px-2 py-1 mr-1 text-xs">
+                      <span
+                        key={id}
+                        className="inline-block bg-blue-100 text-blue-800 rounded-full px-3 py-1 mr-2 mb-1 text-xs font-semibold shadow-sm border border-blue-200"
+                      >
                         {school ? school.name : id}
                       </span>
                     )
                   })
                 ) : (
-                  <span className="text-gray-500 italic">No Schools</span>
+                  <span className="text-gray-400 italic">No Schools</span>
                 ))}
               </td>
-              <td className="px-4 py-2">
+              <td className="px-5 py-3">
                 <Button
                   variant="outline"
                   size="sm"
@@ -69,7 +75,7 @@ export function AdminsTable({ admins, schools, onRemove, onToggleSuperAdmin, onE
                   Edit
                 </Button>
               </td>
-              <td className="px-4 py-2">
+              <td className="px-5 py-3">
                 <Button
                   variant="destructive"
                   size="sm"
