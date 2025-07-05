@@ -160,22 +160,24 @@ export default function AdminDashboard() {
           </Card>
 
           {/* Previous Login Card */}
-          {lastLogin && (
-            <Card className="hover:shadow-xl transition-all duration-300 hover:scale-[1.02] border-2 hover:border-[#223152]">
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium text-gray-700">Previous Login</CardTitle>
-                <div className="bg-purple-100 p-2 rounded-full">
-                  <History className="h-4 w-4 text-purple-600" />
-                </div>
-              </CardHeader>
-              <CardContent>
+          <Card className="hover:shadow-xl transition-all duration-300 hover:scale-[1.02] border-2 hover:border-[#223152]">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium text-gray-700">Previous Login</CardTitle>
+              <div className="bg-purple-100 p-2 rounded-full">
+                <History className="h-4 w-4 text-purple-600" />
+              </div>
+            </CardHeader>
+            <CardContent>
+              {lastLogin ? (
                 <div className="text-xs text-gray-700 space-y-1">
                   <div><span className="font-semibold">Date:</span> {new Date(lastLogin.created_at).toLocaleDateString()}</div>
                   <div><span className="font-semibold">IP:</span> {lastLogin.ip_address || <span className="italic text-gray-400">N/A</span>}</div>
                 </div>
-              </CardContent>
-            </Card>
-          )}
+              ) : (
+                <div className="text-xs text-gray-400 italic">No previous logins found.</div>
+              )}
+            </CardContent>
+          </Card>
         </div>
 
         {/* Quick Actions */}
