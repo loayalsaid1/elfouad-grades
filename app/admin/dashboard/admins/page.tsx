@@ -62,7 +62,7 @@ export default function ManageAdminsPage() {
 
   return (
     <div className="h-full bg-gradient-to-br from-slate-50 to-blue-50 py-8">
-      <div className="max-w-5xl mx-auto px-4">
+      <div className="max-w-6xl mx-auto px-4">
         <BackToDashboard />
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-[#223152] flex items-center">

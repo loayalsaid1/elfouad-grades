@@ -42,8 +42,8 @@ export function AdminsTable({ admins, schools, onRemove, onToggleSuperAdmin, onE
         <tbody>
           {admins.map((admin) => (
             <tr key={admin.id} className="border-b">
-              <td className="px-4 py-2">{admin.full_name}</td>
-              <td className="px-4 py-2">{admin.email}</td>
+              <td className="px-4 py-2 text-sm">{admin.full_name}</td>
+              <td className="px-4 py-2 text-sm">{admin.email}</td>
               <td className="px-4 py-2">
                 {(admin.school_ids && admin.school_ids.length > 0 ? (
                   (admin.school_ids).map((id: any) => {
