@@ -49,15 +49,12 @@ export function useManageAdmins() {
 
   const handleAddAdmin = async (admin: { email: string; full_name: string; is_super_admin: boolean; school_ids: number[] }) => {
     setAddDialogError(null)
-    if (!profile?.is_super_admin) {
-      setAddDialogError("Only super admins can add admins.")
-      return
-    }
     try {
+      // Always send is_super_admin: false
       const res = await fetch("/api/admin/add-admin", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(admin),
+        body: JSON.stringify({ ...admin, is_super_admin: false }),
       })
       const result = await res.json()
       if (!res.ok) throw new Error(result.error || "Failed to add admin")
@@ -76,18 +73,15 @@ export function useManageAdmins() {
 
   const handleSaveEditAdmin = async (admin: { id: string; full_name: string; is_super_admin: boolean; school_ids: number[] }) => {
     setEditDialogError(null)
-    if (!profile?.is_super_admin) {
-      setEditDialogError("Only super admins can edit admins.")
-      return
-    }
     try {
+      // Always set is_super_admin: false
       await supabase.from("users").update({
         full_name: admin.full_name,
-        is_super_admin: admin.is_super_admin,
+        is_super_admin: false,
       }).eq("id", admin.id)
 
       await supabase.from("user_school_access").delete().eq("user_id", admin.id)
-      if (!admin.is_super_admin && admin.school_ids.length > 0) {
+      if (admin.school_ids.length > 0) {
         const accessRows = admin.school_ids.map((school_id) => ({
           user_id: admin.id,
           school_id,
@@ -121,19 +115,6 @@ export function useManageAdmins() {
     }
   }
 
-  const handleToggleSuperAdmin = async (userId: string, isSuperAdmin: boolean) => {
-    if (!profile?.is_super_admin) {
-      setError("Only super admins can change super admin status.")
-      return
-    }
-    try {
-      await supabase.from("users").update({ is_super_admin: isSuperAdmin }).eq("id", userId)
-      await fetchAll()
-    } catch (err: any) {
-      setError("Failed to update admin: " + (err.message || err.toString()))
-    }
-  }
-
   return {
     admins,
     loading,
@@ -142,7 +123,6 @@ export function useManageAdmins() {
     setOpenAddDialog,
     handleAddAdmin,
     handleRemoveAdmin,
-    handleToggleSuperAdmin,
     addDialogError,
     setAddDialogError,
     schools,

@@ -22,13 +22,11 @@ export function EditAdminDialog({
   schoolOptions: { value: number; label: string }[]
 }) {
   const [fullName, setFullName] = useState("")
-  const [isSuperAdmin, setIsSuperAdmin] = useState(false)
   const [selectedSchools, setSelectedSchools] = useState<number[]>([])
 
   useEffect(() => {
     if (admin) {
       setFullName(admin.full_name || "")
-      setIsSuperAdmin(admin.is_super_admin || false)
       setSelectedSchools(admin.school_ids || [])
     }
   }, [admin])
@@ -40,14 +38,14 @@ export function EditAdminDialog({
       setError("Full name is required")
       return
     }
-    if (!isSuperAdmin && selectedSchools.length === 0) {
+    if (selectedSchools.length === 0) {
       setError("Select at least one school for school admin")
       return
     }
     onSave({
       id: admin.id,
       full_name: fullName,
-      is_super_admin: isSuperAdmin,
+      is_super_admin: false, // Always false
       school_ids: selectedSchools,
     })
   }
@@ -78,7 +76,8 @@ export function EditAdminDialog({
               required
             />
           </div>
-          <div className="flex items-center gap-2">
+          {/* Remove Super Admin checkbox */}
+          {/* <div className="flex items-center gap-2">
             <input
               id="super-admin"
               type="checkbox"
@@ -88,30 +87,29 @@ export function EditAdminDialog({
             <label htmlFor="super-admin" className="text-sm font-medium text-gray-700">
               Super Admin (access to all schools)
             </label>
-          </div>
-          {!isSuperAdmin && (
-            <div className="space-y-2">
-              <label className="text-sm font-medium text-gray-700">School Access</label>
-              <div className="flex flex-wrap gap-2">
-                {schoolOptions.map((school) => (
-                  <label key={school.value} className="flex items-center gap-1 text-xs border rounded px-2 py-1">
-                    <input
-                      type="checkbox"
-                      checked={selectedSchools.includes(school.value)}
-                      onChange={e => {
-                        if (e.target.checked) {
-                          setSelectedSchools(prev => [...prev, school.value])
-                        } else {
-                          setSelectedSchools(prev => prev.filter(id => id !== school.value))
-                        }
-                      }}
-                    />
-                    {school.label}
-                  </label>
-                ))}
-              </div>
+          </div> */}
+          {/* Always show school selection */}
+          <div className="space-y-2">
+            <label className="text-sm font-medium text-gray-700">School Access</label>
+            <div className="flex flex-wrap gap-2">
+              {schoolOptions.map((school) => (
+                <label key={school.value} className="flex items-center gap-1 text-xs border rounded px-2 py-1">
+                  <input
+                    type="checkbox"
+                    checked={selectedSchools.includes(school.value)}
+                    onChange={e => {
+                      if (e.target.checked) {
+                        setSelectedSchools(prev => [...prev, school.value])
+                      } else {
+                        setSelectedSchools(prev => prev.filter(id => id !== school.value))
+                      }
+                    }}
+                  />
+                  {school.label}
+                </label>
+              ))}
             </div>
-          )}
+          </div>
           <DialogFooter>
             <Button
               variant="outline"
