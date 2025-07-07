@@ -246,32 +246,37 @@ export default function SchoolsPage() {
               <div className="space-y-4">
                 {schools.length > 0 ? (
                   schools.map((school) => (
-                    <div key={school.id} className="flex items-center justify-between p-6 border-2 rounded-lg hover:border-[#223152] hover:shadow-lg transition-all duration-300 bg-white">
-                      <div>
-                        <h3 className="font-medium text-[#223152] text-lg">{school.name}</h3>
-                        <p className="text-sm text-gray-500">ID: {school.id}</p>
-                        <p className="text-xs text-gray-400">Slug: {school.slug || <span className="italic text-gray-300">none</span>}</p>
+                    <div
+                      key={school.id}
+                      className="flex flex-col sm:flex-row sm:items-center justify-between p-4 sm:p-6 border-2 rounded-lg hover:border-[#223152] hover:shadow-lg transition-all duration-300 bg-white gap-3 sm:gap-0"
+                    >
+                      <div className="flex-1 min-w-0">
+                        <h3 className="font-medium text-[#223152] text-lg truncate">{school.name}</h3>
+                        <p className="text-sm text-gray-500 truncate">ID: {school.id}</p>
+                        <p className="text-xs text-gray-400 truncate">
+                          Slug: {school.slug || <span className="italic text-gray-300">none</span>}
+                        </p>
                       </div>
-                      <div className="flex gap-2">
-                        <Button 
-                          variant="outline" 
-                          size="sm" 
+                      <div className="flex flex-col xs:flex-row gap-2 w-full sm:w-auto sm:justify-end sm:items-center">
+                        <Button
+                          variant="outline"
+                          size="sm"
                           onClick={() => handleEditSchool(school)}
-                          className="border-[#223152] text-[#223152] hover:bg-[#223152] hover:text-white transition-all duration-300"
+                          className="border-[#223152] text-[#223152] hover:bg-[#223152] hover:text-white transition-all duration-300 w-full xs:w-auto"
                         >
                           <Pencil className="h-4 w-4 mr-1" />
                           Edit
                         </Button>
-                        { profile?.is_super_admin && (
-                          <Button 
-                          variant="destructive" 
-                          size="sm" 
-                          onClick={() => handleDeleteSchool(school)}
-                          className="border-red-500 bg-red-500 text-white hover:bg-red-600 hover:text-white transition-all duration-300"
+                        {profile?.is_super_admin && (
+                          <Button
+                            variant="destructive"
+                            size="sm"
+                            onClick={() => handleDeleteSchool(school)}
+                            className="border-red-500 bg-red-500 text-white hover:bg-red-600 hover:text-white transition-all duration-300 w-full xs:w-auto"
                           >
-                          <Trash2 className="h-4 w-4 mr-1" />
-                          Delete
-                        </Button>
+                            <Trash2 className="h-4 w-4 mr-1" />
+                            Delete
+                          </Button>
                         )}
                       </div>
                     </div>
@@ -424,6 +429,36 @@ export default function SchoolsPage() {
           </DialogContent>
         </Dialog>
       </div>
+      <style jsx global>{`
+        @media (max-width: 640px) {
+          .sm\\:flex-row {
+            flex-direction: column !important;
+          }
+          .sm\\:items-center {
+            align-items: stretch !important;
+          }
+          .sm\\:p-6 {
+            padding: 1rem !important;
+          }
+          .sm\\:gap-0 {
+            gap: 0.5rem !important;
+          }
+          .sm\\:w-auto {
+            width: 100% !important;
+          }
+          .sm\\:justify-end {
+            justify-content: flex-start !important;
+          }
+        }
+        @media (max-width: 400px) {
+          .xs\\:flex-row {
+            flex-direction: column !important;
+          }
+          .xs\\:w-auto {
+            width: 100% !important;
+          }
+        }
+      `}</style>
     </div>
   )
 }
