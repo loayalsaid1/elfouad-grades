@@ -16,7 +16,7 @@ export function EditAdminDialog({
   open: boolean
   setOpen: (v: boolean) => void
   admin: any
-  onSave: (admin: { id: string; full_name: string; is_super_admin: boolean; school_ids: number[] }) => void
+  onSave: (admin: { id: string; full_name: string; school_ids: number[] }) => void
   error: string | null
   setError: (e: string | null) => void
   schoolOptions: { value: number; label: string }[]
@@ -45,7 +45,6 @@ export function EditAdminDialog({
     onSave({
       id: admin.id,
       full_name: fullName,
-      is_super_admin: false, // Always false
       school_ids: selectedSchools,
     })
   }
@@ -76,25 +75,13 @@ export function EditAdminDialog({
               required
             />
           </div>
-          {/* Remove Super Admin checkbox */}
-          {/* <div className="flex items-center gap-2">
-            <input
-              id="super-admin"
-              type="checkbox"
-              checked={isSuperAdmin}
-              onChange={e => setIsSuperAdmin(e.target.checked)}
-            />
-            <label htmlFor="super-admin" className="text-sm font-medium text-gray-700">
-              Super Admin (access to all schools)
-            </label>
-          </div> */}
-          {/* Always show school selection */}
           <div className="space-y-2">
             <label className="text-sm font-medium text-gray-700">School Access</label>
             <div className="flex flex-wrap gap-2">
               {schoolOptions.map((school) => (
                 <label key={school.value} className="flex items-center gap-1 text-xs border rounded px-2 py-1">
                   <input
+                    disabled={admin.is_super_admin}
                     type="checkbox"
                     checked={selectedSchools.includes(school.value)}
                     onChange={e => {

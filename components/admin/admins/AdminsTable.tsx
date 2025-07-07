@@ -81,6 +81,7 @@ export function AdminsTable({ admins, schools, onRemove, onToggleSuperAdmin, onE
                   size="sm"
                   onClick={() => onRemove(admin.id)}
                   className="border-red-500 bg-red-500 text-white hover:bg-red-600 hover:text-white"
+                  disabled={admin.is_super_admin}
                 >
                   <Trash2 className="h-4 w-4 mr-1" />
                   Remove

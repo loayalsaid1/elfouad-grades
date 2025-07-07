@@ -72,13 +72,12 @@ export function useManageAdmins() {
     setEditDialogOpen(true)
   }
 
-  const handleSaveEditAdmin = async (admin: { id: string; full_name: string; is_super_admin: boolean; school_ids: number[] }) => {
+  const handleSaveEditAdmin = async (admin: { id: string; full_name: string; school_ids: number[] }) => {
     setEditDialogError(null)
     try {
       // Always set is_super_admin: false
       await supabase.from("users").update({
         full_name: admin.full_name,
-        is_super_admin: false,
       }).eq("id", admin.id)
 
       await supabase.from("user_school_access").delete().eq("user_id", admin.id)
