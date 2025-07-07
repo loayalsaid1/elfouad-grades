@@ -200,10 +200,10 @@ export default function AdminDashboard() {
           <h2 className="text-lg font-semibold text-[#223152] mb-4">Quick Actions</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             <Card
-              className="cursor-pointer hover:shadow-xl transition-all duration-300 hover:scale-[1.02] border-2 hover:border-[#223152] group"
+              className="cursor-pointer hover:shadow-xl transition-all duration-300 hover:scale-[1.02] border-2 hover:border-[#223152] group h-full flex flex-col"
               onClick={() => router.push("/admin/dashboard/upload")}
             >
-              <CardHeader>
+              <CardHeader className="flex-grow">
                 <CardTitle className="flex items-center text-[#223152] group-hover:text-[#1a2642]">
                   <div className="bg-blue-100 p-3 rounded-full mr-3 group-hover:bg-[#223152] group-hover:text-white transition-all duration-300">
                     <Upload className="h-5 w-5" />
@@ -212,6 +212,7 @@ export default function AdminDashboard() {
                 </CardTitle>
                 <CardDescription>Upload CSV files with student results</CardDescription>
               </CardHeader>
+              <div className="flex-grow" />
               <CardContent>
                 <Button className="w-full bg-[#223152] hover:bg-[#1a2642] text-white transition-all duration-300">
                   Start Upload
@@ -220,10 +221,10 @@ export default function AdminDashboard() {
             </Card>
 
             <Card
-              className="cursor-pointer hover:shadow-xl transition-all duration-300 hover:scale-[1.02] border-2 hover:border-[#223152] group"
+              className="cursor-pointer hover:shadow-xl transition-all duration-300 hover:scale-[1.02] border-2 hover:border-[#223152] group h-full flex flex-col"
               onClick={() => router.push("/admin/dashboard/settings")}
             >
-              <CardHeader>
+              <CardHeader className="flex-grow">
                 <CardTitle className="flex items-center text-[#223152] group-hover:text-[#1a2642]">
                   <div className="bg-green-100 p-3 rounded-full mr-3 group-hover:bg-[#223152] group-hover:text-white transition-all duration-300">
                     <Settings className="h-5 w-5" />
@@ -232,6 +233,7 @@ export default function AdminDashboard() {
                 </CardTitle>
                 <CardDescription>Manage system configuration and active contexts</CardDescription>
               </CardHeader>
+              <div className="flex-grow" />
               <CardContent>
                 <Button variant="outline" className="w-full border-[#223152] text-[#223152] hover:bg-[#223152] hover:text-white transition-all duration-300">
                   Open Settings
@@ -240,10 +242,10 @@ export default function AdminDashboard() {
             </Card>
 
             <Card
-              className="cursor-pointer hover:shadow-xl transition-all duration-300 hover:scale-[1.02] border-2 hover:border-[#223152] group"
+              className="cursor-pointer hover:shadow-xl transition-all duration-300 hover:scale-[1.02] border-2 hover:border-[#223152] group h-full flex flex-col"
               onClick={() => router.push("/admin/dashboard/test-results")}
             >
-              <CardHeader>
+              <CardHeader className="flex-grow">
                 <CardTitle className="flex items-center text-[#223152] group-hover:text-[#1a2642]">
                   <div className="bg-purple-100 p-3 rounded-full mr-3 group-hover:bg-[#223152] group-hover:text-white transition-all duration-300">
                     <TestTube className="h-5 w-5" />
@@ -254,6 +256,7 @@ export default function AdminDashboard() {
                   Search and view student results as a normal user would
                 </CardDescription>
               </CardHeader>
+              <div className="flex-grow" />
               <CardContent>
                 <Button variant="outline" className="w-full border-[#223152] text-[#223152] hover:bg-[#223152] hover:text-white transition-all duration-300">
                   Open Test Results
@@ -262,10 +265,10 @@ export default function AdminDashboard() {
             </Card>
 
             <Card
-              className="cursor-pointer hover:shadow-xl transition-all duration-300 hover:scale-[1.02] border-2 hover:border-[#223152] group"
+              className="cursor-pointer hover:shadow-xl transition-all duration-300 hover:scale-[1.02] border-2 hover:border-[#223152] group h-full flex flex-col"
               onClick={() => router.push("/admin/dashboard/logins")}
             >
-              <CardHeader>
+              <CardHeader className="flex-grow">
                 <CardTitle className="flex items-center text-[#223152] group-hover:text-[#1a2642]">
                   <div className="bg-red-100 p-3 rounded-full mr-3 group-hover:bg-[#223152] group-hover:text-white transition-all duration-300">
                     <History className="h-5 w-5" />
@@ -274,6 +277,7 @@ export default function AdminDashboard() {
                 </CardTitle>
                 <CardDescription>View recent admin login activity</CardDescription>
               </CardHeader>
+              <div className="flex-grow" />
               <CardContent>
                 <Button variant="outline" className="w-full border-[#223152] text-[#223152] hover:bg-[#223152] hover:text-white transition-all duration-300">
                   View Logins
@@ -282,10 +286,10 @@ export default function AdminDashboard() {
             </Card>
 
             <Card
-              className="cursor-pointer hover:shadow-xl transition-all duration-300 hover:scale-[1.02] border-2 hover:border-[#223152] group"
+              className="cursor-pointer hover:shadow-xl transition-all duration-300 hover:scale-[1.02] border-2 hover:border-[#223152] group h-full flex flex-col"
               onClick={() => router.push("/admin/dashboard/diffs")}
             >
-              <CardHeader>
+              <CardHeader className="flex-grow">
                 <CardTitle className="flex items-center text-[#223152] group-hover:text-[#1a2642]">
                   <div className="bg-yellow-100 p-3 rounded-full mr-3 group-hover:bg-[#223152] group-hover:text-white transition-all duration-300">
                     <FileDiff className="h-5 w-5" />
@@ -296,6 +300,7 @@ export default function AdminDashboard() {
                   Analyze differences between the uploaded backup file and the current database records for student results.
                 </CardDescription>
               </CardHeader>
+              <div className="flex-grow" />
               <CardContent>
                 <Button variant="outline" className="w-full border-[#223152] text-[#223152] hover:bg-[#223152] hover:text-white transition-all duration-300">
                   Open Data Comparison
@@ -305,10 +310,10 @@ export default function AdminDashboard() {
 
             
             <Card
-              className="cursor-pointer hover:shadow-xl transition-all duration-300 hover:scale-[1.02] border-2 hover:border-[#223152] group"
+              className="cursor-pointer hover:shadow-xl transition-all duration-300 hover:scale-[1.02] border-2 hover:border-[#223152] group h-full flex flex-col"
               onClick={() => router.push("/admin/dashboard/schools")}
             >
-              <CardHeader>
+              <CardHeader className="flex-grow">
                 <CardTitle className="flex items-center text-[#223152] group-hover:text-[#1a2642]">
                   <div className="bg-orange-100 p-3 rounded-full mr-3 group-hover:bg-[#223152] group-hover:text-white transition-all duration-300">
                     <Users className="h-5 w-5" />
@@ -317,6 +322,7 @@ export default function AdminDashboard() {
                 </CardTitle>
                 <CardDescription>Manage schools, including their details and logos</CardDescription>
               </CardHeader>
+              <div className="flex-grow" />
               <CardContent>
                 <Button variant="outline" className="w-full border-[#223152] text-[#223152] hover:bg-[#223152] hover:text-white transition-all duration-300">
                   Manage Schools
@@ -327,10 +333,10 @@ export default function AdminDashboard() {
             {/* Add Manage Admins card for super admins only */}
             {profile?.is_super_admin && (
               <Card
-                className="cursor-pointer hover:shadow-xl transition-all duration-300 hover:scale-[1.02] border-2 hover:border-[#223152] group"
+                className="cursor-pointer hover:shadow-xl transition-all duration-300 hover:scale-[1.02] border-2 hover:border-[#223152] group h-full flex flex-col"
                 onClick={() => router.push("/admin/dashboard/admins")}
               >
-                <CardHeader>
+                <CardHeader className="flex-grow">
                   <CardTitle className="flex items-center text-[#223152] group-hover:text-[#1a2642]">
                     <div className="bg-yellow-100 p-3 rounded-full mr-3 group-hover:bg-[#223152] group-hover:text-white transition-all duration-300">
                       <Users className="h-5 w-5" />
@@ -339,6 +345,7 @@ export default function AdminDashboard() {
                   </CardTitle>
                   <CardDescription>View and manage admin users and their school access</CardDescription>
                 </CardHeader>
+                <div className="flex-grow" />
                 <CardContent>
                   <Button variant="outline" className="w-full border-[#223152] text-[#223152] hover:bg-[#223152] hover:text-white transition-all duration-300">
                     Manage Admins
