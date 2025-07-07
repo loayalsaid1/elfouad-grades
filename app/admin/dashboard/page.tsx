@@ -101,18 +101,27 @@ export default function AdminDashboard() {
       {/* Header */}
       <header className="bg-white shadow-xl border-b border-gray-200 mb-8 rounded-lg mx-4 mt-4">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center py-6">
+          <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center py-6 gap-4 sm:gap-0">
             <div>
               <h1 className="text-3xl font-bold text-[#223152]">Admin Dashboard</h1>
               <p className="text-sm text-gray-600 mt-1">El Fouad Schools Group Management</p>
+              {/* User Info */}
+              <div className="mt-3 flex flex-wrap items-center gap-2">
+                <span className="font-semibold text-[#223152]">{profile?.full_name || user.email}</span>
+                {profile?.is_super_admin && (
+                  <Badge className="bg-yellow-400 text-[#223152] border-yellow-400">Super Admin</Badge>
+                )}
+                <Badge variant="outline" className="px-2 py-1 text-[#223152] border-[#223152]">
+                  {user.email}
+                </Badge>
+              </div>
             </div>
-            <div className="flex items-center space-x-4">
-              <Badge variant="outline" className="px-3 py-1 text-[#223152] border-[#223152]">{user.email}</Badge>
+            <div className="flex flex-col sm:flex-row items-start sm:items-center space-y-2 sm:space-y-0 sm:space-x-4">
               <Button 
                 variant="outline" 
                 size="sm" 
                 onClick={handleLogout}
-                className="hover:bg-red-50 hover:border-red-200 hover:text-red-600 transition-all duration-300"
+                className="hover:bg-red-50 hover:border-red-200 hover:text-red-600 transition-all duration-300 w-full sm:w-auto"
               >
                 <LogOut className="h-4 w-4 mr-2" />
                 Logout
@@ -125,7 +134,7 @@ export default function AdminDashboard() {
       {/* Main Content */}
       <main className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
         {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
           <Card className="hover:shadow-xl transition-all duration-300 hover:scale-[1.02] border-2 hover:border-[#223152]">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium text-gray-700">Total Students</CardTitle>
@@ -186,156 +195,159 @@ export default function AdminDashboard() {
           </Card>
         </div>
 
-        {/* Quick Actions */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6">
-          <Card
-            className="cursor-pointer hover:shadow-xl transition-all duration-300 hover:scale-[1.02] border-2 hover:border-[#223152] group"
-            onClick={() => router.push("/admin/dashboard/upload")}
-          >
-            <CardHeader>
-              <CardTitle className="flex items-center text-[#223152] group-hover:text-[#1a2642]">
-                <div className="bg-blue-100 p-3 rounded-full mr-3 group-hover:bg-[#223152] group-hover:text-white transition-all duration-300">
-                  <Upload className="h-5 w-5" />
-                </div>
-                Upload Results
-              </CardTitle>
-              <CardDescription>Upload CSV files with student results</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <Button className="w-full bg-[#223152] hover:bg-[#1a2642] text-white transition-all duration-300">
-                Start Upload
-              </Button>
-            </CardContent>
-          </Card>
-
-          <Card
-            className="cursor-pointer hover:shadow-xl transition-all duration-300 hover:scale-[1.02] border-2 hover:border-[#223152] group"
-            onClick={() => router.push("/admin/dashboard/settings")}
-          >
-            <CardHeader>
-              <CardTitle className="flex items-center text-[#223152] group-hover:text-[#1a2642]">
-                <div className="bg-green-100 p-3 rounded-full mr-3 group-hover:bg-[#223152] group-hover:text-white transition-all duration-300">
-                  <Settings className="h-5 w-5" />
-                </div>
-                System Settings
-              </CardTitle>
-              <CardDescription>Manage system configuration and active contexts</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <Button variant="outline" className="w-full border-[#223152] text-[#223152] hover:bg-[#223152] hover:text-white transition-all duration-300">
-                Open Settings
-              </Button>
-            </CardContent>
-          </Card>
-
-          <Card
-            className="cursor-pointer hover:shadow-xl transition-all duration-300 hover:scale-[1.02] border-2 hover:border-[#223152] group"
-            onClick={() => router.push("/admin/dashboard/test-results")}
-          >
-            <CardHeader>
-              <CardTitle className="flex items-center text-[#223152] group-hover:text-[#1a2642]">
-                <div className="bg-purple-100 p-3 rounded-full mr-3 group-hover:bg-[#223152] group-hover:text-white transition-all duration-300">
-                  <TestTube className="h-5 w-5" />
-                </div>
-                Test Student Results
-              </CardTitle>
-              <CardDescription>
-                Search and view student results as a normal user would
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <Button variant="outline" className="w-full border-[#223152] text-[#223152] hover:bg-[#223152] hover:text-white transition-all duration-300">
-                Open Test Results
-              </Button>
-            </CardContent>
-          </Card>
-
-          <Card
-            className="cursor-pointer hover:shadow-xl transition-all duration-300 hover:scale-[1.02] border-2 hover:border-[#223152] group"
-            onClick={() => router.push("/admin/dashboard/logins")}
-          >
-            <CardHeader>
-              <CardTitle className="flex items-center text-[#223152] group-hover:text-[#1a2642]">
-                <div className="bg-red-100 p-3 rounded-full mr-3 group-hover:bg-[#223152] group-hover:text-white transition-all duration-300">
-                  <History className="h-5 w-5" />
-                </div>
-                Latest Logins
-              </CardTitle>
-              <CardDescription>View recent admin login activity</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <Button variant="outline" className="w-full border-[#223152] text-[#223152] hover:bg-[#223152] hover:text-white transition-all duration-300">
-                View Logins
-              </Button>
-            </CardContent>
-          </Card>
-
-          <Card
-            className="cursor-pointer hover:shadow-xl transition-all duration-300 hover:scale-[1.02] border-2 hover:border-[#223152] group"
-            onClick={() => router.push("/admin/dashboard/diffs")}
-          >
-            <CardHeader>
-              <CardTitle className="flex items-center text-[#223152] group-hover:text-[#1a2642]">
-                <div className="bg-yellow-100 p-3 rounded-full mr-3 group-hover:bg-[#223152] group-hover:text-white transition-all duration-300">
-                  <FileDiff className="h-5 w-5" />
-                </div>
-                Backup vs Database Comparison
-              </CardTitle>
-              <CardDescription>
-                Analyze differences between the uploaded backup file and the current database records for student results.
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <Button variant="outline" className="w-full border-[#223152] text-[#223152] hover:bg-[#223152] hover:text-white transition-all duration-300">
-                Open Data Comparison
-              </Button>
-            </CardContent>
-          </Card>
-
-          
-          <Card
-            className="cursor-pointer hover:shadow-xl transition-all duration-300 hover:scale-[1.02] border-2 hover:border-[#223152] group"
-            onClick={() => router.push("/admin/dashboard/schools")}
-          >
-            <CardHeader>
-              <CardTitle className="flex items-center text-[#223152] group-hover:text-[#1a2642]">
-                <div className="bg-orange-100 p-3 rounded-full mr-3 group-hover:bg-[#223152] group-hover:text-white transition-all duration-300">
-                  <Users className="h-5 w-5" />
-                </div>
-                Schools Management
-              </CardTitle>
-              <CardDescription>Manage schools, including their details and logos</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <Button variant="outline" className="w-full border-[#223152] text-[#223152] hover:bg-[#223152] hover:text-white transition-all duration-300">
-                Manage Schools
-              </Button>
-            </CardContent>
-          </Card>
-
-          {/* Add Manage Admins card for super admins only */}
-          {profile?.is_super_admin && (
+        {/* Quick Actions Section */}
+        <section className="bg-white/80 border-2 border-[#223152]/10 rounded-xl shadow-inner px-4 py-6 mb-8">
+          <h2 className="text-lg font-semibold text-[#223152] mb-4">Quick Actions</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             <Card
               className="cursor-pointer hover:shadow-xl transition-all duration-300 hover:scale-[1.02] border-2 hover:border-[#223152] group"
-              onClick={() => router.push("/admin/dashboard/admins")}
+              onClick={() => router.push("/admin/dashboard/upload")}
+            >
+              <CardHeader>
+                <CardTitle className="flex items-center text-[#223152] group-hover:text-[#1a2642]">
+                  <div className="bg-blue-100 p-3 rounded-full mr-3 group-hover:bg-[#223152] group-hover:text-white transition-all duration-300">
+                    <Upload className="h-5 w-5" />
+                  </div>
+                  Upload Results
+                </CardTitle>
+                <CardDescription>Upload CSV files with student results</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <Button className="w-full bg-[#223152] hover:bg-[#1a2642] text-white transition-all duration-300">
+                  Start Upload
+                </Button>
+              </CardContent>
+            </Card>
+
+            <Card
+              className="cursor-pointer hover:shadow-xl transition-all duration-300 hover:scale-[1.02] border-2 hover:border-[#223152] group"
+              onClick={() => router.push("/admin/dashboard/settings")}
+            >
+              <CardHeader>
+                <CardTitle className="flex items-center text-[#223152] group-hover:text-[#1a2642]">
+                  <div className="bg-green-100 p-3 rounded-full mr-3 group-hover:bg-[#223152] group-hover:text-white transition-all duration-300">
+                    <Settings className="h-5 w-5" />
+                  </div>
+                  System Settings
+                </CardTitle>
+                <CardDescription>Manage system configuration and active contexts</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <Button variant="outline" className="w-full border-[#223152] text-[#223152] hover:bg-[#223152] hover:text-white transition-all duration-300">
+                  Open Settings
+                </Button>
+              </CardContent>
+            </Card>
+
+            <Card
+              className="cursor-pointer hover:shadow-xl transition-all duration-300 hover:scale-[1.02] border-2 hover:border-[#223152] group"
+              onClick={() => router.push("/admin/dashboard/test-results")}
+            >
+              <CardHeader>
+                <CardTitle className="flex items-center text-[#223152] group-hover:text-[#1a2642]">
+                  <div className="bg-purple-100 p-3 rounded-full mr-3 group-hover:bg-[#223152] group-hover:text-white transition-all duration-300">
+                    <TestTube className="h-5 w-5" />
+                  </div>
+                  Test Student Results
+                </CardTitle>
+                <CardDescription>
+                  Search and view student results as a normal user would
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <Button variant="outline" className="w-full border-[#223152] text-[#223152] hover:bg-[#223152] hover:text-white transition-all duration-300">
+                  Open Test Results
+                </Button>
+              </CardContent>
+            </Card>
+
+            <Card
+              className="cursor-pointer hover:shadow-xl transition-all duration-300 hover:scale-[1.02] border-2 hover:border-[#223152] group"
+              onClick={() => router.push("/admin/dashboard/logins")}
+            >
+              <CardHeader>
+                <CardTitle className="flex items-center text-[#223152] group-hover:text-[#1a2642]">
+                  <div className="bg-red-100 p-3 rounded-full mr-3 group-hover:bg-[#223152] group-hover:text-white transition-all duration-300">
+                    <History className="h-5 w-5" />
+                  </div>
+                  Latest Logins
+                </CardTitle>
+                <CardDescription>View recent admin login activity</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <Button variant="outline" className="w-full border-[#223152] text-[#223152] hover:bg-[#223152] hover:text-white transition-all duration-300">
+                  View Logins
+                </Button>
+              </CardContent>
+            </Card>
+
+            <Card
+              className="cursor-pointer hover:shadow-xl transition-all duration-300 hover:scale-[1.02] border-2 hover:border-[#223152] group"
+              onClick={() => router.push("/admin/dashboard/diffs")}
             >
               <CardHeader>
                 <CardTitle className="flex items-center text-[#223152] group-hover:text-[#1a2642]">
                   <div className="bg-yellow-100 p-3 rounded-full mr-3 group-hover:bg-[#223152] group-hover:text-white transition-all duration-300">
-                    <Users className="h-5 w-5" />
+                    <FileDiff className="h-5 w-5" />
                   </div>
-                  Manage Admins
+                  Backup vs Database Comparison
                 </CardTitle>
-                <CardDescription>View and manage admin users and their school access</CardDescription>
+                <CardDescription>
+                  Analyze differences between the uploaded backup file and the current database records for student results.
+                </CardDescription>
               </CardHeader>
               <CardContent>
                 <Button variant="outline" className="w-full border-[#223152] text-[#223152] hover:bg-[#223152] hover:text-white transition-all duration-300">
-                  Manage Admins
+                  Open Data Comparison
                 </Button>
               </CardContent>
             </Card>
-          )}
-        </div>
+
+            
+            <Card
+              className="cursor-pointer hover:shadow-xl transition-all duration-300 hover:scale-[1.02] border-2 hover:border-[#223152] group"
+              onClick={() => router.push("/admin/dashboard/schools")}
+            >
+              <CardHeader>
+                <CardTitle className="flex items-center text-[#223152] group-hover:text-[#1a2642]">
+                  <div className="bg-orange-100 p-3 rounded-full mr-3 group-hover:bg-[#223152] group-hover:text-white transition-all duration-300">
+                    <Users className="h-5 w-5" />
+                  </div>
+                  Schools Management
+                </CardTitle>
+                <CardDescription>Manage schools, including their details and logos</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <Button variant="outline" className="w-full border-[#223152] text-[#223152] hover:bg-[#223152] hover:text-white transition-all duration-300">
+                  Manage Schools
+                </Button>
+              </CardContent>
+            </Card>
+
+            {/* Add Manage Admins card for super admins only */}
+            {profile?.is_super_admin && (
+              <Card
+                className="cursor-pointer hover:shadow-xl transition-all duration-300 hover:scale-[1.02] border-2 hover:border-[#223152] group"
+                onClick={() => router.push("/admin/dashboard/admins")}
+              >
+                <CardHeader>
+                  <CardTitle className="flex items-center text-[#223152] group-hover:text-[#1a2642]">
+                    <div className="bg-yellow-100 p-3 rounded-full mr-3 group-hover:bg-[#223152] group-hover:text-white transition-all duration-300">
+                      <Users className="h-5 w-5" />
+                    </div>
+                    Manage Admins
+                  </CardTitle>
+                  <CardDescription>View and manage admin users and their school access</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <Button variant="outline" className="w-full border-[#223152] text-[#223152] hover:bg-[#223152] hover:text-white transition-all duration-300">
+                    Manage Admins
+                  </Button>
+                </CardContent>
+              </Card>
+            )}
+          </div>
+        </section>
       </main>
     </div>
   )
