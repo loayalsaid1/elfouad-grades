@@ -29,6 +29,7 @@ export function useManageAdmins() {
       const { data: adminsData, error: adminsError } = await supabase
         .from("admins_with_email")
         .select("*")
+        .order("is_super_admin", { ascending: false })
       if (adminsError) throw adminsError
       setAdmins(adminsData || [])
 
