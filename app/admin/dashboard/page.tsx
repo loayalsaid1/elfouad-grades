@@ -157,7 +157,7 @@ export default function AdminDashboard() {
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold text-[#223152]">{stats.activeContexts}</div>
-              <p className="text-xs text-gray-500 mt-1">Currently active periods</p>
+              <p className="text-xs text-gray-500 mt-1">Currently active contexts</p>
             </CardContent>
           </Card>
 
