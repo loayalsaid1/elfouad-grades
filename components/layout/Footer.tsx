@@ -7,6 +7,7 @@ import { usePathname } from "next/navigation"
 
 export default function Footer() {
   const pathname = usePathname()
+  if ( pathname?.startsWith('/admin')) return null;
 
     // Determine Facebook link based on route
   let facebookUrl = "https://www.facebook.com/share/1HSJHe1df4/"
