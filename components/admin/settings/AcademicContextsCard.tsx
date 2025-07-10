@@ -88,11 +88,11 @@ export function AcademicContextsCard({
       </CardHeader>
       <CardContent>
         {/* Filter Controls */}
-        <div className="flex flex-wrap gap-4 mb-6">
-          <div>
+        <div className="flex flex-col sm:flex-row flex-wrap gap-3 sm:gap-4 mb-4 sm:mb-6">
+          <div className="min-w-[120px]">
             <label className="block text-xs font-medium text-gray-700 mb-1">School</label>
             <select
-              className="border rounded px-2 py-1 text-sm"
+              className="border rounded px-2 py-1 text-xs sm:text-sm w-full"
               value={filters.school}
               onChange={e => setFilters((f) => ({ ...f, school: e.target.value }))}
             >
@@ -102,10 +102,10 @@ export function AcademicContextsCard({
               ))}
             </select>
           </div>
-          <div>
+          <div className="min-w-[100px]">
             <label className="block text-xs font-medium text-gray-700 mb-1">Year</label>
             <select
-              className="border rounded px-2 py-1 text-sm"
+              className="border rounded px-2 py-1 text-xs sm:text-sm w-full"
               value={filters.year}
               onChange={e => setFilters((f) => ({ ...f, year: e.target.value }))}
             >
@@ -115,10 +115,10 @@ export function AcademicContextsCard({
               ))}
             </select>
           </div>
-          <div>
+          <div className="min-w-[100px]">
             <label className="block text-xs font-medium text-gray-700 mb-1">Grade</label>
             <select
-              className="border rounded px-2 py-1 text-sm"
+              className="border rounded px-2 py-1 text-xs sm:text-sm w-full"
               value={filters.grade}
               onChange={e => setFilters((f) => ({ ...f, grade: e.target.value }))}
             >
@@ -128,10 +128,10 @@ export function AcademicContextsCard({
               ))}
             </select>
           </div>
-          <div>
+          <div className="min-w-[100px]">
             <label className="block text-xs font-medium text-gray-700 mb-1">Term</label>
             <select
-              className="border rounded px-2 py-1 text-sm"
+              className="border rounded px-2 py-1 text-xs sm:text-sm w-full"
               value={filters.term}
               onChange={e => setFilters((f) => ({ ...f, term: e.target.value }))}
             >
@@ -143,7 +143,7 @@ export function AcademicContextsCard({
           </div>
         </div>
         {/* Contexts List */}
-        <div className="space-y-4">
+        <div className="space-y-3 sm:space-y-4">
           {filteredContexts.length > 0 ? (
             filteredContexts.map((context) => (
               <AcademicContextRow
