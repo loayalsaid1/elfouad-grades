@@ -196,7 +196,7 @@ export default function AdminDashboard() {
         </div>
 
         {/* Quick Actions Section */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
             <Card
               className="cursor-pointer hover:shadow-xl transition-all duration-300 hover:scale-[1.02] border-2 hover:border-[#223152] group h-full flex flex-col"
               onClick={() => router.push("/admin/dashboard/upload")}
