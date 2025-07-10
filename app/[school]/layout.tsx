@@ -11,5 +11,5 @@ export default function SchoolLayout({
 }) {
 	useRedirectHomeOnSystemDisable()
 
-	return children
+	return <div className="flex-1">{children}</div>
 }

@@ -38,7 +38,7 @@ export default function RootLayout({
       <body className={`${inter.className} h-screen max-h-screen flex flex-col`}>
         <SystemStatusProvider>
           <Header />
-          <div className="flex-1 max-h-full overflow-y-auto">{children}</div>
+          {children}
           <Footer />
         </SystemStatusProvider>
       </body>
