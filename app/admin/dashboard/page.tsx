@@ -97,7 +97,7 @@ export default function AdminDashboard() {
   if (!user) return <LoadingPage message="Loading dashboard..." />
 
   return (
-    <div className="h-full bg-gradient-to-br from-slate-50 to-blue-50">
+    <div className="min-h-full bg-gradient-to-br from-slate-50 to-blue-50">
       {/* Header */}
       <header className="bg-white shadow-xl border-b border-gray-200 mb-8 rounded-lg mx-4 mt-4">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

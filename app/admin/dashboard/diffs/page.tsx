@@ -12,7 +12,7 @@ export default function DiffsPage() {
   const [error, setError] = useState<string | null>(null)
 
   return (
-    <div className="h-full bg-gradient-to-br from-slate-50 to-blue-50 py-8">
+    <div className="min-h-full bg-gradient-to-br from-slate-50 to-blue-50 py-8">
       <div className="max-w-6xl mx-auto px-4">
         <BackToDashboard />
         <div className="mb-8">

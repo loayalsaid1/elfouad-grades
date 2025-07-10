@@ -185,7 +185,7 @@ export default function AdminTestResultsPage() {
   if (!user) return <LoadingPage message="Loading test-results page..." />
 
   return (
-    <div className="h-full bg-gradient-to-br from-slate-50 to-blue-50 py-8">
+    <div className="min-h-full bg-gradient-to-br from-slate-50 to-blue-50 py-8">
       <div className="container mx-auto px-4">
         <BackToDashboard />
         
