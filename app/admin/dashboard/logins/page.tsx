@@ -105,7 +105,6 @@ export default function AdminLoginsPage() {
   if (!user) return <LoadingPage message="Loading logins..." />
 
   return (
-    <div className="min-h-full bg-gradient-to-br from-slate-50 to-blue-50 py-8">
       <div className="max-w-6xl mx-auto px-4">
         <BackToDashboard />
         <div className="mb-8">
@@ -223,6 +222,5 @@ export default function AdminLoginsPage() {
           </CardContent>
         </Card>
       </div>
-    </div>
   )
 }
