@@ -2,7 +2,7 @@
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { useAdminUser } from "@/hooks/useAdminUser"
-import { Upload, Settings, Users, Database, LogOut, TestTube, History, FileDiff, School, UserCircle } from "lucide-react"
+import { Upload, Settings, Users, Database, LogOut, TestTube, History, FileDiff, School, UserCircle, ChevronRight } from "lucide-react"
 import { useState } from "react"
 
 const navLinks = [
@@ -25,18 +25,20 @@ export default function Sidebar() {
 
   return (
     <>
-      {/* Mobile toggle button */}
+      {/* Vertical toggle bar for mobile */}
       <button
-        className="md:hidden fixed top-4 left-4 z-40 bg-white rounded-full p-2 shadow-lg border border-gray-200"
+        className="md:hidden fixed top-0 left-0 z-40 h-full w-6 bg-[hsl(var(--sidebar-accent))] border-r border-[hsl(var(--sidebar-border))] flex items-center justify-center"
         onClick={() => setOpen(v => !v)}
-        aria-label="Open sidebar"
+        aria-label={open ? "Close sidebar" : "Open sidebar"}
       >
-        <svg width={24} height={24} fill="none" stroke="currentColor"><path d="M4 6h16M4 12h16M4 18h16" /></svg>
+        <ChevronRight className={`h-5 w-5 text-[#223152] transition-transform duration-200 ${open ? 'rotate-180' : ''}`} />
       </button>
+      
       {/* Overlay for mobile */}
       {open && (
         <div className="fixed inset-0 bg-black/30 z-30 md:hidden" onClick={() => setOpen(false)} />
       )}
+      
       {/* Sidebar */}
       <aside
         className={`
@@ -60,6 +62,7 @@ export default function Sidebar() {
             )}
           </div>
         </div>
+        
         {/* Navigation */}
         <nav className=" md:sticky md:top-0 md:left-0 flex-1 overflow-y-auto py-4 px-2 space-y-1">
           {navLinks.map(link => {
@@ -81,6 +84,7 @@ export default function Sidebar() {
             )
           })}
         </nav>
+        
         <div className="md:sticky md:bottom-0 md:left-0 p-4 border-t border-[hsl(var(--sidebar-border))] bg-[hsl(var(--sidebar-accent))]">
           <Link
             href="/admin/login"
