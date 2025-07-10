@@ -45,7 +45,7 @@ export default function Footer() {
 
   return (
     <footer className="bg-[#223152] text-white py-8 mt-auto">
-      <div className="container mx-auto px-4">
+      <div className="container max-w-7xl mx-auto px-4">
         <div className="flex flex-col md:flex-row items-center justify-between gap-6">
           {/* School Info */}
           <div className="text-center md:text-left">

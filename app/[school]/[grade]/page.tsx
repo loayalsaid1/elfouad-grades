@@ -99,7 +99,7 @@ const { pdfLoading, generatePDF } = usePDFGeneration()
 
   return (
     <div className="h-full bg-gradient-to-br from-slate-50 to-blue-50">
-      <div className="container mx-auto px-4 py-8">
+      <div className="container max-w-7xl mx-auto px-4 py-8">
         <Button variant="outline" onClick={handleBack} className="mb-8 hover:bg-[#223152] hover:text-white">
           <ArrowLeft className="w-4 h-4 mr-2" />
           Back to Grades
