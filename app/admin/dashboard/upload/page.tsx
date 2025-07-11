@@ -130,7 +130,6 @@ export default function UploadPage() {
   }
 
   return (
-    <div className="min-h-full bg-gradient-to-br from-slate-50 to-blue-50 py-4 sm:py-8">
       <div className="max-w-6xl mx-auto px-3 sm:px-4">
         <BackToDashboard />
 
@@ -199,6 +198,5 @@ export default function UploadPage() {
           />
         )}
       </div>
-    </div>
   )
 }

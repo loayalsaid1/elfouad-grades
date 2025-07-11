@@ -82,8 +82,14 @@ export default function Footer() {
           <div className="text-center text-sm text-gray-400">
             <p>&copy; {new Date().getFullYear()} El Fouad Schools</p>
             <p>All rights reserved</p>
+            <a 
+              href="/admin/login" 
+              className="inline-flex items-center mt-3 text-xs text-gray-400 hover:text-white transition-colors"
+            >
+              <ExternalLink size={12} className="mr-1" /> Admin Dashboard
+            </a>
           </div>
-          </div>
+        </div>
 
         {/* Bottom Border
         <div className="mt-6 pt-4 border-t border-white/20 text-center">
