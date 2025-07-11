@@ -54,22 +54,22 @@ export default function HomePage() {
   }
 
   return (
-    <div className="bg-gradient-to-br from-slate-100 to-blue-50 h-full">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
+    <div className="bg-gradient-to-br from-slate-100 to-blue-50 min-h-full">
+      <div className="max-w-6xl mx-auto px-3 sm:px-6 lg:px-8 py-6 sm:py-8 md:py-12">
         {/* Header */}
-        <div className="text-center mb-12">
-          <div className="flex justify-center mb-6">
-            <div className="bg-[#223152] p-4 rounded-full">
-              <GraduationCap className="h-12 w-12 text-white" />
+        <div className="text-center mb-8 md:mb-12">
+          <div className="flex justify-center mb-4 md:mb-6">
+            <div className="bg-[#223152] p-3 md:p-4 rounded-full">
+              <GraduationCap className="h-10 w-10 md:h-12 md:w-12 text-white" />
             </div>
           </div>
-          <h1 className="text-4xl sm:text-5xl font-bold text-gray-900 mb-4">El-Fouad Schools</h1>
-          <p className="text-xl text-gray-600 mb-2">Student Results Portal</p>
-          <p className="text-lg text-gray-500">Select your school to view exam results</p>
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900 mb-3 md:mb-4">El-Fouad Schools</h1>
+          <p className="text-lg md:text-xl text-gray-600 mb-2">Student Results Portal</p>
+          <p className="text-base md:text-lg text-gray-500 px-2">Select your school to view exam results</p>
         </div>
 
         {/* School Selection */}
-        <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-8 max-w-4xl mx-auto">
           {schools.map((school) => (
             <Card
               key={school.id}
@@ -107,26 +107,26 @@ export default function HomePage() {
         </div>
 
         {/* Features */}
-        <div className="mt-16 grid sm:grid-cols-3 gap-6 max-w-4xl mx-auto">
-          <div className="text-center">
-            <div className="bg-blue-100 p-3 rounded-full w-12 h-12 mx-auto mb-4 flex items-center justify-center">
+        <div className="mt-10 md:mt-16 grid grid-cols-1 sm:grid-cols-3 gap-6 max-w-4xl mx-auto px-4">
+          <div className="text-center p-4 bg-white/50 rounded-lg shadow-sm">
+            <div className="bg-blue-100 p-3 rounded-full w-12 h-12 mx-auto mb-3 flex items-center justify-center">
               <GraduationCap className="h-6 w-6 text-blue-600" />
             </div>
-            <h3 className="font-semibold text-gray-900 mb-2">Grade Selection</h3>
+            <h3 className="font-semibold text-gray-900 mb-1">Grade Selection</h3>
             <p className="text-gray-600 text-sm">Choose from grades 1-8 for your results</p>
           </div>
-          <div className="text-center">
-            <div className="bg-green-100 p-3 rounded-full w-12 h-12 mx-auto mb-4 flex items-center justify-center">
+          <div className="text-center p-4 bg-white/50 rounded-lg shadow-sm">
+            <div className="bg-green-100 p-3 rounded-full w-12 h-12 mx-auto mb-3 flex items-center justify-center">
               <Building2 className="h-6 w-6 text-green-600" />
             </div>
-            <h3 className="font-semibold text-gray-900 mb-2">Instant Results</h3>
+            <h3 className="font-semibold text-gray-900 mb-1">Instant Results</h3>
             <p className="text-gray-600 text-sm">View your exam results immediately</p>
           </div>
-          <div className="text-center">
-            <div className="bg-orange-100 p-3 rounded-full w-12 h-12 mx-auto mb-4 flex items-center justify-center">
+          <div className="text-center p-4 bg-white/50 rounded-lg shadow-sm">
+            <div className="bg-orange-100 p-3 rounded-full w-12 h-12 mx-auto mb-3 flex items-center justify-center">
               <GraduationCap className="h-6 w-6 text-orange-600" />
             </div>
-            <h3 className="font-semibold text-gray-900 mb-2">PDF Reports</h3>
+            <h3 className="font-semibold text-gray-900 mb-1">PDF Reports</h3>
             <p className="text-gray-600 text-sm">Download official academic reports</p>
           </div>
         </div>

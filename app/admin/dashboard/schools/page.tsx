@@ -196,14 +196,14 @@ export default function SchoolsPage() {
     <>
       <div className="max-w-4xl mx-auto px-4">
         <BackToDashboard />
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-[#223152] flex items-center">
-            <div className="bg-[#223152] p-3 rounded-full mr-4">
-              <School className="h-8 w-8 text-white" />
+        <div className="mb-6 sm:mb-8">
+          <h1 className="text-2xl sm:text-3xl font-bold text-[#223152] flex items-center">
+            <div className="bg-[#223152] p-2 sm:p-3 rounded-full mr-2 sm:mr-4 flex-shrink-0">
+              <School className="h-6 w-6 sm:h-8 sm:w-8 text-white" />
             </div>
             Schools Management
           </h1>
-          <p className="text-gray-600 mt-2">Manage schools in the system</p>
+          <p className="text-sm sm:text-base text-gray-600 mt-1 sm:mt-2">Manage schools in the system</p>
         </div>
 
         {error && (
@@ -221,7 +221,7 @@ export default function SchoolsPage() {
         )}
 
         <Card className="shadow-xl border-2 hover:border-[#223152] transition-all duration-300">
-          <CardHeader className="flex flex-row items-center justify-between bg-gradient-to-r from-[#223152] to-[#2a3f66] text-white rounded-t-lg">
+          <CardHeader className="flex flex-row items-center justify-between bg-gradient-to-r from-[#223152] to-[#2a3f66] text-white rounded-t-lg p-5 gap-2">
             <div>
               <CardTitle className="text-white">Schools</CardTitle>
               <CardDescription className="text-blue-100">Add and manage schools in the system</CardDescription>
@@ -230,7 +230,7 @@ export default function SchoolsPage() {
               <Button 
                 onClick={handleAddSchool} 
                 size="sm"
-                className="bg-white text-[#223152] hover:bg-gray-100 transition-all duration-300"
+                className="bg-white text-[#223152] hover:bg-gray-100 transition-all duration-300 gap-0.5"
               >
                 <Plus className="h-4 w-4 mr-1" />
                 Add School

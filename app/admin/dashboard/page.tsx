@@ -103,7 +103,7 @@ export default function AdminDashboard() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center py-6 gap-4 sm:gap-0">
             <div>
-              <h1 className="text-3xl font-bold text-[#223152]">Admin Dashboard</h1>
+              <h1 className="text-2xl sm:text-3xl font-bold text-[#223152]">Admin Dashboard</h1>
               <p className="text-sm text-gray-600 mt-1">El Fouad Schools Group Management</p>
               {/* User Info */}
               <div className="mt-3 flex flex-wrap items-center gap-2">

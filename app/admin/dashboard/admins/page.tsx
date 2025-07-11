@@ -63,14 +63,14 @@ export default function ManageAdminsPage() {
   return (
       <div className="max-w-6xl mx-auto px-4">
         <BackToDashboard />
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-[#223152] flex items-center">
-            <div className="bg-[#223152] p-3 rounded-full mr-4">
-              <Users className="h-8 w-8 text-white" />
+        <div className="mb-6 sm:mb-8">
+          <h1 className="text-2xl sm:text-3xl font-bold text-[#223152] flex items-center">
+            <div className="bg-[#223152] p-2 sm:p-3 rounded-full mr-2 sm:mr-4 flex-shrink-0">
+              <Users className="h-6 w-6 sm:h-8 sm:w-8 text-white" />
             </div>
             Manage Admins
           </h1>
-          <p className="text-gray-600 mt-2">
+          <p className="text-sm sm:text-base text-gray-600 mt-1 sm:mt-2">
             View, add, and manage admin users and their school access.
           </p>
         </div>
@@ -80,18 +80,18 @@ export default function ManageAdminsPage() {
           </Alert>
         )}
         <Card className="shadow-xl border-2 hover:border-[#223152] transition-all duration-300 mb-8">
-          <CardHeader className="flex flex-row items-center justify-between bg-gradient-to-r from-[#223152] to-[#2a3f66] text-white rounded-t-lg">
-            <CardTitle className="text-white">Admins</CardTitle>
+          <CardHeader className="flex flex-row items-center justify-between bg-gradient-to-r from-[#223152] to-[#2a3f66] text-white rounded-t-lg px-4 py-3 sm:px-6 sm:py-4">
+            <CardTitle className="text-white text-base sm:text-lg">Admins</CardTitle>
             <Button
               onClick={() => setOpenAddDialog(true)}
               size="sm"
-              className="bg-white text-[#223152] hover:bg-gray-100 transition-all duration-300"
+              className="bg-white text-[#223152] hover:bg-gray-100 transition-all duration-300 text-xs sm:text-sm h-7 sm:h-9 px-2 sm:px-3"
             >
-              <Plus className="h-4 w-4 mr-1" />
+              <Plus className="h-3 w-3 sm:h-4 sm:w-4 mr-1" />
               Add Admin
             </Button>
           </CardHeader>
-          <CardContent className="p-6">
+          <CardContent className="p-3 sm:p-6">
             <AdminsTable
               admins={admins}
               schools={schools}

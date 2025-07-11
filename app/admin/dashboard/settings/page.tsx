@@ -63,14 +63,14 @@ export default function SettingsPage() {
       <div className="max-w-6xl mx-auto px-4">
         <BackToDashboard />
         
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-[#223152] flex items-center">
-            <div className="bg-[#223152] p-3 rounded-full mr-4">
-              <Settings className="h-8 w-8 text-white" />
+        <div className="mb-6 sm:mb-8">
+          <h1 className="text-2xl sm:text-3xl font-bold text-[#223152] flex items-center">
+            <div className="bg-[#223152] p-2 sm:p-3 rounded-full mr-2 sm:mr-4 flex-shrink-0">
+              <Settings className="h-6 w-6 sm:h-8 sm:w-8 text-white" />
             </div>
             System Settings
           </h1>
-          <p className="text-gray-600 mt-2">
+          <p className="text-sm sm:text-base text-gray-600 mt-1 sm:mt-2">
             Manage system availability and active academic contexts
           </p>
         </div>

@@ -107,23 +107,23 @@ export default function AdminLoginsPage() {
   return (
       <div className="max-w-6xl mx-auto px-4">
         <BackToDashboard />
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-[#223152] flex items-center">
-            <div className="bg-[#223152] p-3 rounded-full mr-4">
-              <Users className="h-8 w-8 text-white" />
+        <div className="mb-6 sm:mb-8">
+          <h1 className="text-2xl sm:text-3xl font-bold text-[#223152] flex items-center">
+            <div className="bg-[#223152] p-2 sm:p-3 rounded-full mr-2 sm:mr-4 flex-shrink-0">
+              <Users className="h-6 w-6 sm:h-8 sm:w-8 text-white" />
             </div>
             Admin Logins
           </h1>
-          <p className="text-gray-600 mt-2">View admin login activity for the selected period</p>
+          <p className="text-sm sm:text-base text-gray-600 mt-1 sm:mt-2">View admin login activity for the selected period</p>
         </div>
 
         {/* Time Filter UI */}
-        <Card className="mb-6 shadow-lg border-2 hover:border-[#223152] transition-all duration-300">
-          <CardContent className="p-6">
-            <div className="flex flex-wrap items-center gap-4">
-              <label className="font-medium text-[#223152]">Show:</label>
+        <Card className="mb-4 sm:mb-6 shadow-lg border-2 hover:border-[#223152] transition-all duration-300">
+          <CardContent className="p-3 sm:p-6">
+            <div className="flex flex-col sm:flex-row flex-wrap items-start sm:items-center gap-3 sm:gap-4">
+              <label className="font-medium text-[#223152] text-sm sm:text-base">Show:</label>
               <select
-                className="border-2 border-gray-200 rounded-lg px-3 py-2 focus:border-[#223152] focus:ring-[#223152] transition-all duration-300"
+                className="border-2 border-gray-200 rounded-lg px-2 py-1 sm:px-3 sm:py-2 focus:border-[#223152] focus:ring-[#223152] transition-all duration-300 text-xs sm:text-sm"
                 value={filter}
                 onChange={e => setFilter(e.target.value as any)}
               >
@@ -135,23 +135,23 @@ export default function AdminLoginsPage() {
                 <option value="custom">Custom range</option>
               </select>
               {filter === "custom" && (
-                <>
+                <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto">
                   <input
                     type="date"
-                    className="border-2 border-gray-200 rounded-lg px-3 py-2 focus:border-[#223152] focus:ring-[#223152] transition-all duration-300"
+                    className="border-2 border-gray-200 rounded-lg px-2 py-1 sm:px-3 sm:py-2 focus:border-[#223152] focus:ring-[#223152] transition-all duration-300 text-xs sm:text-sm"
                     value={customStart}
                     onChange={e => setCustomStart(e.target.value)}
                     max={customEnd || undefined}
                   />
-                  <span className="mx-2 text-gray-500 font-medium">to</span>
+                  <span className="mx-1 sm:mx-2 text-gray-500 font-medium text-xs sm:text-sm">to</span>
                   <input
                     type="date"
-                    className="border-2 border-gray-200 rounded-lg px-3 py-2 focus:border-[#223152] focus:ring-[#223152] transition-all duration-300"
+                    className="border-2 border-gray-200 rounded-lg px-2 py-1 sm:px-3 sm:py-2 focus:border-[#223152] focus:ring-[#223152] transition-all duration-300 text-xs sm:text-sm"
                     value={customEnd}
                     onChange={e => setCustomEnd(e.target.value)}
                     min={customStart || undefined}
                   />
-                </>
+                </div>
               )}
             </div>
           </CardContent>
@@ -165,50 +165,50 @@ export default function AdminLoginsPage() {
         )}
 
         <Card className="shadow-xl border-2 hover:border-[#223152] transition-all duration-300">
-          <CardHeader className="bg-gradient-to-r from-[#223152] to-[#2a3f66] text-white rounded-t-lg">
-            <CardTitle className="text-white">Admin Logins ({getFilterLabel(filter, customStart, customEnd)})</CardTitle>
-            <CardDescription className="text-blue-100">
+          <CardHeader className="bg-gradient-to-r from-[#223152] to-[#2a3f66] text-white rounded-t-lg px-4 py-3 sm:px-6 sm:py-4">
+            <CardTitle className="text-white text-base sm:text-lg">Admin Logins ({getFilterLabel(filter, customStart, customEnd)})</CardTitle>
+            <CardDescription className="text-blue-100 text-xs sm:text-sm mt-1">
               Admin Login Activity - {getFilterLabel(filter, customStart, customEnd)}
             </CardDescription>
           </CardHeader>
           <CardContent className="p-0">
             {loading ? (
-              <div className="flex justify-center p-8">
-                <Loader2 className="h-8 w-8 animate-spin text-[#223152]" />
+              <div className="flex justify-center p-4 sm:p-8">
+                <Loader2 className="h-6 w-6 sm:h-8 sm:w-8 animate-spin text-[#223152]" />
               </div>
             ) : (
-              <div className="overflow-x-auto">
-                <table className="min-w-full">
+              <div className="overflow-x-auto sm:mx-0">
+                <table className="min-w-full text-xs sm:text-sm">
                   <thead>
                     <tr className="bg-gray-50 border-b">
-                      <th className="px-6 py-4 text-left text-xs font-semibold text-[#223152] uppercase tracking-wider">Email</th>
-                      <th className="px-6 py-4 text-left text-xs font-semibold text-[#223152] uppercase tracking-wider">Date</th>
-                      <th className="px-6 py-4 text-left text-xs font-semibold text-[#223152] uppercase tracking-wider">IP Address</th>
-                      <th className="px-6 py-4 text-left text-xs font-semibold text-[#223152] uppercase tracking-wider">User Agent</th>
-                      <th className="px-6 py-4 text-left text-xs font-semibold text-[#223152] uppercase tracking-wider">Location</th>
+                      <th className="px-3 sm:px-6 py-2 sm:py-4 text-left text-xs font-semibold text-[#223152] uppercase tracking-wider">Email</th>
+                      <th className="px-3 sm:px-6 py-2 sm:py-4 text-left text-xs font-semibold text-[#223152] uppercase tracking-wider">Date</th>
+                      <th className="px-3 sm:px-6 py-2 sm:py-4 text-left text-xs font-semibold text-[#223152] uppercase tracking-wider">IP Address</th>
+                      <th className="px-3 sm:px-6 py-2 sm:py-4 text-left text-xs font-semibold text-[#223152] uppercase tracking-wider">User Agent</th>
+                      <th className="px-3 sm:px-6 py-2 sm:py-4 text-left text-xs font-semibold text-[#223152] uppercase tracking-wider">Location</th>
                     </tr>
                   </thead>
                   <tbody className="bg-white divide-y divide-gray-200">
                     {logins.length === 0 ? (
                       <tr>
-                        <td colSpan={5} className="text-center py-12 text-gray-500">
+                        <td colSpan={5} className="text-center py-6 sm:py-12 text-gray-500">
                           <div className="flex flex-col items-center">
-                            <Users className="h-12 w-12 opacity-50 mb-4" />
-                            <p className="text-lg font-medium">No logins found</p>
-                            <p className="text-sm">for the selected time period</p>
+                            <Users className="h-8 w-8 sm:h-12 sm:w-12 opacity-50 mb-2 sm:mb-4" />
+                            <p className="text-base sm:text-lg font-medium">No logins found</p>
+                            <p className="text-xs sm:text-sm">for the selected time period</p>
                           </div>
                         </td>
                       </tr>
                     ) : (
                       logins.map((login, index) => (
                         <tr key={login.id} className={`hover:bg-gray-50 transition-colors duration-200 ${index % 2 === 0 ? 'bg-white' : 'bg-gray-25'}`}>
-                          <td className="px-6 py-4 text-sm font-medium text-[#223152]">{login.email}</td>
-                          <td className="px-6 py-4 text-sm text-gray-700">{new Date(login.created_at).toLocaleString()}</td>
-                          <td className="px-6 py-4 text-sm text-gray-700">{login.ip_address || <span className="text-gray-400 italic">N/A</span>}</td>
-                          <td className="px-6 py-4 text-xs text-gray-600 max-w-xs truncate" title={login.user_agent}>{login.user_agent || <span className="text-gray-400 italic">N/A</span>}</td>
-                          <td className="px-6 py-4 text-xs text-gray-600">
+                          <td className="px-3 sm:px-6 py-2 sm:py-4 text-xs sm:text-sm font-medium text-[#223152]">{login.email}</td>
+                          <td className="px-3 sm:px-6 py-2 sm:py-4 text-xs sm:text-sm text-gray-700">{new Date(login.created_at).toLocaleString()}</td>
+                          <td className="px-3 sm:px-6 py-2 sm:py-4 text-xs sm:text-sm text-gray-700">{login.ip_address || <span className="text-gray-400 italic">N/A</span>}</td>
+                          <td className="px-3 sm:px-6 py-2 sm:py-4 text-[10px] sm:text-xs text-gray-600 max-w-[100px] sm:max-w-xs truncate" title={login.user_agent}>{login.user_agent || <span className="text-gray-400 italic">N/A</span>}</td>
+                          <td className="px-3 sm:px-6 py-2 sm:py-4 text-[10px] sm:text-xs text-gray-600">
                             {login.latitude !== null && login.longitude !== null 
-                              ? `${login.latitude}, ${login.longitude}` 
+                              ? <span className="inline-flex items-center text-[10px] sm:text-xs bg-blue-50 text-blue-800 px-1 py-0.5 sm:px-2 sm:py-1 rounded-full">{login.latitude.toFixed(4)}, {login.longitude.toFixed(4)}</span>
                               : <span className="text-gray-400 italic">N/A</span>
                             }
                           </td>
