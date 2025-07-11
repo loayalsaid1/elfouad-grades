@@ -34,7 +34,7 @@ export function AdminsTable({ admins, schools, onRemove, onToggleSuperAdmin, onE
           <tr className="bg-gray-50 border-b">
             <th className="px-3 sm:px-7 py-2 sm:py-3 text-left text-xs font-semibold text-[#223152] uppercase rounded-tl-lg whitespace-nowrap">Name</th>
             <th className="px-3 sm:px-5 py-2 sm:py-3 text-left text-xs font-semibold text-[#223152] uppercase">Email</th>
-            <th className="px-3 sm:px-5 py-2 sm:py-3 text-left text-xs font-semibold text-[#223152] uppercase">School Access</th>
+            <th className="min-w-52 px-3 sm:px-5 py-2 sm:py-3 text-left text-xs font-semibold text-[#223152] uppercase">School Access</th>
             <th className="px-2 sm:px-5 py-2 sm:py-3 rounded-tr-lg"></th>
             <th className="px-2 sm:px-5 py-2 sm:py-3"></th>
           </tr>
