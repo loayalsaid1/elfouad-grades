@@ -54,7 +54,7 @@ export default function HomePage() {
   }
 
   return (
-    <div className="bg-gradient-to-br from-slate-100 to-blue-50 min-h-full">
+    <div className="bg-gradient-to-br from-slate-100 to-blue-50 h-full">
       <div className="max-w-6xl mx-auto px-3 sm:px-6 lg:px-8 py-6 sm:py-8 md:py-12">
         {/* Header */}
         <div className="text-center mb-8 md:mb-12">

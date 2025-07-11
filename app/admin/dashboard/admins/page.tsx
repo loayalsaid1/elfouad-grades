@@ -91,7 +91,7 @@ export default function ManageAdminsPage() {
               Add Admin
             </Button>
           </CardHeader>
-          <CardContent className="p-3 sm:p-6">
+          <CardContent className="p-0">
             <AdminsTable
               admins={admins}
               schools={schools}
