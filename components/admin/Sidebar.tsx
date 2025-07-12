@@ -2,11 +2,11 @@
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { useAdminUser } from "@/hooks/useAdminUser"
-import { Upload, Settings, Users, Database, LogOut, TestTube, History, FileDiff, School, UserCircle, ChevronRight } from "lucide-react"
+import { Upload, Settings, Users, Database, LogOut, TestTube, History, FileDiff, School, UserCircle, ChevronRight, Home } from "lucide-react"
 import { useState } from "react"
 
 const navLinks = [
-  { href: "/admin/dashboard", label: "Dashboard", icon: Database },
+  { href: "/admin/dashboard", label: "Dashboard", icon: Home },
   { href: "/admin/dashboard/upload", label: "Upload Results", icon: Upload },
   { href: "/admin/dashboard/settings", label: "System Settings", icon: Settings },
   { href: "/admin/dashboard/test-results", label: "Test Results", icon: TestTube },
