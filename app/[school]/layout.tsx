@@ -2,6 +2,8 @@
 
 import { useRouter } from "next/navigation"
 import  useRedirectHomeOnSystemDisable  from "@/hooks/useRedirectHomeOnSystemDisable"
+import Header from "@/components/layout/Header"
+import Footer from "@/components/layout/Footer"
 
 
 export default function SchoolLayout({
@@ -11,5 +13,13 @@ export default function SchoolLayout({
 }) {
 	useRedirectHomeOnSystemDisable()
 
-	return <div className="flex-1">{children}</div>
+	return (
+		<div className="h-full flex flex-col">
+			<Header />
+			<div className="flex-1">
+				{children}
+			</div>
+			<Footer />
+		</div>
+	)
 }

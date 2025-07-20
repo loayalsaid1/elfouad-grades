@@ -1,0 +1,92 @@
+{
+	"saveEditorLayout.list": [
+		{
+			"name": "app layout",
+			"documents": [
+				{
+					"fsPath": "/home/loayalsaid1/My-Projects/elfouad-grades/app/layout.tsx",
+					"column": 1,
+					"pinned": false
+				},
+				{
+					"fsPath": "/home/loayalsaid1/My-Projects/elfouad-grades/app/[school]/layout.tsx",
+					"column": 2,
+					"pinned": false
+				},
+				{
+					"fsPath": "/home/loayalsaid1/My-Projects/elfouad-grades/app/page.tsx",
+					"column": 3,
+					"pinned": false
+				},
+				{
+					"fsPath": "/home/loayalsaid1/My-Projects/elfouad-grades/app/admin/dashboard/upload/page.tsx",
+					"column": 3,
+					"pinned": false
+				},
+				{
+					"fsPath": "/home/loayalsaid1/My-Projects/elfouad-grades/app/admin/layout.tsx",
+					"column": 4,
+					"pinned": false
+				},
+				{
+					"fsPath": "/home/loayalsaid1/My-Projects/elfouad-grades/app/admin/dashboard/layout.tsx",
+					"column": 5,
+					"pinned": false
+				},
+				{
+					"fsPath": "/home/loayalsaid1/My-Projects/elfouad-grades/components/layout/Footer.tsx",
+					"column": 6,
+					"pinned": false
+				},
+				{
+					"fsPath": "/home/loayalsaid1/My-Projects/elfouad-grades/components/admin/Sidebar.tsx",
+					"column": 6,
+					"pinned": false
+				}
+			],
+			"layout": {
+				"orientation": 1,
+				"groups": [
+					{
+						"size": 544,
+						"groups": [
+							{
+								"size": 758,
+								"groups": [
+									{
+										"size": 272
+									},
+									{
+										"size": 272
+									}
+								]
+							},
+							{
+								"size": 758
+							}
+						]
+					},
+					{
+						"size": 379,
+						"groups": [
+							{
+								"size": 758,
+								"groups": [
+									{
+										"size": 189
+									},
+									{
+										"size": 190
+									}
+								]
+							},
+							{
+								"size": 758
+							}
+						]
+					}
+				]
+			}
+		}
+	]
+}

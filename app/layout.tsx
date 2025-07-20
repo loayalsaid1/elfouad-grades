@@ -34,12 +34,10 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en">
-      <body className={`${inter.className} h-screen flex flex-col`}>
+    <html lang="en" className="h-screen">
+      <body className={`${inter.className} h-full `}>
         <SystemStatusProvider>
-          <Header />
-          {children}
-          <Footer />
+            {children}
         </SystemStatusProvider>
       </body>
     </html>

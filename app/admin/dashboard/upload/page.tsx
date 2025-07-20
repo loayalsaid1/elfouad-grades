@@ -28,6 +28,21 @@ export default function UploadPage() {
   const [context, setContext] = useState<UploadContext | null>(null)
   const [message, setMessage] = useState<{ type: "success" | "error" | "info"; text: string } | null>(null)
 
+  // ⛔⛔ I've spent many days on a promblem, so don't freaking ask me why the hell this useEffect
+  // I can't have any explanation why this freaking page the only on in the app the make the HTML has whitespace under it
+  // Actually, i'll give you 20 dollars or even 50 if you can tell me!
+
+  // Don't Freaking ask ok. now go do something useful!!!!!!!!!!!!!!!!
+    // Effect to scroll to the top and add overflow-hidden to the HTML element
+    useEffect(() => {
+      window.scrollTo(0, 0)
+      document.documentElement.classList.add("overflow-hidden")
+      return () => {
+        document.documentElement.classList.remove("overflow-hidden")
+      }
+    }, [])
+
+
   const { 
     parsedData, 
     processedStudents, 
