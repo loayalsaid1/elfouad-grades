@@ -11,17 +11,19 @@ export function useSchool(schoolSlug: string) {
   const [school, setSchool] = useState<School | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [retryCount, setRetryCount] = useState(0)
   
   const supabase = createClientComponentSupabaseClient()
 
   useEffect(() => {
     if (!schoolSlug) {
       setLoading(false)
+      setError("No school identifier provided")
       return
     }
 
     fetchSchool()
-  }, [schoolSlug])
+  }, [schoolSlug, retryCount])
 
   const fetchSchool = async () => {
     try {
@@ -34,7 +36,13 @@ export function useSchool(schoolSlug: string) {
         .eq("slug", schoolSlug)
         .single()
 
-      if (supabaseError) throw supabaseError
+      if (supabaseError) {
+        // Provide more user-friendly error messages
+        if (supabaseError.code === 'PGRST116') {
+          throw new Error(`School with identifier "${schoolSlug}" was not found`)
+        }
+        throw new Error(supabaseError.message)
+      }
       
       setSchool(data)
     } catch (err: any) {
@@ -46,5 +54,11 @@ export function useSchool(schoolSlug: string) {
     }
   }
 
-  return { school, loading, error, refetch: fetchSchool }
+  return { 
+    school, 
+    loading, 
+    error, 
+    refetch: fetchSchool,
+    retry: () => setRetryCount(prev => prev + 1)
+  }
 }

@@ -7,13 +7,15 @@ import { getOrdinalInfo } from "@/utils/gradeUtils"
 import Image from "next/image"
 import LoadingSpinner from "@/components/ui/LoadingSpinner"
 import { useSchool } from "@/hooks/useSchool"
+import { SchoolLoadingSkeleton } from "@/components/ui/SchoolLoadingSkeleton"
+import { SchoolNotFound } from "@/components/errors/SchoolNotFound"
 
 export default function SchoolPage() {
   const router = useRouter()
   const params = useParams()
   const schoolSlug = params?.school as string
 
-  const { school, loading, error } = useSchool(schoolSlug)
+  const { school, loading, error, retry } = useSchool(schoolSlug)
 
   const handleGradeSelect = (grade: number) => {
     router.push(`/${schoolSlug}/${grade}`)
@@ -24,15 +26,18 @@ export default function SchoolPage() {
   }
 
   if (loading) {
-    return (
-      <div className="flex-1 h-full flex items-center justify-center bg-blue-50">
-        <LoadingSpinner size="lg" className="w-18 h-18 border-4 border-cyan-500" />
-      </div>
-    )
+    return <SchoolLoadingSkeleton showGrades={true} />
   }
 
   if (!school && !loading) {
-    return <div className="text-center py-12">School not found</div>
+    return (
+      <SchoolNotFound 
+        schoolSlug={schoolSlug}
+        error={error || undefined}
+        onBack={handleBack}
+        onRetry={retry}
+      />
+    )
   }
 
   if (!school) {

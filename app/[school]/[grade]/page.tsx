@@ -10,12 +10,16 @@ import { useActiveContext } from "@/hooks/useActiveContext"
 import { useStudentSearch } from "@/hooks/useStudentSearch"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { AlertCircle, ArrowLeft, Database } from "lucide-react"
+import { AlertCircle, ArrowLeft } from "lucide-react"
 import { usePDFGeneration } from "@/hooks/usePDFGeneration"
 import Instructions from "@/components/Instructions"
 import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { useSchool } from "@/hooks/useSchool"
+import { GradePageLoadingSkeleton } from "@/components/ui/GradePageLoadingSkeleton"
+import { SchoolNotFound } from "@/components/errors/SchoolNotFound"
+import { ContextError } from "@/components/errors/ContextError"
+import { ContextLoading } from "@/components/ui/ContextLoading"
 
 
 export default function GradePage() {
@@ -24,7 +28,7 @@ export default function GradePage() {
   const schoolSlug = params?.school as string
   const grade = params?.grade as string
 
-  const { school, loading: schoolLoading } = useSchool(schoolSlug)
+  const { school, loading: schoolLoading, retry: retrySchool } = useSchool(schoolSlug)
 
 const { pdfLoading, generatePDF } = usePDFGeneration()
 
@@ -66,37 +70,35 @@ const { pdfLoading, generatePDF } = usePDFGeneration()
   
   // Show context loading state
   if (contextLoading) {
+    return <ContextLoading />
+  }
+  
+  // Show school loading state
+  if (schoolLoading) {
+    return <GradePageLoadingSkeleton />
+  }
+
+  // Show school not found error
+  if (!school && !schoolLoading) {
     return (
-      <div className="container mx-auto px-4 py-8">
-        <div className="flex items-center justify-center min-h-[400px]">
-          <div className="text-center">
-            <Database className="h-8 w-8 animate-spin mx-auto mb-4 text-blue-600" />
-            <p className="text-lg">Loading academic context...</p>
-          </div>
-        </div>
-      </div>
+      <SchoolNotFound 
+        schoolSlug={schoolSlug}
+        grade={grade}
+        onBack={() => router.push("/")}
+        onRetry={retrySchool}
+      />
     )
   }
 
   // Show context error
   if (contextError) {
     return (
-      <div className="container h-full mx-auto px-4 py-8">
-        <Button variant="outline" onClick={handleBack} className="mb-8 hover:bg-[#223152] hover:text-white">
-          <ArrowLeft className="w-4 h-4 mr-2" />
-          Back to Grades
-        </Button>
-        <Alert variant="destructive">
-          <AlertCircle className="h-4 w-4" />
-          <AlertDescription>
-            <strong>Academic Context Error:</strong> {contextError}
-            <br />
-            <span className="text-sm mt-2 block">
-              Please ensure that an active academic context is set up for {schoolSlug} grade {grade} in the admin dashboard.
-            </span>
-          </AlertDescription>
-        </Alert>
-      </div>
+      <ContextError 
+        error={contextError}
+        schoolSlug={schoolSlug}
+        grade={grade}
+        onBack={handleBack}
+      />
     )
   }
 
