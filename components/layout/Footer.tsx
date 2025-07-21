@@ -9,17 +9,17 @@ export default function Footer() {
   const pathname = usePathname()
   if ( pathname?.startsWith('/admin')) return null;
 
-    // Determine Facebook link based on route
-  let facebookUrl = "https://www.facebook.com/share/1HSJHe1df4/"
-  if (pathname?.startsWith("/international")) {
-    facebookUrl = "https://www.facebook.com/share/19DbXqKcRA/"
-  } else if (pathname?.startsWith("/modern")) {
-    facebookUrl = "https://www.facebook.com/share/16TciEwA8g/"
-  }
+  //   // Determine Facebook link based on route
+  // let facebookUrl = "https://www.facebook.com/share/1HSJHe1df4/"
+  // if (pathname?.startsWith("/international")) {
+  //   facebookUrl = "https://www.facebook.com/share/19DbXqKcRA/"
+  // } else if (pathname?.startsWith("/modern")) {
+  //   facebookUrl = "https://www.facebook.com/share/16TciEwA8g/"
+  // }
   const socialLinks = [
     {
       name: "Facebook",
-      url: facebookUrl,
+      url: 'https://www.facebook.com/people/El-Fouad-International-Schools/61577833614487/',
       icon: Facebook,
       color: "hover:text-blue-600",
     },
