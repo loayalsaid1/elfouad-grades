@@ -15,17 +15,20 @@ import { usePDFGeneration } from "@/hooks/usePDFGeneration"
 import Instructions from "@/components/Instructions"
 import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
+import { useSchool } from "@/hooks/useSchool"
 
 
 export default function GradePage() {
   const router = useRouter()
   const params = useParams()
-  const school = params.school as string
-  const grade = params.grade as string
+  const schoolSlug = params?.school as string
+  const grade = params?.grade as string
+
+  const { school, loading: schoolLoading } = useSchool(schoolSlug)
 
 const { pdfLoading, generatePDF } = usePDFGeneration()
 
-  const { year, term, loading: contextLoading, error: contextError } = useActiveContext(school, grade)
+  const { year, term, loading: contextLoading, error: contextError } = useActiveContext(schoolSlug, grade)
   const {
       studentResult: student,
     loading,
@@ -36,14 +39,14 @@ const { pdfLoading, generatePDF } = usePDFGeneration()
     cancelPasswordDialog,
     passwordError,
     passwordLoading,
-} = useStudentSearch(school, Number.parseInt(grade))
+} = useStudentSearch(schoolSlug, Number.parseInt(grade))
 
   // Add refs for GradeReference and ResultsTable
   const referenceRef = useRef<HTMLDivElement | null>(null)
   const tableRef = useRef<HTMLDivElement | null>(null)
 
   const handleSearch = async (studentId: string, password?: string) => {
-    await searchStudent(studentId, password)
+    await searchStudent(studentId)
   }
 
   const handlePasswordSubmit = async (password: string) => {
@@ -58,7 +61,7 @@ const { pdfLoading, generatePDF } = usePDFGeneration()
   }, [student])
 
   const handleBack = () => {
-    router.push(`/${school}`)
+    router.push(`/${schoolSlug}`)
   }
   
   // Show context loading state
@@ -89,7 +92,7 @@ const { pdfLoading, generatePDF } = usePDFGeneration()
             <strong>Academic Context Error:</strong> {contextError}
             <br />
             <span className="text-sm mt-2 block">
-              Please ensure that an active academic context is set up for {school} grade {grade} in the admin dashboard.
+              Please ensure that an active academic context is set up for {schoolSlug} grade {grade} in the admin dashboard.
             </span>
           </AlertDescription>
         </Alert>
@@ -107,7 +110,7 @@ const { pdfLoading, generatePDF } = usePDFGeneration()
         
         <div className="mb-8">
           <h1 className="text-3xl font-bold mb-2">
-            {school === "international" ? "El-Fouad International School" : "El-Fouad Modern Schools"} - Grade {grade}
+            {school?.name || schoolSlug} - Grade {grade}
           </h1>
           <p className="text-muted-foreground">
             Academic Year {year}/{year + 1} - Term {term}

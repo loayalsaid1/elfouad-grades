@@ -1,45 +1,19 @@
 "use client"
 import { useRouter, useParams } from "next/navigation"
-import { useEffect, useState } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { GraduationCap, ArrowLeft, BookOpen } from "lucide-react"
 import { getOrdinalInfo } from "@/utils/gradeUtils"
 import Image from "next/image"
-import { createClientComponentSupabaseClient } from "@/lib/supabase"
 import LoadingSpinner from "@/components/ui/LoadingSpinner"
+import { useSchool } from "@/hooks/useSchool"
 
 export default function SchoolPage() {
   const router = useRouter()
   const params = useParams()
-  const schoolSlug = params.school as string
-  const supabase = createClientComponentSupabaseClient()
+  const schoolSlug = params?.school as string
 
-  const [school, setSchool] = useState<any | null>(null)
-  const [loading, setLoading] = useState(true)
-
-  useEffect(() => {
-    fetchSchool()
-  }, [])
-
-  const fetchSchool = async () => {
-    try {
-      setLoading(true)
-      const { data, error } = await supabase
-        .from("schools")
-        .select("*")
-        .eq("slug", schoolSlug)
-        .single()
-
-      if (error) throw error
-      setSchool(data)
-    } catch (err: any) {
-      console.error("Failed to fetch school:", err.message)
-      setSchool(null)
-    } finally {
-      setLoading(false)
-    }
-  }
+  const { school, loading, error } = useSchool(schoolSlug)
 
   const handleGradeSelect = (grade: number) => {
     router.push(`/${schoolSlug}/${grade}`)
@@ -57,8 +31,12 @@ export default function SchoolPage() {
     )
   }
 
-  if (!school) {
+  if (!school && !loading) {
     return <div className="text-center py-12">School not found</div>
+  }
+
+  if (!school) {
+    return null // Still loading, let the loading state handle it
   }
 
   return (
