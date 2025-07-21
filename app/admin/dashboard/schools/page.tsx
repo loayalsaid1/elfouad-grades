@@ -14,7 +14,7 @@ import LoadingPage from "@/components/admin/LoadingPage"
 import { useRouter } from "next/navigation"
 
 export default function SchoolsPage() {
-  const { user, profile, loading: userLoading } = useAdminUser()
+  const { user, profile, schoolAccess, loading: userLoading } = useAdminUser()
   const router = useRouter()
   const [schools, setSchools] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
