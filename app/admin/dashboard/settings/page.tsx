@@ -14,7 +14,7 @@ import { ActiveContextsConfirmDialog } from "@/components/admin/settings/ActiveC
 import { useActiveContextChanges } from "@/hooks/useActiveContextChanges"
 
 export default function SettingsPage() {
-  const {user, profile } = useAdminUser()
+  const { user, profile, loading: userLoading } = useAdminUser()
   const settings = useSettingsPage()
   const [showConfirm, setShowConfirm] = useState(false)
   const [pendingSave, setPendingSave] = useState(false)
@@ -35,7 +35,7 @@ export default function SettingsPage() {
     }
   }, [settings.error, settings.message])
 
-  if (settings.loading || !user) {
+  if (settings.loading || userLoading || !user) {
     return <LoadingPage message="Loading settings..." />
   }
 

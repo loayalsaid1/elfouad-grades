@@ -4,7 +4,7 @@ import { useAdminUser } from "@/hooks/useAdminUser"
 
 export function useManageAdmins() {
   const supabase = createClientComponentSupabaseClient()
-  const { profile } = useAdminUser()
+  const { profile, refreshUser } = useAdminUser()
   const [admins, setAdmins] = useState<any[]>([])
   const [schools, setSchools] = useState<any[]>([])
   const [schoolOptions, setSchoolOptions] = useState<any[]>([])
@@ -61,6 +61,8 @@ export function useManageAdmins() {
       if (!res.ok) throw new Error(result.error || "Failed to add admin")
       await fetchAll()
       setOpenAddDialog(false)
+      // Refresh current user data in case permissions changed
+      await refreshUser()
     } catch (err: any) {
       setAddDialogError(err.message || "Failed to add admin")
     }
@@ -90,6 +92,8 @@ export function useManageAdmins() {
       }
       await fetchAll()
       setEditDialogOpen(false)
+      // Refresh current user data in case permissions changed
+      await refreshUser()
     } catch (err: any) {
       setEditDialogError(err.message || "Failed to update admin")
     }
@@ -110,6 +114,8 @@ export function useManageAdmins() {
       const result = await res.json()
       if (!res.ok) throw new Error(result.error || "Failed to remove admin")
       await fetchAll()
+      // Refresh current user data in case permissions changed
+      await refreshUser()
     } catch (err: any) {
       setError("Failed to remove admin: " + (err.message || err.toString()))
     }

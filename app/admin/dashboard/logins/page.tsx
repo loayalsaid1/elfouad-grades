@@ -45,7 +45,7 @@ function getFilterLabel(filter: FilterType, customStart: string, customEnd: stri
 }
 
 export default function AdminLoginsPage() {
-  const user = useAdminUser()
+  const { user, loading: userLoading } = useAdminUser()
   const [logins, setLogins] = useState<LoginRecord[]>([])
   const [loading, setLoading] = useState<boolean>(true)
   const [error, setError] = useState<string | null>(null)
@@ -102,7 +102,7 @@ export default function AdminLoginsPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [supabase, filter, customStart, customEnd])
 
-  if (!user) return <LoadingPage message="Loading logins..." />
+  if (userLoading || !user) return <LoadingPage message="Loading logins..." />
 
   return (
       <div className="max-w-6xl mx-auto px-4">

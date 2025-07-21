@@ -11,7 +11,7 @@ import { createClientComponentSupabaseClient } from "@/lib/supabase"
 import LoadingPage from "@/components/admin/LoadingPage"
 
 export default function AdminDashboard() {
-  const { user, profile } = useAdminUser()
+  const { user, profile, loading: userLoading, signOut } = useAdminUser()
   const [stats, setStats] = useState({
     totalStudents: 0,
     totalSchools: 0,
@@ -28,12 +28,12 @@ export default function AdminDashboard() {
   const supabase = createClientComponentSupabaseClient()
 
   useEffect(() => {
-    if (user) {
+    if (user && !userLoading) {
       loadStats()
       fetchLastLogin()
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [user])
+  }, [user, userLoading])
 
   useEffect(() => {
     if (typeof window !== "undefined" && "serviceWorker" in navigator) {
@@ -90,11 +90,10 @@ export default function AdminDashboard() {
   }
 
   const handleLogout = async () => {
-    await supabase.auth.signOut()
-    router.push("/admin/login")
+    await signOut()
   }
 
-  if (!user) return <LoadingPage message="Loading dashboard..." />
+  if (userLoading || !user) return <LoadingPage message="Loading dashboard..." />
 
   return (
     <>  

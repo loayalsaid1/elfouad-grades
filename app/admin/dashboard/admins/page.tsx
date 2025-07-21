@@ -39,7 +39,7 @@ export default function ManageAdminsPage() {
     editDialogError,
     setEditDialogError,
   } = useManageAdmins()
-  useAdminUser();
+  const { loading: userLoading } = useAdminUser();
   const [pendingDelete, setPendingDelete] = useState<any | null>(null)
   const [deleting, setDeleting] = useState(false)
 
@@ -58,7 +58,7 @@ export default function ManageAdminsPage() {
     setPendingDelete(null)
   }
 
-  if (loading) return <LoadingPage message="Loading admins..." />
+  if (loading || userLoading) return <LoadingPage message="Loading admins..." />
 
   return (
       <div className="max-w-6xl mx-auto px-4">

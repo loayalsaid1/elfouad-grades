@@ -1,36 +1,22 @@
 // a hook to get the current user
-import { useEffect, useState } from "react";
-import { createClientComponentSupabaseClient } from "@/lib/supabase";
+import { useAdminUserContext } from "@/contexts/AdminUserContext";
 
+/**
+ * Legacy compatibility hook for useGetUser
+ * @deprecated Use useAdminUser from hooks/useAdminUser.ts instead
+ */
 export default function useGetUser() {
-	const [user, setUser] = useState<any | null>(null);
-	const [profile, setProfile] = useState<any | null>(null);
-	const [schoolAccess, setSchoolAccess] = useState<number[]>([]);
-	const [loading, setLoading] = useState(true);
-	const supabase = createClientComponentSupabaseClient();
-
-	useEffect(() => {
-		const fetchUser = async () => {
-			const { data: { user } } = await supabase.auth.getUser();
-			setUser(user);
-			if (user) {
-				const { data: profile } = await supabase
-					.from("users")
-					.select("*")
-					.eq("id", user.id)
-					.single();
-				setProfile(profile);
-				const { data: access } = await supabase
-					.from("user_school_access")
-					.select("school_id")
-					.eq("user_id", user.id);
-				setSchoolAccess((access || []).map((a: any) => a.school_id));
-			}
-			setLoading(false);
+	try {
+		const { user, profile, schoolAccess, loading } = useAdminUserContext()
+		return { user, profile, schoolAccess, loading };
+	} catch (error) {
+		// Fallback for components not wrapped in AdminUserProvider
+		console.warn("useGetUser called outside AdminUserProvider context. Returning default values.");
+		return { 
+			user: null, 
+			profile: null, 
+			schoolAccess: [], 
+			loading: false 
 		};
-
-		fetchUser();
-	}, [supabase]);
-
-	return { user, profile, schoolAccess, loading };
+	}
 }
