@@ -145,6 +145,7 @@ export function AdminUserProvider({ children }: { children: React.ReactNode }) {
 
     // Set up auth state listener
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+      console.log("Auth state changed:", event, session)
       if (event === 'SIGNED_IN' && session?.user) {
         setUser(session.user)
         await fetchUserData(session.user)
@@ -167,6 +168,58 @@ export function AdminUserProvider({ children }: { children: React.ReactNode }) {
       subscription.unsubscribe()
     }
   }, [supabase, router, fetchUserData, getUser])
+
+  // Session timeout management - force logout after 4 hours from initial login
+  useEffect(() => {
+    let timeoutId: NodeJS.Timeout | null = null
+
+    if (user) {
+      const LOGIN_TIMESTAMP_KEY = 'admin_login_timestamp'
+      const now = Date.now()
+      const sessionDuration =  60 * 60 * 1000 
+      
+      // Check if we have a stored login time
+      const storedLoginTime = localStorage.getItem(LOGIN_TIMESTAMP_KEY)
+      
+      if (storedLoginTime) {
+        const loginTime = parseInt(storedLoginTime)
+        const elapsed = now - loginTime
+        
+        if (elapsed >= sessionDuration) {
+          // Session already expired
+          console.log("Session already expired - forcing logout")
+          supabase.auth.signOut()
+          localStorage.removeItem(LOGIN_TIMESTAMP_KEY)
+          return
+        } else {
+          // Set timeout for remaining time
+          const remainingTime = sessionDuration - elapsed
+          timeoutId = setTimeout(async () => {
+            console.log("Session expired after 4 hours - forcing logout")
+            await supabase.auth.signOut()
+            localStorage.removeItem(LOGIN_TIMESTAMP_KEY)
+          }, remainingTime)
+        }
+      } else {
+        // New login - store timestamp and set full timeout
+        localStorage.setItem(LOGIN_TIMESTAMP_KEY, now.toString())
+        timeoutId = setTimeout(async () => {
+          console.log("Session expired after 4 hours - forcing logout")
+          await supabase.auth.signOut()
+          localStorage.removeItem(LOGIN_TIMESTAMP_KEY)
+        }, sessionDuration)
+      }
+    } else {
+      // User logged out - clean up timestamp
+      localStorage.removeItem('admin_login_timestamp')
+    }
+
+    return () => {
+      if (timeoutId) {
+        clearTimeout(timeoutId)
+      }
+    }
+  }, [user, supabase])
 
   const contextValue: AdminUserContextType = {
     user,
