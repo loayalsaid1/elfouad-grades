@@ -19,6 +19,9 @@ import LoadingPage from "@/components/admin/LoadingPage"
 import ExportContextCSVButton from "@/components/admin/ExportContextCSVButton"
 import { useStudentEdit } from "@/hooks/useStudentEdit"
 import { EditStudentDialog } from "@/components/results/EditStudentDialog"
+import { useStudentDelete } from "@/hooks/useStudentDelete"
+import { DeleteStudentDialog } from "@/components/results/DeleteStudentDialog"
+import type { StudentResult } from "@/types/student"
 
 
 export default function AdminTestResultsPage() {
@@ -54,6 +57,7 @@ export default function AdminTestResultsPage() {
     cancelPasswordDialog,
     passwordError,
     passwordLoading,
+    clearResult,
   } = useStudentSearch(
     selection.school,
     typeof selection.grade === "number" ? selection.grade : 0,
@@ -72,6 +76,19 @@ export default function AdminTestResultsPage() {
     success: editSuccess,
   } = useStudentEdit()
 
+  // Delete student hook
+  const {
+    deleteStudent,
+    pending: deletePending,
+    error: deleteError,
+    success: deleteSuccess,
+    clearMessages: clearDeleteMessages,
+  } = useStudentDelete()
+
+  // State for delete confirmation
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false)
+  const [studentToDelete, setStudentToDelete] = useState<StudentResult | null>(null)
+
   // Add refs for GradeReference and ResultsTable
   const referenceRef = useRef<HTMLDivElement | null>(null)
   const tableRef = useRef<HTMLDivElement | null>(null)
@@ -82,13 +99,38 @@ export default function AdminTestResultsPage() {
     []
   )
 
-  const handleSearch = useCallback(async (studentId: string, password?: string) => {
-    await searchStudent(studentId, password)
+  const handleSearch = useCallback(async (studentId: string) => {
+    await searchStudent(studentId)
   }, [searchStudent])
 
   const handlePasswordSubmit = useCallback(async (password: string) => {
     await submitPassword(password)
   }, [submitPassword])
+
+  // Delete handlers
+  const handleDeleteClick = useCallback((student: StudentResult) => {
+    setStudentToDelete(student)
+    setShowDeleteDialog(true)
+    clearDeleteMessages()
+  }, [clearDeleteMessages])
+
+  const handleDeleteCancel = useCallback(() => {
+    setShowDeleteDialog(false)
+    setStudentToDelete(null)
+    clearDeleteMessages()
+  }, [clearDeleteMessages])
+
+  const handleDeleteConfirm = useCallback(async () => {
+    if (!studentToDelete || !contextState.activeContext) return
+    
+    const success = await deleteStudent(studentToDelete, { id: contextState.activeContext.id })
+    if (success) {
+      setShowDeleteDialog(false)
+      setStudentToDelete(null)
+      // Clear the current student result since it was deleted
+      clearResult()
+    }
+  }, [studentToDelete, contextState.activeContext, deleteStudent, clearResult])
 
   // Scroll into view when student is found
   useEffect(() => {
@@ -291,12 +333,26 @@ export default function AdminTestResultsPage() {
         </Card>
 
         <div className="flex flex-col gap-6">
-          <StudentSearchForm onSearch={canSearch ? handleSearch : undefined} loading={loading || contextState.loading} />
+          <StudentSearchForm onSearch={canSearch ? handleSearch : () => Promise.resolve()} loading={loading || contextState.loading} />
 
           {error && (
             <Alert variant="destructive" className="shadow-lg animate-in slide-in-from-top-2 duration-300">
               <AlertCircle className="h-4 w-4" />
               <AlertDescription>{error}</AlertDescription>
+            </Alert>
+          )}
+
+          {deleteError && (
+            <Alert variant="destructive" className="shadow-lg animate-in slide-in-from-top-2 duration-300">
+              <AlertCircle className="h-4 w-4" />
+              <AlertDescription>{deleteError}</AlertDescription>
+            </Alert>
+          )}
+
+          {deleteSuccess && (
+            <Alert className="shadow-lg animate-in slide-in-from-top-2 duration-300 border-green-200 bg-green-50">
+              <AlertCircle className="h-4 w-4 text-green-600" />
+              <AlertDescription className="text-green-700">{deleteSuccess}</AlertDescription>
             </Alert>
           )}
 
@@ -313,6 +369,7 @@ export default function AdminTestResultsPage() {
                   onExportPDF={() => generatePDF(student)}
                   pdfLoading={pdfLoading}
                   onEdit={() => startEdit(student)} // Pass onEdit for admin
+                  onDelete={() => handleDeleteClick(student)} // Pass onDelete for admin
                 />
               </div>
             </>
@@ -346,6 +403,15 @@ export default function AdminTestResultsPage() {
           }}
           pending={editPending}
           error={editError}
+        />
+
+        {/* Delete Student Dialog */}
+        <DeleteStudentDialog
+          open={showDeleteDialog}
+          student={studentToDelete}
+          onCancel={handleDeleteCancel}
+          onConfirm={handleDeleteConfirm}
+          pending={deletePending}
         />
       </div>
   )

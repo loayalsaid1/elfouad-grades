@@ -3,7 +3,7 @@
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardHeader, CardDescription, CardTitle } from "@/components/ui/card"
 import { formatScore, getGradeLevel } from "@/utils/gradeUtils"
-import { Download, Edit2 } from "lucide-react"
+import { Download, Edit2, Trash2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import LoadingSpinner from "@/components/ui/LoadingSpinner"
 import type { StudentResult } from "@/types/student"
@@ -13,9 +13,10 @@ interface ResultsTableProps {
   onExportPDF: () => void
   pdfLoading: boolean
   onEdit?: () => void // Add optional onEdit prop
+  onDelete?: () => void // Add optional onDelete prop
 }
 
-export default function ResultsTable({ student, onExportPDF, pdfLoading, onEdit }: ResultsTableProps) {
+export default function ResultsTable({ student, onExportPDF, pdfLoading, onEdit, onDelete }: ResultsTableProps) {
   const showGrade = student.grade < 7
   console.log(student);
   // Find subjects with score < 50 or absent
@@ -38,7 +39,7 @@ export default function ResultsTable({ student, onExportPDF, pdfLoading, onEdit 
             </CardDescription>
           </div>
           <div className="flex flex-col align-center sm:flex-row gap-2 w-full sm:w-auto">
-                        {onEdit && (
+            {onEdit && (
               <Button
                 variant="outline"
                 size="sm"
@@ -47,6 +48,17 @@ export default function ResultsTable({ student, onExportPDF, pdfLoading, onEdit 
               >
                 <Edit2 className="h-3 w-3 sm:h-4 sm:w-4" />
                 Edit Student
+              </Button>
+            )}
+            {onDelete && (
+              <Button
+                variant="outline"
+                size="sm"
+                className="flex items-center gap-1 sm:gap-2 border-red-500 text-red-500 hover:bg-red-500 hover:text-white transition-all duration-300 text-xs sm:text-sm py-1 h-8 sm:h-9"
+                onClick={onDelete}
+              >
+                <Trash2 className="h-3 w-3 sm:h-4 sm:w-4" />
+                Delete Student
               </Button>
             )}
             <Button 
