@@ -144,24 +144,26 @@ export function AdminUserProvider({ children }: { children: React.ReactNode }) {
     getUser()
 
     // Set up auth state listener
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
-      console.log("Auth state changed:", event, session)
-      if (event === 'SIGNED_IN' && session?.user) {
-        setUser(session.user)
-        await fetchUserData(session.user)
-        setLoading(false)
-      } else if (event === 'SIGNED_OUT') {
-        setUser(null)
-        setProfile(null)
-        setSchoolAccess([])
-        setError(null)
-        setLoading(false)
-        router.replace("/admin/login")
-      } else if (event === 'TOKEN_REFRESHED' && session?.user) {
-        setUser(session.user)
-        // Don't need to refetch profile data on token refresh
-        setLoading(false)
-      }
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      setTimeout(async () => {
+        console.log("Auth state changed:", event, session)
+        if (event === 'SIGNED_IN' && session?.user) {
+          setUser(session.user)
+          await fetchUserData(session.user)
+          setLoading(false)
+        } else if (event === 'SIGNED_OUT') {
+          setUser(null)
+          setProfile(null)
+          setSchoolAccess([])
+          setError(null)
+          setLoading(false)
+          router.replace("/admin/login")
+        } else if (event === 'TOKEN_REFRESHED' && session?.user) {
+          setUser(session.user)
+          // Don't need to refetch profile data on token refresh
+          setLoading(false)
+        }
+      }, 0)
     })
 
     return () => {
