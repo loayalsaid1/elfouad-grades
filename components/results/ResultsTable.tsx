@@ -36,6 +36,11 @@ export default function ResultsTable({ student, onExportPDF, pdfLoading, onEdit,
             <CardDescription className="mt-1 sm:mt-2">
               <div className="text-base sm:text-lg font-semibold break-words">{student.name}</div>
               <div className="text-xs sm:text-sm text-gray-600">Student ID: {student.id}</div>
+              {student.parentPassword && (
+                <div className="text-xs sm:text-sm text-red-600 mt-1">
+                  Parent Password: <span className="font-mono bg-red-50 px-2 py-1 rounded border border-red-200">{student.parentPassword}</span>
+                </div>
+              )}
             </CardDescription>
           </div>
           <div className="flex flex-col align-center sm:flex-row gap-2 w-full sm:w-auto">
