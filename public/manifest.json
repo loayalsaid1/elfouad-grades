@@ -1,8 +1,8 @@
 {
-  "name": "El-Fouad Admin Dashboard",
-  "short_name": "El-Fouad Admin",
-  "description": "Admin dashboard for El-Fouad Schools Academic Management System.",
-  "start_url": "/admin/dashboard",
+  "name": "El-Fouad Academic Scores Management System",
+  "short_name": "El-Fouad Schools",
+  "description": "El-Fouad Schools Academic Management System.",
+  "start_url": "/",
   "display": "standalone",
   "background_color": "#f8fafc",
   "theme_color": "#223152",
