@@ -109,13 +109,13 @@ export default function SchoolPage() {
         {/* Info Section */}
         <div className="mt-16 text-center max-w-2xl mx-auto">
           <div className="bg-white rounded-lg shadow-lg p-8">
-            <h3 className="text-xl font-semibold text-gray-900 mb-4">Academic Year 2024-2025</h3>
+            <h3 className="text-xl font-semibold text-gray-900 mb-4">Academic Year 2025-2026</h3>
             <p className="text-gray-600 mb-4">
               Select your grade to access exam results and generate official academic reports.
             </p>
             <div className="grid grid-cols-2 gap-4 text-sm text-gray-500">
               <div>
-                <strong>Term:</strong> Second Term
+                <strong>Term:</strong> First Term
               </div>
               <div>
                 <strong>School:</strong> {school.name}
