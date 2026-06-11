@@ -7,19 +7,18 @@ import { usePathname } from "next/navigation"
 
 export default function Footer() {
   const pathname = usePathname()
-  if ( pathname?.startsWith('/admin')) return null;
 
-  //   // Determine Facebook link based on route
-  // let facebookUrl = "https://www.facebook.com/share/1HSJHe1df4/"
-  // if (pathname?.startsWith("/international")) {
-  //   facebookUrl = "https://www.facebook.com/share/19DbXqKcRA/"
-  // } else if (pathname?.startsWith("/modern")) {
-  //   facebookUrl = "https://www.facebook.com/share/16TciEwA8g/"
-  // }
+    // Determine Facebook link based on route
+  let facebookUrl = "https://www.facebook.com/share/1HSJHe1df4/"
+  if (pathname?.startsWith("/international")) {
+    facebookUrl = "https://www.facebook.com/share/19DbXqKcRA/"
+  } else if (pathname?.startsWith("/modern")) {
+    facebookUrl = "https://www.facebook.com/share/16TciEwA8g/"
+  }
   const socialLinks = [
     {
       name: "Facebook",
-      url: 'https://www.facebook.com/people/El-Fouad-International-Schools/61577833614487/',
+      url: facebookUrl,
       icon: Facebook,
       color: "hover:text-blue-600",
     },
@@ -45,7 +44,7 @@ export default function Footer() {
 
   return (
     <footer className="bg-[#223152] text-white py-8 mt-auto">
-      <div className="container max-w-7xl mx-auto px-4">
+      <div className="container mx-auto px-4">
         <div className="flex flex-col md:flex-row items-center justify-between gap-6">
           {/* School Info */}
           <div className="text-center md:text-left">
@@ -82,14 +81,8 @@ export default function Footer() {
           <div className="text-center text-sm text-gray-400">
             <p>&copy; {new Date().getFullYear()} El Fouad Schools</p>
             <p>All rights reserved</p>
-            <a 
-              href="/admin/login" 
-              className="inline-flex items-center mt-3 text-xs text-gray-400 hover:text-white transition-colors"
-            >
-              <ExternalLink size={12} className="mr-1" /> Admin Dashboard
-            </a>
           </div>
-        </div>
+          </div>
 
         {/* Bottom Border
         <div className="mt-6 pt-4 border-t border-white/20 text-center">

@@ -73,7 +73,7 @@ export class StudentService {
       throw new Error("Student not found")
     }
 
-    // The function returns: [{ student_name, scores, parent_password }]
+    // The function returns: [{ student_name, scores }]
     return {
       id,
       name: data[0].student_name,
@@ -88,7 +88,6 @@ export class StudentService {
       school,
       grade,
       requiresPassword: false,
-      parentPassword: data[0].parent_password,
     }
   }
 }

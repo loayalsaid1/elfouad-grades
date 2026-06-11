@@ -72,11 +72,6 @@ export function useStudentSearch(
     setPasswordError("")
   }
 
-  const clearResult = () => {
-    setStudentResult(null)
-    setError("")
-  }
-
   return {
     studentResult,
     loading,
@@ -87,6 +82,5 @@ export function useStudentSearch(
     cancelPasswordDialog,
     passwordError,
     passwordLoading,
-    clearResult,
   }
 }

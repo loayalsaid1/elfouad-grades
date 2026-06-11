@@ -12,16 +12,17 @@ export default function DiffsPage() {
   const [error, setError] = useState<string | null>(null)
 
   return (
+    <div className="h-full bg-gradient-to-br from-slate-50 to-blue-50 py-8">
       <div className="max-w-6xl mx-auto px-4">
         <BackToDashboard />
-        <div className="mb-6 sm:mb-8">
-          <h1 className="text-2xl sm:text-3xl font-bold text-[#223152] flex items-center">
-            <div className="bg-[#223152] p-2 sm:p-3 rounded-full mr-2 sm:mr-4 flex-shrink-0">
-              <Info className="h-6 w-6 sm:h-8 sm:w-8 text-white" />
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold text-[#223152] flex items-center">
+            <div className="bg-[#223152] p-3 rounded-full mr-4">
+              <Info className="h-8 w-8 text-white" />
             </div>
-            Compare Uploads with Database
+            Compare Uploaded Backup with Current Database Records
           </h1>
-          <p className="text-sm sm:text-base text-gray-600 mt-1 sm:mt-2">
+          <p className="text-gray-600 mt-2">
             Select a context to compare the uploaded backup file (CSV) with the current database records. 
             View differences in student results, including additions, removals, and updates.
           </p>
@@ -41,5 +42,6 @@ export default function DiffsPage() {
           <BackupAndExportDiff context={context} onError={setError} />
         )}
       </div>
+    </div>
   )
 }

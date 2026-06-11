@@ -1,21 +1,45 @@
 "use client"
 import { useRouter, useParams } from "next/navigation"
+import { useEffect, useState } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { GraduationCap, ArrowLeft, BookOpen } from "lucide-react"
 import { getOrdinalInfo } from "@/utils/gradeUtils"
 import Image from "next/image"
+import { createClientComponentSupabaseClient } from "@/lib/supabase"
 import LoadingSpinner from "@/components/ui/LoadingSpinner"
-import { useSchool } from "@/hooks/useSchool"
-import { SchoolLoadingSkeleton } from "@/components/ui/SchoolLoadingSkeleton"
-import { SchoolNotFound } from "@/components/errors/SchoolNotFound"
 
 export default function SchoolPage() {
   const router = useRouter()
   const params = useParams()
-  const schoolSlug = params?.school as string
+  const schoolSlug = params.school as string
+  const supabase = createClientComponentSupabaseClient()
 
-  const { school, loading, error, retry } = useSchool(schoolSlug)
+  const [school, setSchool] = useState<any | null>(null)
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    fetchSchool()
+  }, [])
+
+  const fetchSchool = async () => {
+    try {
+      setLoading(true)
+      const { data, error } = await supabase
+        .from("schools")
+        .select("*")
+        .eq("slug", schoolSlug)
+        .single()
+
+      if (error) throw error
+      setSchool(data)
+    } catch (err: any) {
+      console.error("Failed to fetch school:", err.message)
+      setSchool(null)
+    } finally {
+      setLoading(false)
+    }
+  }
 
   const handleGradeSelect = (grade: number) => {
     router.push(`/${schoolSlug}/${grade}`)
@@ -26,26 +50,19 @@ export default function SchoolPage() {
   }
 
   if (loading) {
-    return <SchoolLoadingSkeleton showGrades={true} />
-  }
-
-  if (!school && !loading) {
     return (
-      <SchoolNotFound 
-        schoolSlug={schoolSlug}
-        error={error || undefined}
-        onBack={handleBack}
-        onRetry={retry}
-      />
+      <div className="flex-1 h-full flex items-center justify-center bg-blue-50">
+        <LoadingSpinner size="lg" className="w-18 h-18 border-4 border-cyan-500" />
+      </div>
     )
   }
 
   if (!school) {
-    return null // Still loading, let the loading state handle it
+    return <div className="text-center py-12">School not found</div>
   }
 
   return (
-    <div className="bg-gradient-to-br from-slate-100 to-blue-50 h-full">
+    <div className="bg-gradient-to-br from-slate-50 to-blue-50 h-full">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
         {/* Back Button */}
         <Button variant="outline" onClick={handleBack} className="mb-8 hover:bg-[#223152] hover:text-white">
@@ -109,13 +126,13 @@ export default function SchoolPage() {
         {/* Info Section */}
         <div className="mt-16 text-center max-w-2xl mx-auto">
           <div className="bg-white rounded-lg shadow-lg p-8">
-            <h3 className="text-xl font-semibold text-gray-900 mb-4">Academic Year 2025-2026</h3>
+            <h3 className="text-xl font-semibold text-gray-900 mb-4">Academic Year 2024-2025</h3>
             <p className="text-gray-600 mb-4">
               Select your grade to access exam results and generate official academic reports.
             </p>
             <div className="grid grid-cols-2 gap-4 text-sm text-gray-500">
               <div>
-                <strong>Term:</strong> First Term
+                <strong>Term:</strong> Second Term
               </div>
               <div>
                 <strong>School:</strong> {school.name}

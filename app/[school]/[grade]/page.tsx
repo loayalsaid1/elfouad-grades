@@ -10,29 +10,22 @@ import { useActiveContext } from "@/hooks/useActiveContext"
 import { useStudentSearch } from "@/hooks/useStudentSearch"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { AlertCircle, ArrowLeft } from "lucide-react"
+import { AlertCircle, ArrowLeft, Database } from "lucide-react"
 import { usePDFGeneration } from "@/hooks/usePDFGeneration"
 import Instructions from "@/components/Instructions"
 import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
-import { useSchool } from "@/hooks/useSchool"
-import { GradePageLoadingSkeleton } from "@/components/ui/GradePageLoadingSkeleton"
-import { SchoolNotFound } from "@/components/errors/SchoolNotFound"
-import { ContextError } from "@/components/errors/ContextError"
-import { ContextLoading } from "@/components/ui/ContextLoading"
 
 
 export default function GradePage() {
   const router = useRouter()
   const params = useParams()
-  const schoolSlug = params?.school as string
-  const grade = params?.grade as string
-
-  const { school, loading: schoolLoading, retry: retrySchool } = useSchool(schoolSlug)
+  const school = params.school as string
+  const grade = params.grade as string
 
 const { pdfLoading, generatePDF } = usePDFGeneration()
 
-  const { year, term, loading: contextLoading, error: contextError } = useActiveContext(schoolSlug, grade)
+  const { year, term, loading: contextLoading, error: contextError } = useActiveContext(school, grade)
   const {
       studentResult: student,
     loading,
@@ -43,14 +36,14 @@ const { pdfLoading, generatePDF } = usePDFGeneration()
     cancelPasswordDialog,
     passwordError,
     passwordLoading,
-} = useStudentSearch(schoolSlug, Number.parseInt(grade))
+} = useStudentSearch(school, Number.parseInt(grade))
 
   // Add refs for GradeReference and ResultsTable
   const referenceRef = useRef<HTMLDivElement | null>(null)
   const tableRef = useRef<HTMLDivElement | null>(null)
 
   const handleSearch = async (studentId: string, password?: string) => {
-    await searchStudent(studentId)
+    await searchStudent(studentId, password)
   }
 
   const handlePasswordSubmit = async (password: string) => {
@@ -65,46 +58,48 @@ const { pdfLoading, generatePDF } = usePDFGeneration()
   }, [student])
 
   const handleBack = () => {
-    router.push(`/${schoolSlug}`)
+    router.push(`/${school}`)
   }
   
   // Show context loading state
   if (contextLoading) {
-    return <ContextLoading />
-  }
-  
-  // Show school loading state
-  if (schoolLoading) {
-    return <GradePageLoadingSkeleton />
-  }
-
-  // Show school not found error
-  if (!school && !schoolLoading) {
     return (
-      <SchoolNotFound 
-        schoolSlug={schoolSlug}
-        grade={grade}
-        onBack={() => router.push("/")}
-        onRetry={retrySchool}
-      />
+      <div className="container mx-auto px-4 py-8">
+        <div className="flex items-center justify-center min-h-[400px]">
+          <div className="text-center">
+            <Database className="h-8 w-8 animate-spin mx-auto mb-4 text-blue-600" />
+            <p className="text-lg">Loading academic context...</p>
+          </div>
+        </div>
+      </div>
     )
   }
 
   // Show context error
   if (contextError) {
     return (
-      <ContextError 
-        error={contextError}
-        schoolSlug={schoolSlug}
-        grade={grade}
-        onBack={handleBack}
-      />
+      <div className="container h-full mx-auto px-4 py-8">
+        <Button variant="outline" onClick={handleBack} className="mb-8 hover:bg-[#223152] hover:text-white">
+          <ArrowLeft className="w-4 h-4 mr-2" />
+          Back to Grades
+        </Button>
+        <Alert variant="destructive">
+          <AlertCircle className="h-4 w-4" />
+          <AlertDescription>
+            <strong>Academic Context Error:</strong> {contextError}
+            <br />
+            <span className="text-sm mt-2 block">
+              Please ensure that an active academic context is set up for {school} grade {grade} in the admin dashboard.
+            </span>
+          </AlertDescription>
+        </Alert>
+      </div>
     )
   }
 
   return (
     <div className="h-full bg-gradient-to-br from-slate-50 to-blue-50">
-      <div className="container max-w-7xl mx-auto px-4 py-8">
+      <div className="container mx-auto px-4 py-8">
         <Button variant="outline" onClick={handleBack} className="mb-8 hover:bg-[#223152] hover:text-white">
           <ArrowLeft className="w-4 h-4 mr-2" />
           Back to Grades
@@ -112,7 +107,7 @@ const { pdfLoading, generatePDF } = usePDFGeneration()
         
         <div className="mb-8">
           <h1 className="text-3xl font-bold mb-2">
-            {school?.name || schoolSlug} - Grade {grade}
+            {school === "international" ? "El-Fouad International School" : "El-Fouad Modern Schools"} - Grade {grade}
           </h1>
           <p className="text-muted-foreground">
             Academic Year {year}/{year + 1} - Term {term}
