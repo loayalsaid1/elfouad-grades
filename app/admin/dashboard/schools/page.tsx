@@ -12,6 +12,7 @@ import { useAdminUser } from "@/hooks/useAdminUser"
 import BackToDashboard from "@/components/admin/BackToDashboard"
 import LoadingPage from "@/components/admin/LoadingPage"
 import { useRouter } from "next/navigation"
+import { migrateSchoolStorage } from "@/lib/storageUtils"
 
 export default function SchoolsPage() {
   const { user, profile, schoolAccess, loading: userLoading } = useAdminUser()
@@ -101,11 +102,32 @@ export default function SchoolsPage() {
 
       if (editingSchool) {
         // Update existing school
+        const oldSlug = editingSchool.slug
+        const newSlug = schoolSlug.trim()
+        
+        // Handle storage migration if slug has changed
+        if (oldSlug && oldSlug !== newSlug) {
+          console.log(`Migrating storage from "${oldSlug}" to "${newSlug}"`)
+          const migrationResult = await migrateSchoolStorage(oldSlug, newSlug)
+          
+          if (!migrationResult.success) {
+            console.error("Storage migration failed:", migrationResult.errors)
+            throw new Error(`Storage migration failed: ${migrationResult.errors?.join(", ")}`)
+          }
+          
+          console.log("Storage migration successful:", migrationResult.migratedFiles)
+          
+          // Update logo path if it exists and references the old slug
+          if (editingSchool.logo && editingSchool.logo.startsWith(oldSlug + "/")) {
+            logoPath = editingSchool.logo.replace(oldSlug + "/", newSlug + "/")
+          }
+        }
+
         const { error } = await supabase
           .from("schools")
           .update({
             name: schoolName.trim(),
-            slug: schoolSlug.trim(),
+            slug: newSlug,
             description: schoolDescription.trim(),
             logo: logoPath || editingSchool.logo,
           })
@@ -130,6 +152,13 @@ export default function SchoolsPage() {
 
       // Refresh schools list
       await fetchSchools()
+      
+      // Reset form state
+      setEditingSchool(null)
+      setSchoolName("")
+      setSchoolSlug("")
+      setSchoolDescription("")
+      setSchoolLogo(null)
       setIsDialogOpen(false)
     } catch (err: any) {
       setError("Failed to save school: " + err.message)
