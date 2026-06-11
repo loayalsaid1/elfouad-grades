@@ -138,7 +138,7 @@ const { pdfLoading, generatePDF } = usePDFGeneration()
           {student && (
             <>
               <div ref={tableRef}>
-                <ResultsTable student={student} onExportPDF={() => generatePDF(student)} pdfLoading={pdfLoading} />
+                <ResultsTable student={student} onExportPDF={async () => await generatePDF(student)} pdfLoading={pdfLoading} />
               </div>
             </>
           )}

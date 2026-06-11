@@ -366,7 +366,7 @@ export default function AdminTestResultsPage() {
               <div ref={tableRef}>
                 <ResultsTable
                   student={student}
-                  onExportPDF={() => generatePDF(student)}
+                  onExportPDF={async () => await generatePDF(student)}
                   pdfLoading={pdfLoading}
                   onEdit={() => startEdit(student)} // Pass onEdit for admin
                   onDelete={() => handleDeleteClick(student)} // Pass onDelete for admin
