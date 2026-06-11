@@ -115,7 +115,7 @@ export default function SchoolPage() {
             </p>
             <div className="grid grid-cols-2 gap-4 text-sm text-gray-500">
               <div>
-                <strong>Term:</strong> First Term
+                <strong>Term:</strong> Second Term
               </div>
               <div>
                 <strong>School:</strong> {school.name}
