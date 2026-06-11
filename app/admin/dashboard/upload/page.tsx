@@ -28,21 +28,6 @@ export default function UploadPage() {
   const [context, setContext] = useState<UploadContext | null>(null)
   const [message, setMessage] = useState<{ type: "success" | "error" | "info"; text: string } | null>(null)
 
-  // ⛔⛔ I've spent many days on a promblem, so don't freaking ask me why the hell this useEffect
-  // I can't have any explanation why this freaking page the only on in the app the make the HTML has whitespace under it
-  // Actually, i'll give you 20 dollars or even 50 if you can tell me!
-
-  // Don't Freaking ask ok. now go do something useful!!!!!!!!!!!!!!!!
-    // Effect to scroll to the top and add overflow-hidden to the HTML element
-    useEffect(() => {
-      window.scrollTo(0, 0)
-      document.documentElement.classList.add("overflow-hidden")
-      return () => {
-        document.documentElement.classList.remove("overflow-hidden")
-      }
-    }, [])
-
-
   const { 
     parsedData, 
     processedStudents, 
@@ -145,17 +130,18 @@ export default function UploadPage() {
   }
 
   return (
-      <div className="max-w-6xl mx-auto px-3 sm:px-4">
+    <div className="h-full bg-gradient-to-br from-slate-50 to-blue-50 py-8">
+      <div className="max-w-6xl mx-auto px-4">
         <BackToDashboard />
 
-        <div className="mb-6 sm:mb-8">
-          <h1 className="text-2xl sm:text-3xl font-bold text-[#223152] flex items-center">
-            <div className="bg-[#223152] p-2 sm:p-3 rounded-full mr-2 sm:mr-4 flex-shrink-0">
-              <Upload className="h-6 w-6 sm:h-8 sm:w-8 text-white" />
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold text-[#223152] flex items-center">
+            <div className="bg-[#223152] p-3 rounded-full mr-4">
+              <Upload className="h-8 w-8 text-white" />
             </div>
             Upload Student Results
           </h1>
-          <p className="text-sm sm:text-base text-gray-600 mt-1 sm:mt-2">
+          <p className="text-gray-600 mt-2">
             Upload CSV files with student results data. Use "-" or leave empty for absent students in subject columns only.
           </p>
         </div>
@@ -213,5 +199,6 @@ export default function UploadPage() {
           />
         )}
       </div>
+    </div>
   )
 }

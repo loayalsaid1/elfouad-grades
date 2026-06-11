@@ -14,7 +14,7 @@ import { ActiveContextsConfirmDialog } from "@/components/admin/settings/ActiveC
 import { useActiveContextChanges } from "@/hooks/useActiveContextChanges"
 
 export default function SettingsPage() {
-  const { user, profile, loading: userLoading } = useAdminUser()
+  const {user, profile } = useAdminUser()
   const settings = useSettingsPage()
   const [showConfirm, setShowConfirm] = useState(false)
   const [pendingSave, setPendingSave] = useState(false)
@@ -35,7 +35,7 @@ export default function SettingsPage() {
     }
   }, [settings.error, settings.message])
 
-  if (settings.loading || userLoading || !user) {
+  if (settings.loading || !user) {
     return <LoadingPage message="Loading settings..." />
   }
 
@@ -60,17 +60,18 @@ export default function SettingsPage() {
   }
 
   return (
+    <div className="h-full bg-gradient-to-br from-slate-50 to-blue-50 py-8">
       <div className="max-w-6xl mx-auto px-4">
         <BackToDashboard />
         
-        <div className="mb-6 sm:mb-8">
-          <h1 className="text-2xl sm:text-3xl font-bold text-[#223152] flex items-center">
-            <div className="bg-[#223152] p-2 sm:p-3 rounded-full mr-2 sm:mr-4 flex-shrink-0">
-              <Settings className="h-6 w-6 sm:h-8 sm:w-8 text-white" />
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold text-[#223152] flex items-center">
+            <div className="bg-[#223152] p-3 rounded-full mr-4">
+              <Settings className="h-8 w-8 text-white" />
             </div>
             System Settings
           </h1>
-          <p className="text-sm sm:text-base text-gray-600 mt-1 sm:mt-2">
+          <p className="text-gray-600 mt-2">
             Manage system availability and active academic contexts
           </p>
         </div>
@@ -107,5 +108,6 @@ export default function SettingsPage() {
           onConfirm={handleConfirm}
         />
       </div>
+    </div>
   )
 }

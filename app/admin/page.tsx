@@ -6,22 +6,20 @@ import { useAdminUser } from "@/hooks/useAdminUser";
 
 export default function Page() {
 	const [checked, setChecked] = useState(false);
-	const { user, loading } = useAdminUser()
+	const user = useAdminUser()
 	
 
 	useEffect(() => {
 		const checkSession = async () => {
-			if (!loading) {
-				setChecked(true);
-				if (user) {
-					redirect("/admin/dashboard");
-				} else {
-					redirect("/admin/login");
-				}
+			setChecked(true);
+			if (user) {
+				redirect("/admin/dashboard");
+			} else {
+				redirect("/admin/login");
 			}
 		};
 		checkSession();
-	}, [user, loading]);
+	}, [user]);
 
 	if (!checked) return <LoadingSpinner size="lg" className="border-4 border-cyan-500" />;
 	return null;

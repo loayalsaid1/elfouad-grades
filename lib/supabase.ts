@@ -28,7 +28,6 @@ export const createClientComponentSupabaseClient = () => {
     clientSideSupabase = createClient<Database>(supabaseUrl, supabaseAnonKey, {
       auth: {
         persistSession: false,
-        autoRefreshToken: true,
       },
     })
   }

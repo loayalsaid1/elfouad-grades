@@ -26,6 +26,7 @@ export const metadata: Metadata = {
     apple: "/square-logo.png"
   },
   manifest: "/manifest.json",
+    generator: 'v0.app'
 }
 
 export default function RootLayout({
@@ -34,10 +35,12 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en" className="h-screen">
-      <body className={`${inter.className} h-full `}>
+    <html lang="en">
+      <body className={`${inter.className} h-screen flex flex-col`}>
         <SystemStatusProvider>
-            {children}
+          <Header />
+          <main className="flex-1">{children}</main>
+          <Footer />
         </SystemStatusProvider>
       </body>
     </html>
