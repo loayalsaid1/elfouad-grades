@@ -15,6 +15,7 @@ export function usePDFGeneration() {
       await PDFService.generateStudentReport(studentData)
     } catch (error) {
       console.error("Error generating PDF:", error)
+      console.log("Student data causing error:", studentData)
       // You could add toast notification here
     } finally {
       setPdfLoading(false)
