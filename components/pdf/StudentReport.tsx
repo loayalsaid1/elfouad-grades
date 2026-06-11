@@ -8,7 +8,7 @@ import type { StudentResult } from "@/types/student";
 // Register a font that supports Arabic characters
 Font.register({
   family: "NotoSansArabic",
-  src: "https://fonts.gstatic.com/s/notosansarabic/v18/nwpxtLGrOAZMl5nJ_wfgRg3DrWFZWsnVBJ_sS6tlqHHFlhQ5l3sQWIHPqzCfyGyvu3CBFQLaig.ttf",
+  src: "/fonts/notosansarabic.ttf",
 });
 
 interface StudentReportProps {
